@@ -5,49 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Favo Studio 3D - Boas-vindas" Height="720" Width="1100"
+        MinWidth="1100" MinHeight="720"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
 
-    <!-- Grid Principal com a imagem de fundo definida como ImageBrush -->
+    <!-- Grid Principal com a imagem de fundo RESPONSIVA -->
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Assets/Images/ImagemTelaInicio.png" Stretch="UniformToFill" AlignmentY="Center"/>
+            <!-- UniformToFill garante a responsividade. AlignmentX e Y centralizam o foco -->
+            <ImageBrush ImageSource="/Assets/Images/ImagemTelaInicio.png" 
+                        Stretch="UniformToFill" 
+                        AlignmentX="Center" 
+                        AlignmentY="Center"/>
         </Grid.Background>
 
-        <Grid>
-            <!-- Divisão responsiva da tela: 55% esquerda, 45% direita -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5.5*" />
-                <ColumnDefinition Width="4.5*" />
-            </Grid.ColumnDefinitions>
+        <!-- Container do Card -->
+        <Border Width="480" Height="520" 
+                CornerRadius="20" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Right" 
+                Margin="0,0,220,0" 
+                BorderBrush="#D4AF37" 
+                BorderThickness="1">
 
-            <!-- Card centralizado na coluna da direita -->
-            <Border Grid.Column="1" Width="400" Height="450" CornerRadius="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border.Background>
+                <SolidColorBrush Color="White" Opacity="0.50"/>
+            </Border.Background>
 
-                <Border.Background>
-                    <SolidColorBrush Color="White" Opacity="0.85"/>
-                </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="25" ShadowDepth="8"/>
+            </Border.Effect>
 
-                <Border.Effect>
-                    <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="20" ShadowDepth="5"/>
-                </Border.Effect>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="35">
 
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="30">
+                <!-- Logo -->
+                <Image Source="/Assets/Images/Logo.png" Height="170" Margin="0,0,0,10" Stretch="Uniform"/>
 
-                    <!-- Logo: Altura aumentada significativamente para 180 -->
-                    <Image Source="/Assets/Images/Logo.png" Height="180" Margin="0,0,0,10" Stretch="Uniform"/>
+                <TextBlock Text="Bem-vindos" 
+                           FontSize="48" 
+                           FontWeight="SemiBold" 
+                           Foreground="{StaticResource CorTextoPrincipal}" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,5,0,1"/>
 
-                    <TextBlock Text="Bem-vindos" FontSize="36" FontWeight="SemiBold" Foreground="{StaticResource CorTextoPrincipal}" HorizontalAlignment="Center" Margin="0,0,0,15"/>
-                    <TextBlock Text="Precificação inteligente&#x0A;para impressões 3D." FontSize="16" Foreground="{StaticResource CorTextoSecundario}" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,40"/>
+                <TextBlock Text="Precificação inteligente&#x0A;para impressões 3D." 
+                           FontSize="24" 
+                           Foreground="{StaticResource CorTextoSecundario}" 
+                           HorizontalAlignment="Center" 
+                           TextAlignment="Center" 
+                           Margin="0,0,0,45"/>
 
-                    <!-- Botão -->
-                    <Button Style="{StaticResource BotaoPrincipalStyle}" Width="250" Height="45" Click="BotaoEntrar_Click">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Entrar no sistema" Margin="0,0,10,0"/>
-                            <TextBlock Text="➔" FontSize="16"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Border>
-        </Grid>
+                <!-- Botão -->
+                <Button Style="{StaticResource BotaoPrincipalStyle}" 
+                        Width="380" Height="59" 
+                        BorderBrush="#E5C158" 
+                        BorderThickness="1" 
+                        Click="BotaoEntrar_Click">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <!-- Ajustes de alinhamento vertical e margens para centralização perfeita -->
+                        <TextBlock Text="Entrar no sistema" Margin="0,0,12,0" FontSize="20" VerticalAlignment="Center" Padding="0,0,0,4"/>
+                        <TextBlock Text="➔" FontSize="22" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
-</Window>ss
+</Window>
