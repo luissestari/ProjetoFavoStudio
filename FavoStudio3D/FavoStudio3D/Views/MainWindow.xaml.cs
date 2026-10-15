@@ -11,7 +11,9 @@ namespace FavoStudio3D.Views
 
         private void BotaoEntrar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Bem-vindo ao Favo Studio 3D!", "Acesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            DashboardWindow dashboard = new DashboardWindow();
+            dashboard.Show();
+            this.Close();
         }
     }
 }

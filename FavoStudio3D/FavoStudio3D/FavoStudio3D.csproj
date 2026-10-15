@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\FundoDashboard.png" />
+    <None Remove="Assets\Images\IconeAviso.png" />
+    <None Remove="Assets\Images\IconeCalculadora.png" />
+    <None Remove="Assets\Images\IconeCustos.png" />
+    <None Remove="Assets\Images\IconeImpressora.png" />
+    <None Remove="Assets\Images\IconeProdutos.png" />
+    <None Remove="Assets\Images\IconeSair.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
     <None Remove="Assets\Images\Logo.png" />
   </ItemGroup>
@@ -19,6 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\FundoDashboard.png" />
+    <Resource Include="Assets\Images\IconeAviso.png" />
+    <Resource Include="Assets\Images\IconeCalculadora.png" />
+    <Resource Include="Assets\Images\IconeCustos.png" />
+    <Resource Include="Assets\Images\IconeImpressora.png" />
+    <Resource Include="Assets\Images\IconeProdutos.png" />
+    <Resource Include="Assets\Images\IconeSair.png" />
     <Resource Include="Assets\Images\ImagemTelaInicio.png" />
     <Resource Include="Assets\Images\Logo.png" />
   </ItemGroup>

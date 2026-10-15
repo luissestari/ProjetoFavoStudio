@@ -1,0 +1,145 @@
+﻿<Window x:Class="FavoStudio3D.Views.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Favo Studio 3D - Calculadora" 
+        Height="720" Width="1100"
+        MinWidth="1100" MinHeight="720"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- Fundo da Tela -->
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/Images/FundoDashboard.png" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+        </Grid.Background>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <!-- Espaço do Menu Lateral -->
+                <ColumnDefinition Width="*" />
+                <!-- Espaço do Conteúdo -->
+            </Grid.ColumnDefinitions>
+
+            <!-- MENU LATERAL -->
+            <!-- Margens e tamanho ajustados para ficar idêntico ao Figma -->
+            <Border Grid.Column="0" Width="100" Margin="25,25,0,25" CornerRadius="20">
+                <Border.Background>
+                    <!-- Fundo bege muito claro, quase branco, para bater com o design -->
+                    <SolidColorBrush Color="#FFFFFF" Opacity="0.50"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="20" ShadowDepth="2"/>
+                </Border.Effect>
+
+                <Grid>
+                    <StackPanel Margin="0,35,0,0" HorizontalAlignment="Center">
+
+                        <!-- Logo Miniatura -->
+                        <Image Source="/Assets/Images/Logo.png" Height="45" Margin="0,0,0,45" Stretch="Uniform"/>
+
+                        <!-- Botão Ativo: Calculadora -->
+                        <!-- A caixa dourada com bordas arredondadas -->
+                        <Border Background="#F3D09E" CornerRadius="12" Width="85" Height="75" Margin="0,0,0,20">
+                            <StackPanel VerticalAlignment="Center">
+                                <!-- AQUI ENTRA A IMAGEM DO SEU ÍCONE -->
+                                <Image Source="/Assets/Images/IconeCalculadora.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                                <TextBlock Text="Calculadora" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Botão: Custos e Materiais -->
+                        <StackPanel Margin="0,0,0,30" Cursor="Hand" Background="Transparent">
+                            <!-- AQUI ENTRA A IMAGEM DO SEU ÍCONE -->
+                            <Image Source="/Assets/Images/IconeCustos.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                            <TextBlock Text="Custos e materiais" FontSize="10" HorizontalAlignment="Center" Foreground="#4A2A1A" TextAlignment="Center" TextWrapping="Wrap" Width="80"/>
+                        </StackPanel>
+
+                        <!-- Botão: Produtos -->
+                        <StackPanel Margin="0,0,0,30" Cursor="Hand" Background="Transparent">
+                            <!-- AQUI ENTRA A IMAGEM DO SEU ÍCONE -->
+                            <Image Source="/Assets/Images/IconeProdutos.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                            <TextBlock Text="Produtos" FontSize="11" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
+                        </StackPanel>
+
+                        <!-- Botão: Impressora -->
+                        <StackPanel Cursor="Hand" Background="Transparent">
+                            <!-- AQUI ENTRA A IMAGEM DO SEU ÍCONE -->
+                            <Image Source="/Assets/Images/IconeImpressora.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                            <TextBlock Text="Impressora" FontSize="11" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Botão Sair (Fixo no final usando VerticalAlignment="Bottom") -->
+                    <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,35" Cursor="Hand" Background="Transparent" MouseLeftButtonUp="BotaoSair_Click">
+                        <!-- AQUI ENTRA A IMAGEM DO SEU ÍCONE -->
+                        <Image Source="/Assets/Images/IconeSair.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                        <TextBlock Text="Sair" FontSize="11" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+            <Grid Grid.Column="1" Margin="50,50,50,30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Cabeçalho -->
+                    <RowDefinition Height="*"/>
+                    <!-- Card Central -->
+                </Grid.RowDefinitions>
+
+                <!-- CABEÇALHO -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Títulos -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="Calculadora" FontSize="42" FontWeight="Bold" Foreground="#3E2723"/>
+                        <TextBlock Text="Calcule os custos de produção e defina o preço de venda dos seus produtos 3D." FontSize="18" Foreground="#3E2723" Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <!-- Data e Hora -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <TextBlock Text="Seg, 21 de Setembro de 2026" FontSize="16" Foreground="#3E2723" HorizontalAlignment="Right"/>
+                        <TextBlock Text="20:24" FontSize="28" FontWeight="SemiBold" Foreground="#3E2723" HorizontalAlignment="Right" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- CARD CENTRAL (AVISO DE BLOQUEIO) -->
+                <Border Grid.Row="1" Width="650" Height="555" CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,40,0,0">
+                    <Border.Background>
+                        <SolidColorBrush Color="White" Opacity="0.90"/>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="30" ShadowDepth="5"/>
+                    </Border.Effect>
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50">
+
+                        <!-- Ícone de Aviso com o nome exato -->
+                        <Image Source="/Assets/Images/IconeAviso.png" Height="120" Margin="0,0,0,25" Stretch="Uniform"/>
+
+                        <!-- Título do Aviso -->
+                        <TextBlock Text="Configure os dados antes&#x0A;de usar a calculadora" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="#3E2723" 
+                                   HorizontalAlignment="Center" 
+                                   TextAlignment="Center" 
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Subtítulo do Aviso -->
+                        <TextBlock Text="Para utilizar a calculadora, cadastre primeiro as&#x0A;impressoras, os filamentos e os custos utilizados&#x0A;nas impressões." 
+                                   FontSize="17" 
+                                   Foreground="#3E2723" 
+                                   HorizontalAlignment="Center" 
+                                   TextAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
