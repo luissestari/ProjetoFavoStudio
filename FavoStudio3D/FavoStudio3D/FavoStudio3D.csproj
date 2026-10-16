@@ -10,14 +10,20 @@
 
   <ItemGroup>
     <None Remove="Assets\Images\FundoDashboard.png" />
+    <None Remove="Assets\Images\IconeAbaCusto.png" />
+    <None Remove="Assets\Images\IconeAbaFilamento.png" />
     <None Remove="Assets\Images\IconeAviso.png" />
     <None Remove="Assets\Images\IconeCaixaNovo.png" />
     <None Remove="Assets\Images\IconeCalculadora.png" />
     <None Remove="Assets\Images\IconeCustos.png" />
     <None Remove="Assets\Images\IconeImpressora.png" />
+    <None Remove="Assets\Images\IconeInfoLaranja.png" />
+    <None Remove="Assets\Images\IconeLimpar.png" />
     <None Remove="Assets\Images\IconeMais.png" />
     <None Remove="Assets\Images\IconeProdutos.png" />
     <None Remove="Assets\Images\IconeSair.png" />
+    <None Remove="Assets\Images\IconeSalvar.png" />
+    <None Remove="Assets\Images\IconeSetaDropdown.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
     <None Remove="Assets\Images\Logo.png" />
     <None Remove="Assets\Images\LogoMini.png" />
@@ -30,14 +36,20 @@
 
   <ItemGroup>
     <Resource Include="Assets\Images\FundoDashboard.png" />
+    <Resource Include="Assets\Images\IconeAbaCusto.png" />
+    <Resource Include="Assets\Images\IconeAbaFilamento.png" />
     <Resource Include="Assets\Images\IconeAviso.png" />
     <Resource Include="Assets\Images\IconeCaixaNovo.png" />
     <Resource Include="Assets\Images\IconeCalculadora.png" />
     <Resource Include="Assets\Images\IconeCustos.png" />
     <Resource Include="Assets\Images\IconeImpressora.png" />
+    <Resource Include="Assets\Images\IconeInfoLaranja.png" />
+    <Resource Include="Assets\Images\IconeLimpar.png" />
     <Resource Include="Assets\Images\IconeMais.png" />
     <Resource Include="Assets\Images\IconeProdutos.png" />
     <Resource Include="Assets\Images\IconeSair.png" />
+    <Resource Include="Assets\Images\IconeSalvar.png" />
+    <Resource Include="Assets\Images\IconeSetaDropdown.png" />
     <Resource Include="Assets\Images\ImagemTelaInicio.png" />
     <Resource Include="Assets\Images\Logo.png" />
     <Resource Include="Assets\Images\LogoMini.png" />
