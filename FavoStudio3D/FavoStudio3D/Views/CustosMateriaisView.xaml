@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="FavoStudio3D.Views.CustosMateriaisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="600">
+
+    <!-- CARD CENTRAL: Apenas UMA camada para garantir a transparência correta -->
+    <Border Width="600" Height="500" CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+        <!-- Fundo com Transparência a 0.70 -->
+        <Border.Background>
+            <SolidColorBrush Color="White" Opacity="0.70"/>
+        </Border.Background>
+
+        <!-- Sombra espalhada -->
+        <Border.Effect>
+            <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
+        </Border.Effect>
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50">
+
+            <!-- Ícone Central: Tamanho 125 -->
+            <Image Source="/Assets/Images/IconeCaixaNovo.png" Height="125" Margin="0,0,0,25" Stretch="Uniform"/>
+
+            <!-- Título -->
+            <TextBlock Text="Novo cadastro" 
+                       FontSize="30" 
+                       FontWeight="Bold" 
+                       Foreground="#3E2723" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,20"/>
+
+            <!-- Subtítulo -->
+            <TextBlock Text="Para cadastrar um filamento, um custo fixo ou&#x0A;um custo adicional, clique no botão abaixo e&#x0A;preencha as informações." 
+                       FontSize="20" 
+                       Foreground="#3E2723" 
+                       HorizontalAlignment="Center" 
+                       TextAlignment="Center"
+                       Margin="0,0,0,30"/>
+
+            <!-- Botão de Novo Cadastro -->
+            <Button Width="400" Height="55" Background="#B57218" BorderThickness="0" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Assets/Images/IconeMais.png" Height="22" Margin="0,0,10,0"/>
+                    <TextBlock Text="Cadastrar novo item" Foreground="White" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>

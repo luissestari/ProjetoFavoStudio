@@ -1,25 +1,109 @@
-﻿using System.Windows;
-using System.Windows.Input; // Necessário para detetar o clique do rato no StackPanel
+﻿using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
+using System.Windows.Controls;
 
 namespace FavoStudio3D.Views
 {
     public partial class DashboardWindow : Window
     {
+        private DispatcherTimer? timerRelogio;
+
+        // Cor dourada do botão ativo
+        private readonly SolidColorBrush corAtiva = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F3D09E"));
+        // Cor transparente para os botões inativos
+        private readonly SolidColorBrush corInativa = Brushes.Transparent;
+
         public DashboardWindow()
         {
             InitializeComponent();
+            ConfigurarRelogio();
+
+            NavegarParaCalculadora();
         }
 
-        // Ação que acontece quando clicamos no botão Sair
+        private void ConfigurarRelogio()
+        {
+            timerRelogio = new DispatcherTimer();
+            timerRelogio.Interval = TimeSpan.FromSeconds(1);
+            timerRelogio.Tick += TimerRelogio_Tick;
+            timerRelogio.Start();
+            AtualizarDataEHora();
+        }
+
+        private void TimerRelogio_Tick(object? sender, EventArgs? e)
+        {
+            AtualizarDataEHora();
+        }
+
+        private void AtualizarDataEHora()
+        {
+            DateTime agora = DateTime.Now;
+            string dataFormatada = agora.ToString("ddd, dd 'de' MMMM 'de' yyyy", new CultureInfo("pt-BR"));
+            TextoData.Text = char.ToUpper(dataFormatada[0]) + dataFormatada.Substring(1);
+            TextoHora.Text = agora.ToString("HH:mm");
+        }
+
+        // ==========================================
+        // LÓGICA VISUAL DO MENU
+        // ==========================================
+
+        private void AtivarBotaoMenu(Border borderAtivo, TextBlock textoAtivo)
+        {
+            // 1. Reseta TODOS os botões para Transparente e fonte Normal
+            MenuCalculadoraBorder.Background = corInativa;
+            MenuCalculadoraTexto.FontWeight = FontWeights.Normal;
+
+            MenuCustosBorder.Background = corInativa;
+            MenuCustosTexto.FontWeight = FontWeights.Normal;
+
+            MenuProdutosBorder.Background = corInativa;
+            MenuProdutosTexto.FontWeight = FontWeights.Normal;
+
+            MenuImpressoraBorder.Background = corInativa;
+            MenuImpressoraTexto.FontWeight = FontWeights.Normal;
+
+            // 2. Pinta apenas o botão que foi clicado de Dourado e coloca a fonte em SemiBold
+            borderAtivo.Background = corAtiva;
+            textoAtivo.FontWeight = FontWeights.SemiBold;
+        }
+
+        // ==========================================
+        // EVENTOS DE NAVEGAÇÃO
+        // ==========================================
+
+        private void BotaoMenuCalculadora_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavegarParaCalculadora();
+        }
+
+        private void BotaoMenuCustos_Click(object sender, MouseButtonEventArgs e)
+        {
+            AtivarBotaoMenu(MenuCustosBorder, MenuCustosTexto);
+
+            TextoTituloPagina.Text = "Custos e materiais";
+            TextoSubtituloPagina.Text = "Cadastre seus filamentos e mantenha os custos atualizados.";
+
+            AreaConteudo.Content = new CustosMateriaisView();
+        }
+
+        private void NavegarParaCalculadora()
+        {
+            AtivarBotaoMenu(MenuCalculadoraBorder, MenuCalculadoraTexto);
+
+            TextoTituloPagina.Text = "Calculadora";
+            TextoSubtituloPagina.Text = "Calcule os custos de produção e defina o preço de venda dos seus produtos 3D.";
+
+            AreaConteudo.Content = new CalculadoraBloqueadaView();
+        }
+
         private void BotaoSair_Click(object sender, MouseButtonEventArgs e)
         {
-            // 1. Cria a janela de boas-vindas novamente
             MainWindow telaInicio = new MainWindow();
-
-            // 2. Mostra a tela de boas-vindas no ecrã
             telaInicio.Show();
-
-            // 3. Fecha o Dashboard (a janela atual)
             this.Close();
         }
     }
