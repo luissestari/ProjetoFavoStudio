@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace FavoStudio3D.Views
 {
@@ -9,23 +11,15 @@ namespace FavoStudio3D.Views
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // PASSO 3: Inicializada com '= new ObservableCollection<CorFilamento>();' para remover o aviso CS8618
+        // --- PROPRIEDADES DA ABA FILAMENTO ---
         public ObservableCollection<CorFilamento> ListaCores { get; set; } = new ObservableCollection<CorFilamento>();
 
-        // PASSO 3: Inicializada com '= new CorFilamento();' para remover o aviso CS8618
         private CorFilamento _corSelecionada = new CorFilamento();
-
         public CorFilamento CorSelecionada
         {
             get { return _corSelecionada; }
-            set
-            {
-                _corSelecionada = value;
-                OnPropertyChanged(nameof(CorSelecionada));
-            }
+            set { _corSelecionada = value; OnPropertyChanged(nameof(CorSelecionada)); }
         }
-
-        // --- PROPRIEDADES PARA A OPÇÃO 2 (Expansão do Popup) ---
 
         private Visibility _botaoOutraCorVisivel = Visibility.Visible;
         public Visibility BotaoOutraCorVisivel
@@ -55,56 +49,132 @@ namespace FavoStudio3D.Views
             set { _novaCorHex = value; OnPropertyChanged(nameof(NovaCorHex)); }
         }
 
+        // --- PROPRIEDADES DA ABA CUSTO ---
+        public ObservableCollection<string> ListaTiposCusto { get; set; } = new ObservableCollection<string>();
+
+        private string _tipoCustoSelecionado = string.Empty;
+        public string TipoCustoSelecionado
+        {
+            get { return _tipoCustoSelecionado; }
+            set { _tipoCustoSelecionado = value; OnPropertyChanged(nameof(TipoCustoSelecionado)); }
+        }
+
+        // --- CONTROLO DAS ABAS (VISIBILIDADE) ---
+        private Visibility _visibilidadeFilamento = Visibility.Visible;
+        public Visibility VisibilidadeFilamento
+        {
+            get { return _visibilidadeFilamento; }
+            set { _visibilidadeFilamento = value; OnPropertyChanged(nameof(VisibilidadeFilamento)); }
+        }
+
+        private Visibility _visibilidadeCusto = Visibility.Collapsed;
+        public Visibility VisibilidadeCusto
+        {
+            get { return _visibilidadeCusto; }
+            set { _visibilidadeCusto = value; OnPropertyChanged(nameof(VisibilidadeCusto)); }
+        }
+
         public CadastroCustosView()
         {
             InitializeComponent();
             DataContext = this;
+
             CarregarCores();
+            CarregarTiposCusto();
         }
 
+        // --- LÓGICA DE NAVEGAÇÃO DAS ABAS ---
+        private void TabFilamento_Click(object sender, MouseButtonEventArgs e)
+        {
+            VisibilidadeFilamento = Visibility.Visible;
+            VisibilidadeCusto = Visibility.Collapsed;
+
+            // Muda a cor das abas para dar o efeito de "Selecionado"
+            TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D");
+            TabCusto.Background = Brushes.Transparent;
+        }
+
+        private void TabCusto_Click(object sender, MouseButtonEventArgs e)
+        {
+            VisibilidadeFilamento = Visibility.Collapsed;
+            VisibilidadeCusto = Visibility.Visible;
+
+            // Muda a cor das abas para dar o efeito de "Selecionado"
+            TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D");
+            TabFilamento.Background = Brushes.Transparent;
+        }
+
+        // --- MÉTODOS DE INICIALIZAÇÃO ---
         private void CarregarCores()
         {
-            ListaCores = new ObservableCollection<CorFilamento>
-            {
-                new CorFilamento { Nome = "Branco", Hex = "#FFFFFF", Borda = "#E0E0E0" },
-                new CorFilamento { Nome = "Preto", Hex = "#212121", Borda = "Transparent" },
-                new CorFilamento { Nome = "Cinza", Hex = "#9E9E9E", Borda = "Transparent" },
-                new CorFilamento { Nome = "Vermelho", Hex = "#F44336", Borda = "Transparent" },
-                new CorFilamento { Nome = "Azul", Hex = "#2196F3", Borda = "Transparent" },
-                new CorFilamento { Nome = "Verde", Hex = "#4CAF50", Borda = "Transparent" },
-                new CorFilamento { Nome = "Amarelo", Hex = "#FFEB3B", Borda = "Transparent" },
-                new CorFilamento { Nome = "Laranja", Hex = "#FF9800", Borda = "Transparent" },
-                new CorFilamento { Nome = "Roxo", Hex = "#9C27B0", Borda = "Transparent" },
-                new CorFilamento { Nome = "Rosa", Hex = "#F48FB1", Borda = "Transparent" }
-            };
+            ListaCores.Add(new CorFilamento { Nome = "Selecione uma cor", Hex = "#B88A58", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Branco", Hex = "#FFFFFF", Borda = "#E0E0E0", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Preto", Hex = "#212121", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Cinza", Hex = "#9E9E9E", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Vermelho", Hex = "#F44336", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Azul", Hex = "#2196F3", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Verde", Hex = "#4CAF50", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Amarelo", Hex = "#FFEB3B", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Laranja", Hex = "#FF9800", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Roxo", Hex = "#9C27B0", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Rosa", Hex = "#F48FB1", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
 
             CorSelecionada = ListaCores[0];
+            ListaCores.RemoveAt(0);
         }
 
-        // Clica em uma cor existente
-        private void CorSelecionada_Click(object sender, RoutedEventArgs e)
+        private void CarregarTiposCusto()
+        {
+            TipoCustoSelecionado = "Selecione o tipo";
+            ListaTiposCusto.Add("Custo fixo");
+            ListaTiposCusto.Add("Custo adicional");
+        }
+
+        // --- EVENTOS DA ABA CUSTO ---
+        private void TipoCusto_Click(object sender, RoutedEventArgs e)
         {
             var botao = sender as Button;
-            if (botao?.DataContext is CorFilamento corClicada)
+            if (botao?.DataContext is string tipoClicado)
             {
-                CorSelecionada = corClicada;
-                BtnAbrirCores.IsChecked = false; // Fecha o popup
-                ResetarPainelExpansao();         // Recolhe os campos extras para a próxima vez
+                TipoCustoSelecionado = tipoClicado;
+                BtnAbrirTiposCusto.IsChecked = false; // Fecha o popup
             }
         }
 
-        // --- LÓGICA DE EVENTOS DA OPÇÃO 2 ---
+        // --- EVENTOS DA ABA FILAMENTO ---
+        private void CorSelecionada_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as FrameworkElement;
+            if (item?.DataContext is CorFilamento corClicada)
+            {
+                CorSelecionada = corClicada;
+                BtnAbrirCores.IsChecked = false;
+                ResetarPainelExpansao();
+            }
+        }
+
+        private void BtnExcluirCor_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var botao = sender as Button;
+            if (botao?.DataContext is CorFilamento corParaExcluir)
+            {
+                ListaCores.Remove(corParaExcluir);
+                if (CorSelecionada == corParaExcluir && ListaCores.Count > 0)
+                {
+                    CorSelecionada = ListaCores[0];
+                }
+            }
+        }
 
         private void BtnCorPersonalizada_Click(object sender, RoutedEventArgs e)
         {
-            // Esconde o botão e revela os campos para digitar a nova cor
             BotaoOutraCorVisivel = Visibility.Collapsed;
             PainelNovaCorVisivel = Visibility.Visible;
         }
 
         private void BtnCancelarNovaCor_Click(object sender, RoutedEventArgs e)
         {
-            // Recolhe os campos e volta ao normal
             ResetarPainelExpansao();
         }
 
@@ -116,40 +186,32 @@ namespace FavoStudio3D.Views
                 return;
             }
 
-            // 1. Prepara e corrige o código Hexadecimal
             string hexDigitado = NovaCorHex.Trim();
+            if (!hexDigitado.StartsWith("#")) hexDigitado = "#" + hexDigitado;
 
-            // Adiciona o '#' automaticamente se o utilizador esquecer de colocar
-            if (!hexDigitado.StartsWith("#"))
-            {
-                hexDigitado = "#" + hexDigitado;
-            }
-
-            // 2. Valida se o código HEX é uma cor real que o sistema consiga ler
             try
             {
-                var conversor = new System.Windows.Media.BrushConverter();
-                conversor.ConvertFromString(hexDigitado); // Faz o teste de conversão
+                var conversor = new BrushConverter();
+                conversor.ConvertFromString(hexDigitado);
             }
             catch
             {
                 MessageBox.Show("Código HEX inválido!\nUse um formato correto, ex: #FFD700 para Dourado.", "Erro de Cor", MessageBoxButton.OK, MessageBoxImage.Error);
-                return; // Impede que o popup feche para o utilizador corrigir
+                return;
             }
 
-            // 3. Cria a cor, adiciona na lista e seleciona automaticamente
             var novaCor = new CorFilamento
             {
                 Nome = NovaCorNome.Trim(),
                 Hex = hexDigitado,
-                // Coloca borda cinza só se a cor for branca para não sumir no fundo, senão deixa transparente
-                Borda = (hexDigitado.ToUpper() == "#FFFFFF" || hexDigitado.ToUpper() == "#FFF") ? "#E0E0E0" : "Transparent"
+                Borda = (hexDigitado.ToUpper() == "#FFFFFF" || hexDigitado.ToUpper() == "#FFF") ? "#E0E0E0" : "Transparent",
+                VisibilidadeExcluir = Visibility.Visible
             };
 
             ListaCores.Add(novaCor);
             CorSelecionada = novaCor;
 
-            BtnAbrirCores.IsChecked = false; // Fecha o popup
+            BtnAbrirCores.IsChecked = false;
             ResetarPainelExpansao();
         }
 
@@ -172,5 +234,6 @@ namespace FavoStudio3D.Views
         public string Nome { get; set; } = string.Empty;
         public string Hex { get; set; } = string.Empty;
         public string Borda { get; set; } = string.Empty;
+        public Visibility VisibilidadeExcluir { get; set; } = Visibility.Collapsed;
     }
 }

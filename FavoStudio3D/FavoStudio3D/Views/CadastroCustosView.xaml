@@ -6,27 +6,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="630" d:DesignWidth="650">
 
-    <!-- Margem adicionada (50 à esquerda) para compensar e alinhar exatamente com o título do Dashboard -->
     <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,15,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Área das Abas -->
             <RowDefinition Height="Auto"/>
-            <!-- Área do Cartão -->
         </Grid.RowDefinitions>
 
         <!-- ABAS (TABS) SUPERIORES -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,15">
-            <!-- Aba Ativa: Filamento -->
-            <Border Background="#EBB45D" CornerRadius="10" Width="180" Height="50" Margin="0,0,15,0" Cursor="Hand">
+            <Border x:Name="TabFilamento" Background="#EBB45D" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="180" Height="50" Margin="0,0,15,0" Cursor="Hand" MouseLeftButtonUp="TabFilamento_Click">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Assets/Images/IconeAbaFilamento.png" Height="22" Margin="0,0,10,0" Stretch="Uniform"/>
                     <TextBlock Text="Filamento" FontWeight="Bold" FontSize="16" Foreground="#3E2723" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
-            <!-- Aba Inativa: Custo -->
-            <Border Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="180" Height="50" Cursor="Hand">
+            <Border x:Name="TabCusto" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="180" Height="50" Cursor="Hand" MouseLeftButtonUp="TabCusto_Click">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Assets/Images/IconeAbaCusto.png" Height="22" Margin="0,0,10,0" Stretch="Uniform"/>
                     <TextBlock Text="Custo" FontWeight="Bold" FontSize="16" Foreground="#3E2723" VerticalAlignment="Center"/>
@@ -34,320 +29,456 @@
             </Border>
         </StackPanel>
 
-        <!-- CARD PRINCIPAL (FORMULÁRIO) -->
-        <Border Grid.Row="1" Width="600" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
-            <!-- Fundo Translúcido -->
+        <!-- CARD PRINCIPAL: Sem largura fixa, para se adaptar à aba ativa -->
+        <Border Grid.Row="1" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity="0.70"/>
             </Border.Background>
-            <!-- Sombra -->
             <Border.Effect>
                 <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
             </Border.Effect>
 
-            <StackPanel>
+            <Grid>
 
-                <!-- LINHA 1: Nome do Filamento -->
-                <StackPanel Margin="0,0,0,20">
-                    <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
-                        Nome do filamento <Run Text="*" Foreground="#D32F2F"/>
-                    </TextBlock>
-                    <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
-                        <!-- GRID para sobrepor o Placeholder e o TextBox -->
-                        <Grid>
-                            <TextBlock Text="Ex: PLA Branco" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=TxtNome}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <TextBox x:Name="TxtNome" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-
-                <!-- LINHA 2: Tipo e Cor -->
-                <Grid Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Tipo -->
-                    <StackPanel Grid.Column="0">
+                <!-- ========================================== -->
+                <!-- TELA 1: FORMULÁRIO DE FILAMENTO            -->
+                <!-- ========================================== -->
+                <!-- A largura de 530px mantém o layout original -->
+                <StackPanel Visibility="{Binding VisibilidadeFilamento}" Width="530">
+                    <StackPanel Margin="0,0,0,20">
                         <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
-                            Tipo de filamento <Run Text="*" Foreground="#D32F2F"/>
+                            Nome do filamento <Run Text="*" Foreground="#D32F2F"/>
                         </TextBlock>
                         <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
                             <Grid>
-                                <TextBlock Text="Ex: PLA" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock Text="Ex: PLA Branco" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=TxtTipo}" Value="">
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtNome}" Value="">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                <TextBox x:Name="TxtTipo" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                <TextBox x:Name="TxtNome" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
                             </Grid>
                         </Border>
                     </StackPanel>
 
-                    <!-- Cor (Dropdown Dinâmico e Customizado com Opção 2) -->
-                    <StackPanel Grid.Column="2">
-                        <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
-                            Cor <Run Text="*" Foreground="#D32F2F"/>
-                        </TextBlock>
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                        <!-- Botão que abre o Popup e mostra a cor selecionada -->
-                        <ToggleButton x:Name="BtnAbrirCores" Height="40" Cursor="Hand">
-                            <ToggleButton.Template>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Padding="12,0">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <!-- Ligação dinâmica com a cor selecionada no C# -->
-                                            <Ellipse Grid.Column="0" Width="16" Height="16" Fill="{Binding CorSelecionada.Hex}" Stroke="{Binding CorSelecionada.Borda}" StrokeThickness="1" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding CorSelecionada.Nome}" Foreground="#3E2723" FontSize="14" VerticalAlignment="Center"/>
-                                            <Image Grid.Column="2" Source="/Assets/Images/IconeSetaDropdown.png" Height="8" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </ToggleButton.Template>
-                        </ToggleButton>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Tipo de filamento <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                <Grid>
+                                    <TextBlock Text="Ex: PLA" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtTipo}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtTipo" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
 
-                        <!-- POPUP (A janelinha que abre com as cores) -->
-                        <Popup IsOpen="{Binding IsChecked, ElementName=BtnAbrirCores}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAbrirCores}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
-                            <!-- Fundo do Popup com sombra -->
-                            <Border Background="White" CornerRadius="12" Padding="15" Margin="10" Width="280">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.10" ShadowDepth="2"/>
-                                </Border.Effect>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Cor <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <ToggleButton x:Name="BtnAbrirCores" Height="40" Cursor="Hand">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="16" Height="16" Fill="{Binding CorSelecionada.Hex}" Stroke="{Binding CorSelecionada.Borda}" StrokeThickness="1" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding CorSelecionada.Nome}" Foreground="#3E2723" FontSize="14" VerticalAlignment="Center"/>
+                                                <Image Grid.Column="2" Source="/Assets/Images/IconeSetaDropdown.png" Height="20" Width="20" Stretch="Uniform" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
 
-                                <StackPanel>
-                                    <!-- Título -->
-                                    <TextBlock Text="Escolha a cor do filamento" FontSize="12" Foreground="#A99F96" Margin="0,0,0,15"/>
-
-                                    <!-- Grade Dinâmica das Cores (Alimentada pela lista do C#) -->
-                                    <ItemsControl ItemsSource="{Binding ListaCores}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <!-- UniformGrid divide tudo automaticamente em 5 colunas -->
-                                                <UniformGrid Columns="5"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <!-- Botão invisível de cada cor -->
-                                                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="CorSelecionada_Click" Margin="0,0,0,10">
+                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnAbrirCores}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAbrirCores}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
+                                <Border Background="White" CornerRadius="12" Padding="15" Margin="10" Width="280">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.10" ShadowDepth="2"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <TextBlock Text="Escolha a cor do filamento" FontSize="12" Foreground="#A99F96" Margin="0,0,0,15"/>
+                                        <ItemsControl ItemsSource="{Binding ListaCores}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <UniformGrid Columns="5"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Background="Transparent" Cursor="Hand" MouseLeftButtonUp="CorSelecionada_MouseLeftButtonUp" Margin="0,0,0,10">
+                                                        <StackPanel>
+                                                            <Grid Width="30" Height="30" HorizontalAlignment="Center">
+                                                                <Ellipse Width="24" Height="24" Fill="{Binding Hex}" Stroke="{Binding Borda}" StrokeThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Button Width="14" Height="14" Background="#D32F2F" Foreground="White" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-2,-2,0" Cursor="Hand" Visibility="{Binding VisibilidadeExcluir}" Click="BtnExcluirCor_Click">
+                                                                    <Button.Template>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" CornerRadius="7">
+                                                                                <TextBlock Text="✕" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,1"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </Grid>
+                                                            <TextBlock Text="{Binding Nome}" FontSize="11" Foreground="#3E2723" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="#E0E0E0" Margin="0,10,0,15"/>
+                                        <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnCorPersonalizada_Click" Visibility="{Binding BotaoOutraCorVisivel}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="🎨" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="Outra cor (personalizada)" FontSize="13" Foreground="#3E2723" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="&gt;" Foreground="#3E2723" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Button>
+                                        <StackPanel Visibility="{Binding PainelNovaCorVisivel}" Margin="0,5,0,0">
+                                            <TextBlock Text="Nome da cor" FontSize="12" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,5"/>
+                                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="30" Padding="8,0" Margin="0,0,0,10">
+                                                <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12" Text="{Binding NovaCorNome, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Border>
+                                            <TextBlock Text="Código HEX (Ex: #FF00FF)" FontSize="12" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,5"/>
+                                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="30" Padding="8,0" Margin="0,0,0,15">
+                                                <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12" Text="{Binding NovaCorHex, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Border>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button Grid.Column="0" Height="30" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" Cursor="Hand" Click="BtnCancelarNovaCor_Click">
                                                     <Button.Template>
                                                         <ControlTemplate TargetType="Button">
-                                                            <Border Background="Transparent">
-                                                                <ContentPresenter HorizontalAlignment="Center"/>
+                                                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                                                <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                             </Border>
                                                         </ControlTemplate>
                                                     </Button.Template>
-                                                    <StackPanel>
-                                                        <Ellipse Width="24" Height="24" Fill="{Binding Hex}" Stroke="{Binding Borda}" StrokeThickness="1" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="{Binding Nome}" FontSize="11" Foreground="#3E2723" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                                                    </StackPanel>
                                                 </Button>
+                                                <Button Grid.Column="2" Height="30" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarNovaCor_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                                                <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Preço (R$/KG) <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                <Grid>
+                                    <TextBlock Text="R$ 0,00" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtPreco}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtPreco" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Quantidade (kg) <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                <Grid>
+                                    <TextBlock Text="1,00" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtQuantidade}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtQuantidade" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="Quantidade que será utilizada no cálculo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Background="#F4DDB5" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,30">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="30" VerticalAlignment="Top" Margin="0,2,15,0"/>
+                            <TextBlock Grid.Column="1" Text="O preço por kg será utilizado para calcular o custo do material nas&#x0A;impressões." Foreground="#4A2A1A" FontSize="14" TextWrapping="Wrap" LineHeight="18"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeLimpar.png" Height="16" Margin="0,0,10,0"/>
+                                <TextBlock Text="Limpar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeSalvar.png" Height="18" Margin="0,0,10,0"/>
+                                <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- ========================================== -->
+                <!-- TELA 2: FORMULÁRIO DE CUSTO                -->
+                <!-- ========================================== -->
+                <StackPanel Visibility="{Binding VisibilidadeCusto}" Width="450">
+
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                            Descrição <Run Text="*" Foreground="#D32F2F"/>
+                        </TextBlock>
+                        <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                            <Grid>
+                                <TextBlock Text="Ex: Base de corte" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtDescricaoCusto}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="TxtDescricaoCusto" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <Grid Margin="0,0,0,30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Valor <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                <Grid>
+                                    <TextBlock Text="R$ 0,00" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtValorCusto}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtValorCusto" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Tipo <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+
+                            <ToggleButton x:Name="BtnAbrirTiposCusto" Height="40" Cursor="Hand">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding TipoCustoSelecionado}" Foreground="#3E2723" FontSize="14" VerticalAlignment="Center"/>
+                                                <Image Grid.Column="1" Source="/Assets/Images/IconeSetaDropdown.png" Height="20" Width="20" Stretch="Uniform" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <!-- Popup dos Tipos de Custo ATUALIZADO COM LINHA SEPARADORA -->
+                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnAbrirTiposCusto}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAbrirTiposCusto}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
+                                <Border Background="White" CornerRadius="8" Padding="10" Margin="10" Width="210">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.10" ShadowDepth="2"/>
+                                    </Border.Effect>
+
+                                    <!-- Alterado de ItemsControl para ItemsControl com DataTemplate complexo -->
+                                    <ItemsControl ItemsSource="{Binding ListaTiposCusto}" AlternationCount="2">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="TipoCusto_Click" Height="35">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="Transparent" Padding="10,0">
+                                                                    <TextBlock Text="{Binding}" Foreground="#3E2723" FontSize="14" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+
+                                                    <!-- LINHA SEPARADORA -->
+                                                    <!-- O Style com Trigger faz com que a linha NÃO apareça no último item -->
+                                                    <Rectangle Height="1" Fill="#EAEAEA" Margin="10,0">
+                                                        <Rectangle.Style>
+                                                            <Style TargetType="Rectangle">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                                <Style.Triggers>
+                                                                    <!-- Usamos o AlternationIndex para esconder a linha no item de índice 1 (o último, já que só temos 2 itens) -->
+                                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPresenter}}, Path=(ItemsControl.AlternationIndex)}" Value="1">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Rectangle.Style>
+                                                    </Rectangle>
+
+                                                </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+                                </Border>
+                            </Popup>
 
-                                    <!-- Linha separadora -->
-                                    <Rectangle Height="1" Fill="#E0E0E0" Margin="0,10,0,15"/>
-
-                                    <!-- Botão de Cor Personalizada (Some quando clicado) -->
-                                    <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnCorPersonalizada_Click" Visibility="{Binding BotaoOutraCorVisivel}">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <ContentPresenter/>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="🎨" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="Outra cor (personalizada)" FontSize="13" Foreground="#3E2723" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="&gt;" Foreground="#3E2723" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Button>
-
-                                    <!-- PAINEL OCULTO (Aparece ao clicar em "Outra cor") -->
-                                    <StackPanel Visibility="{Binding PainelNovaCorVisivel}" Margin="0,5,0,0">
-
-                                        <TextBlock Text="Nome da cor" FontSize="12" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,5"/>
-                                        <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="30" Padding="8,0" Margin="0,0,0,10">
-                                            <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12" Text="{Binding NovaCorNome, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Border>
-
-                                        <TextBlock Text="Código HEX (Ex: #FF00FF)" FontSize="12" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,5"/>
-                                        <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="30" Padding="8,0" Margin="0,0,0,15">
-                                            <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12" Text="{Binding NovaCorHex, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Border>
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="10"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Botão Cancelar -->
-                                            <Button Grid.Column="0" Height="30" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" Cursor="Hand" Click="BtnCancelarNovaCor_Click">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
-                                                            <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-
-                                            <!-- Botão Salvar -->
-                                            <Button Grid.Column="2" Height="30" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarNovaCor_Click">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                                            <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-                                        </Grid>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </Popup>
-                    </StackPanel>
-                </Grid>
-
-                <!-- LINHA 3: Preço e Quantidade -->
-                <Grid Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Preço -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
-                            Preço (R$/KG) <Run Text="*" Foreground="#D32F2F"/>
-                        </TextBlock>
-                        <Border Width="170" HorizontalAlignment="Left" BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
-                            <Grid>
-                                <TextBlock Text="R$ 0,00" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPreco}" Value="">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBox x:Name="TxtPreco" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Quantidade -->
-                    <StackPanel Grid.Column="2">
-                        <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
-                            Quantidade (kg) <Run Text="*" Foreground="#D32F2F"/>
-                        </TextBlock>
-                        <Border Width="170" HorizontalAlignment="Left" BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
-                            <Grid>
-                                <TextBlock Text="1,00" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=TxtQuantidade}" Value="">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBox x:Name="TxtQuantidade" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
-                            </Grid>
-                        </Border>
-                        <TextBlock Text="Quantidade que será utilizada&#x0A;no cálculo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
-                    </StackPanel>
-                </Grid>
-
-                <!-- CAIXA DE INFORMAÇÃO COM BORDA DOURADA -->
-                <Border Background="#F4DDB5" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,30">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="24" VerticalAlignment="Top" Margin="0,2,15,0"/>
-                        <TextBlock Grid.Column="1" Text="O preço por kg será utilizado para calcular o custo do material nas&#x0A;impressões." Foreground="#4A2A1A" FontSize="14" TextWrapping="Wrap" LineHeight="18"/>
+                            <TextBlock Text="Escolha entre custo adicional ou custo&#x0A;fixo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
+                        </StackPanel>
                     </Grid>
-                </Border>
 
-                <!-- BOTÕES DE AÇÃO -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Border Background="#F4DDB5" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,30">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="30" VerticalAlignment="Top" Margin="0,2,15,0"/>
+                            <TextBlock Grid.Column="1" Text="O valor será aplicado aos cálculos conforme o tipo de&#x0A;custo selecionado." Foreground="#4A2A1A" FontSize="14" TextWrapping="Wrap" LineHeight="18"/>
+                        </Grid>
+                    </Border>
 
-                    <!-- Botão Limpar -->
-                    <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Assets/Images/IconeLimpar.png" Height="16" Margin="0,0,10,0"/>
-                            <TextBlock Text="Limpar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Botão Salvar -->
-                    <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Assets/Images/IconeSalvar.png" Height="18" Margin="0,0,10,0"/>
-                            <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeLimpar.png" Height="16" Margin="0,0,10,0"/>
+                                <TextBlock Text="Limpar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeSalvar.png" Height="18" Margin="0,0,10,0"/>
+                                <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
-
-            </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>
