@@ -89,8 +89,8 @@ namespace FavoStudio3D.Views
             VisibilidadeFilamento = Visibility.Visible;
             VisibilidadeCusto = Visibility.Collapsed;
 
-            // Muda a cor das abas para dar o efeito de "Selecionado"
-            TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D");
+            // CORREÇÃO DOS AVISOS: Adicionado o '!' no final da conversão
+            TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabCusto.Background = Brushes.Transparent;
         }
 
@@ -99,8 +99,8 @@ namespace FavoStudio3D.Views
             VisibilidadeFilamento = Visibility.Collapsed;
             VisibilidadeCusto = Visibility.Visible;
 
-            // Muda a cor das abas para dar o efeito de "Selecionado"
-            TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D");
+            // CORREÇÃO DOS AVISOS: Adicionado o '!' no final da conversão
+            TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabFilamento.Background = Brushes.Transparent;
         }
 
