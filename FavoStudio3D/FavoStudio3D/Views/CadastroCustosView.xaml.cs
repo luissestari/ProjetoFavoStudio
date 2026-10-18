@@ -11,7 +11,6 @@ namespace FavoStudio3D.Views
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // --- PROPRIEDADES DA ABA FILAMENTO ---
         public ObservableCollection<CorFilamento> ListaCores { get; set; } = new ObservableCollection<CorFilamento>();
 
         private CorFilamento _corSelecionada = new CorFilamento();
@@ -49,7 +48,6 @@ namespace FavoStudio3D.Views
             set { _novaCorHex = value; OnPropertyChanged(nameof(NovaCorHex)); }
         }
 
-        // --- PROPRIEDADES DA ABA CUSTO ---
         public ObservableCollection<string> ListaTiposCusto { get; set; } = new ObservableCollection<string>();
 
         private string _tipoCustoSelecionado = string.Empty;
@@ -59,7 +57,6 @@ namespace FavoStudio3D.Views
             set { _tipoCustoSelecionado = value; OnPropertyChanged(nameof(TipoCustoSelecionado)); }
         }
 
-        // --- CONTROLO DAS ABAS (VISIBILIDADE) ---
         private Visibility _visibilidadeFilamento = Visibility.Visible;
         public Visibility VisibilidadeFilamento
         {
@@ -81,43 +78,66 @@ namespace FavoStudio3D.Views
 
             CarregarCores();
             CarregarTiposCusto();
+            AtivarAbaFilamento(); // Garante o estado inicial correto
         }
 
-        // --- LÓGICA DE NAVEGAÇÃO DAS ABAS ---
-        private void TabFilamento_Click(object sender, MouseButtonEventArgs e)
+        // ==========================================
+        // FUNÇÕES DE CONTROLO DAS ABAS (CORES E TELAS)
+        // ==========================================
+        public void AtivarAbaFilamento()
         {
             VisibilidadeFilamento = Visibility.Visible;
             VisibilidadeCusto = Visibility.Collapsed;
-
-            // CORREÇÃO DOS AVISOS: Adicionado o '!' no final da conversão
             TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabCusto.Background = Brushes.Transparent;
         }
 
-        private void TabCusto_Click(object sender, MouseButtonEventArgs e)
+        public void AtivarAbaCusto()
         {
             VisibilidadeFilamento = Visibility.Collapsed;
             VisibilidadeCusto = Visibility.Visible;
-
-            // CORREÇÃO DOS AVISOS: Adicionado o '!' no final da conversão
             TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabFilamento.Background = Brushes.Transparent;
         }
 
-        // --- MÉTODOS DE INICIALIZAÇÃO ---
+        private void TabFilamento_Click(object sender, MouseButtonEventArgs e)
+        {
+            AtivarAbaFilamento();
+        }
+
+        private void TabCusto_Click(object sender, MouseButtonEventArgs e)
+        {
+            AtivarAbaCusto();
+        }
+
+        private void TabResumo_Click(object sender, MouseButtonEventArgs e)
+        {
+            var telaResumo = new ResumoCustosMateriaisView();
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            while (parent != null)
+            {
+                if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
+                if (parent is Panel panel)
+                {
+                    int index = panel.Children.IndexOf(this);
+                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                }
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+        }
+
+        // ==========================================
+        // LÓGICA INTERNA DE DADOS
+        // ==========================================
         private void CarregarCores()
         {
-            ListaCores.Add(new CorFilamento { Nome = "Selecione uma cor", Hex = "#B88A58", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
+            ListaCores.Add(new CorFilamento { Nome = "Selecione uma cor", Hex = "Transparent", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed, VisibilidadeCirculo = Visibility.Collapsed });
+
             ListaCores.Add(new CorFilamento { Nome = "Branco", Hex = "#FFFFFF", Borda = "#E0E0E0", VisibilidadeExcluir = Visibility.Collapsed });
             ListaCores.Add(new CorFilamento { Nome = "Preto", Hex = "#212121", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
             ListaCores.Add(new CorFilamento { Nome = "Cinza", Hex = "#9E9E9E", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
             ListaCores.Add(new CorFilamento { Nome = "Vermelho", Hex = "#F44336", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
             ListaCores.Add(new CorFilamento { Nome = "Azul", Hex = "#2196F3", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
-            ListaCores.Add(new CorFilamento { Nome = "Verde", Hex = "#4CAF50", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
-            ListaCores.Add(new CorFilamento { Nome = "Amarelo", Hex = "#FFEB3B", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
-            ListaCores.Add(new CorFilamento { Nome = "Laranja", Hex = "#FF9800", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
-            ListaCores.Add(new CorFilamento { Nome = "Roxo", Hex = "#9C27B0", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
-            ListaCores.Add(new CorFilamento { Nome = "Rosa", Hex = "#F48FB1", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed });
 
             CorSelecionada = ListaCores[0];
             ListaCores.RemoveAt(0);
@@ -130,18 +150,16 @@ namespace FavoStudio3D.Views
             ListaTiposCusto.Add("Custo adicional");
         }
 
-        // --- EVENTOS DA ABA CUSTO ---
         private void TipoCusto_Click(object sender, RoutedEventArgs e)
         {
             var botao = sender as Button;
             if (botao?.DataContext is string tipoClicado)
             {
                 TipoCustoSelecionado = tipoClicado;
-                BtnAbrirTiposCusto.IsChecked = false; // Fecha o popup
+                BtnAbrirTiposCusto.IsChecked = false;
             }
         }
 
-        // --- EVENTOS DA ABA FILAMENTO ---
         private void CorSelecionada_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             var item = sender as FrameworkElement;
@@ -180,25 +198,13 @@ namespace FavoStudio3D.Views
 
         private void BtnSalvarNovaCor_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(NovaCorNome) || string.IsNullOrWhiteSpace(NovaCorHex))
-            {
-                MessageBox.Show("Preencha o nome e o código HEX.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(NovaCorNome) || string.IsNullOrWhiteSpace(NovaCorHex)) return;
 
             string hexDigitado = NovaCorHex.Trim();
             if (!hexDigitado.StartsWith("#")) hexDigitado = "#" + hexDigitado;
 
-            try
-            {
-                var conversor = new BrushConverter();
-                conversor.ConvertFromString(hexDigitado);
-            }
-            catch
-            {
-                MessageBox.Show("Código HEX inválido!\nUse um formato correto, ex: #FFD700 para Dourado.", "Erro de Cor", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            try { var c = new BrushConverter().ConvertFromString(hexDigitado); }
+            catch { MessageBox.Show("Código HEX inválido!", "Erro", MessageBoxButton.OK, MessageBoxImage.Error); return; }
 
             var novaCor = new CorFilamento
             {
@@ -210,23 +216,60 @@ namespace FavoStudio3D.Views
 
             ListaCores.Add(novaCor);
             CorSelecionada = novaCor;
-
             BtnAbrirCores.IsChecked = false;
             ResetarPainelExpansao();
         }
 
         private void ResetarPainelExpansao()
         {
-            NovaCorNome = string.Empty;
-            NovaCorHex = string.Empty;
+            NovaCorNome = string.Empty; NovaCorHex = string.Empty;
             PainelNovaCorVisivel = Visibility.Collapsed;
             BotaoOutraCorVisivel = Visibility.Visible;
         }
 
-        private void OnPropertyChanged(string propertyName)
+        private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            TxtNome.Text = ""; TxtTipo.Text = ""; TxtPreco.Text = ""; TxtQuantidade.Text = "";
+            TxtDescricaoCusto.Text = ""; TxtValorCusto.Text = ""; TipoCustoSelecionado = "Selecione o tipo";
         }
+
+        private void BtnSalvarCadastro_Click(object sender, RoutedEventArgs e)
+        {
+            if (VisibilidadeFilamento == Visibility.Visible)
+            {
+                ResumoCustosMateriaisView.FilamentosBancoDados.Add(new FilamentoModel
+                {
+                    Nome = string.IsNullOrWhiteSpace(TxtNome.Text) ? "Sem Nome" : TxtNome.Text,
+                    Tipo = string.IsNullOrWhiteSpace(TxtTipo.Text) ? "PLA" : TxtTipo.Text,
+                    CorHex = CorSelecionada.Hex,
+                    PrecoFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtPreco.Text) ? "0,00" : TxtPreco.Text)
+                });
+            }
+            else
+            {
+                ResumoCustosMateriaisView.CustosBancoDados.Add(new CustoModel
+                {
+                    Descricao = string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ? "Sem Descrição" : TxtDescricaoCusto.Text,
+                    ValorFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtValorCusto.Text) ? "0,00" : TxtValorCusto.Text),
+                    Tipo = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado
+                });
+            }
+
+            var telaResumo = new ResumoCustosMateriaisView();
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            while (parent != null)
+            {
+                if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
+                if (parent is Panel panel)
+                {
+                    int index = panel.Children.IndexOf(this);
+                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                }
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+        }
+
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public class CorFilamento
@@ -235,5 +278,6 @@ namespace FavoStudio3D.Views
         public string Hex { get; set; } = string.Empty;
         public string Borda { get; set; } = string.Empty;
         public Visibility VisibilidadeExcluir { get; set; } = Visibility.Collapsed;
+        public Visibility VisibilidadeCirculo { get; set; } = Visibility.Visible;
     }
 }

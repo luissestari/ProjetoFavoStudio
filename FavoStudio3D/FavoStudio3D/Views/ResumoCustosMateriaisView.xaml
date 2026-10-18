@@ -8,11 +8,8 @@
 
     <Grid Margin="40,20,40,20">
         <Grid.ColumnDefinitions>
-            <!-- Coluna 1: Filamentos -->
             <ColumnDefinition Width="*"/>
-            <!-- Espaço entre os cartões -->
             <ColumnDefinition Width="30"/>
-            <!-- Coluna 2: Outros Custos -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -26,15 +23,10 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Cabeçalho -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Pesquisa e Filtro -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Títulos da Tabela -->
                     <RowDefinition Height="*"/>
-                    <!-- Lista de Itens -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Paginação -->
                 </Grid.RowDefinitions>
 
                 <!-- Cabeçalho -->
@@ -53,7 +45,6 @@
                         <TextBlock Text="Cadastre, visualize e gerencie os filamentos utilizados." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
                     </StackPanel>
 
-                    <!-- Botão Novo Filamento (CORRIGIDO PARA SUPORTAR CORNERRADIUS) -->
                     <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoFilamento_Click" VerticalAlignment="Top">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -69,7 +60,7 @@
                     </Button>
                 </Grid>
 
-                <!-- Pesquisa e Filtro -->
+                <!-- Pesquisa e Filtro (ATUALIZADO COM IMAGENS REAIS) -->
                 <Grid Grid.Row="1" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -79,15 +70,38 @@
 
                     <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
                         <Grid>
-                            <TextBlock Text="🔍 Pesquisar filamento..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" Margin="25,0,0,0" IsHitTestVisible="False"/>
-                            <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13" Margin="25,0,0,0"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Imagem da Lupa -->
+                            <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="14" Width="14" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
+
+                            <!-- Placeholder Dinâmico -->
+                            <TextBlock Grid.Column="1" Text="Pesquisar filamento..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaFilamento}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- Caixa de Texto -->
+                            <TextBox x:Name="TxtPesquisaFilamento" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
                         </Grid>
                     </Border>
 
                     <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0" Cursor="Hand">
                         <Grid>
-                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
-                            <TextBlock Text="⌄" Foreground="#795548" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-5,0,0"/>
+                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <!-- Imagem da Seta -->
+                            <Image Source="/Assets/Images/IconeSetaDropdown (2).png" Height="8" Width="12" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -97,15 +111,10 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2.5*"/>
-                            <!-- Nome -->
                             <ColumnDefinition Width="1.5*"/>
-                            <!-- Tipo -->
                             <ColumnDefinition Width="1*"/>
-                            <!-- Cor -->
                             <ColumnDefinition Width="2*"/>
-                            <!-- Preço -->
                             <ColumnDefinition Width="1*"/>
-                            <!-- Ações -->
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
                         <TextBlock Grid.Column="1" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
@@ -115,7 +124,7 @@
                     </Grid>
                 </Border>
 
-                <!-- Lista de Filamentos (ItemsControl ligado ao C#) -->
+                <!-- Lista de Filamentos -->
                 <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding ListaFilamentos}">
                         <ItemsControl.ItemTemplate>
@@ -130,13 +139,11 @@
                                             <ColumnDefinition Width="1*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Nome da Cor com a bolinha colorida do lado -->
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Ellipse Width="12" Height="12" Fill="{Binding CorHex}" Stroke="#E0E0E0" StrokeThickness="1" Margin="0,0,8,0"/>
                                             <TextBlock Text="{Binding Nome}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold"/>
                                         </StackPanel>
 
-                                        <!-- Badge de Tipo (Com cor dinâmica) -->
                                         <Border Grid.Column="1" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
                                         </Border>
@@ -145,7 +152,7 @@
 
                                         <TextBlock Grid.Column="3" Text="{Binding PrecoFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                                        <!-- Botão Três Pontinhos (Ações) -->
+                                        <!-- Três Pontinhos para Excluir -->
                                         <TextBlock Grid.Column="4" Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="MenuAcoesFilamento_Click"/>
                                     </Grid>
                                 </Border>
@@ -156,8 +163,9 @@
 
                 <!-- Paginação -->
                 <Grid Grid.Row="4" Margin="0,20,0,0">
-                    <TextBlock Text="11 filamentos cadastrados" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding TextoTotalFilamentos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoFilamentos}">
                         <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
                             <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
                         </Border>
@@ -205,7 +213,6 @@
                         <TextBlock Text="Adicione e gerencie os custos extras." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
                     </StackPanel>
 
-                    <!-- Botão Novo Custo (CORRIGIDO PARA SUPORTAR CORNERRADIUS) -->
                     <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCusto_Click" VerticalAlignment="Top">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -221,7 +228,7 @@
                     </Button>
                 </Grid>
 
-                <!-- Pesquisa e Filtro -->
+                <!-- Pesquisa e Filtro (ATUALIZADO COM IMAGENS REAIS) -->
                 <Grid Grid.Row="1" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -231,15 +238,38 @@
 
                     <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
                         <Grid>
-                            <TextBlock Text="🔍 Pesquisar custo..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" Margin="25,0,0,0" IsHitTestVisible="False"/>
-                            <TextBox Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13" Margin="25,0,0,0"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Imagem da Lupa -->
+                            <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="14" Width="14" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
+
+                            <!-- Placeholder Dinâmico -->
+                            <TextBlock Grid.Column="1" Text="Pesquisar custo..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaCusto}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- Caixa de Texto -->
+                            <TextBox x:Name="TxtPesquisaCusto" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
                         </Grid>
                     </Border>
 
                     <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0" Cursor="Hand">
                         <Grid>
-                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
-                            <TextBlock Text="⌄" Foreground="#795548" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-5,0,0"/>
+                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <!-- Imagem da Seta -->
+                            <Image Source="/Assets/Images/IconeSetaDropdown (2).png" Height="8" Width="12" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -260,7 +290,7 @@
                     </Grid>
                 </Border>
 
-                <!-- Lista de Custos (ItemsControl) -->
+                <!-- Lista de Custos -->
                 <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding ListaOutrosCustos}">
                         <ItemsControl.ItemTemplate>
@@ -275,15 +305,12 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0" Text="{Binding Descricao}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
-
                                         <TextBlock Grid.Column="1" Text="{Binding ValorFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                                        <!-- Badge de Tipo (Fixo ou Adicional) -->
                                         <Border Grid.Column="2" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
                                         </Border>
 
-                                        <!-- Botão Três Pontinhos -->
                                         <TextBlock Grid.Column="3" Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="MenuAcoesCusto_Click"/>
                                     </Grid>
                                 </Border>
@@ -294,8 +321,9 @@
 
                 <!-- Paginação -->
                 <Grid Grid.Row="4" Margin="0,20,0,0">
-                    <TextBlock Text="7 custos cadastrados" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding TextoTotalCustos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoCustos}">
                         <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
                             <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
                         </Border>

@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="630" d:DesignWidth="650">
+             d:DesignHeight="630" d:DesignWidth="700">
 
+    <!-- Revertidas as margens para as originais para não ficar colado embaixo do menu pai -->
     <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,15,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,15 +22,22 @@
                 </StackPanel>
             </Border>
 
-            <Border x:Name="TabCusto" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="180" Height="50" Cursor="Hand" MouseLeftButtonUp="TabCusto_Click">
+            <Border x:Name="TabCusto" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="180" Height="50" Margin="0,0,15,0" Cursor="Hand" MouseLeftButtonUp="TabCusto_Click">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Assets/Images/IconeAbaCusto.png" Height="22" Margin="0,0,10,0" Stretch="Uniform"/>
                     <TextBlock Text="Custo" FontWeight="Bold" FontSize="16" Foreground="#3E2723" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
+
+            <Border x:Name="TabResumo" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="10" Width="210" Height="50" Cursor="Hand" MouseLeftButtonUp="TabResumo_Click">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="/Assets/Images/IconeResumo.png" Height="22" Margin="0,0,10,0" Stretch="Uniform"/>
+                    <TextBlock Text="Resumo dos cadastros" FontWeight="Bold" FontSize="15" Foreground="#3E2723" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
 
-        <!-- CARD PRINCIPAL: Sem largura fixa, para se adaptar à aba ativa -->
+        <!-- CARD PRINCIPAL -->
         <Border Grid.Row="1" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity="0.70"/>
@@ -43,7 +51,6 @@
                 <!-- ========================================== -->
                 <!-- TELA 1: FORMULÁRIO DE FILAMENTO            -->
                 <!-- ========================================== -->
-                <!-- A largura de 530px mantém o layout original -->
                 <StackPanel Visibility="{Binding VisibilidadeFilamento}" Width="530">
                     <StackPanel Margin="0,0,0,20">
                         <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
@@ -112,7 +119,8 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Ellipse Grid.Column="0" Width="16" Height="16" Fill="{Binding CorSelecionada.Hex}" Stroke="{Binding CorSelecionada.Borda}" StrokeThickness="1" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <Ellipse Grid.Column="0" Width="16" Height="16" Fill="{Binding CorSelecionada.Hex}" Stroke="{Binding CorSelecionada.Borda}" StrokeThickness="1" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding CorSelecionada.VisibilidadeCirculo}"/>
+
                                                 <TextBlock Grid.Column="1" Text="{Binding CorSelecionada.Nome}" Foreground="#3E2723" FontSize="14" VerticalAlignment="Center"/>
                                                 <Image Grid.Column="2" Source="/Assets/Images/IconeSetaDropdown.png" Height="20" Width="20" Stretch="Uniform" VerticalAlignment="Center"/>
                                             </Grid>
@@ -274,13 +282,13 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="30" VerticalAlignment="Top" Margin="0,2,15,0"/>
+                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="24" VerticalAlignment="Top" Margin="0,2,15,0"/>
                             <TextBlock Grid.Column="1" Text="O preço por kg será utilizado para calcular o custo do material nas&#x0A;impressões." Foreground="#4A2A1A" FontSize="14" TextWrapping="Wrap" LineHeight="18"/>
                         </Grid>
                     </Border>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand">
+                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnLimpar_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
@@ -293,7 +301,7 @@
                                 <TextBlock Text="Limpar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand">
+                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarCadastro_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="8">
@@ -389,14 +397,12 @@
                                 </ToggleButton.Template>
                             </ToggleButton>
 
-                            <!-- Popup dos Tipos de Custo ATUALIZADO COM LINHA SEPARADORA -->
                             <Popup IsOpen="{Binding IsChecked, ElementName=BtnAbrirTiposCusto}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAbrirTiposCusto}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
                                 <Border Background="White" CornerRadius="8" Padding="10" Margin="10" Width="210">
                                     <Border.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.10" ShadowDepth="2"/>
                                     </Border.Effect>
 
-                                    <!-- Alterado de ItemsControl para ItemsControl com DataTemplate complexo -->
                                     <ItemsControl ItemsSource="{Binding ListaTiposCusto}" AlternationCount="2">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -411,14 +417,11 @@
                                                         </Button.Template>
                                                     </Button>
 
-                                                    <!-- LINHA SEPARADORA -->
-                                                    <!-- O Style com Trigger faz com que a linha NÃO apareça no último item -->
                                                     <Rectangle Height="1" Fill="#EAEAEA" Margin="10,0">
                                                         <Rectangle.Style>
                                                             <Style TargetType="Rectangle">
                                                                 <Setter Property="Visibility" Value="Visible"/>
                                                                 <Style.Triggers>
-                                                                    <!-- Usamos o AlternationIndex para esconder a linha no item de índice 1 (o último, já que só temos 2 itens) -->
                                                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPresenter}}, Path=(ItemsControl.AlternationIndex)}" Value="1">
                                                                         <Setter Property="Visibility" Value="Collapsed"/>
                                                                     </DataTrigger>
@@ -426,7 +429,6 @@
                                                             </Style>
                                                         </Rectangle.Style>
                                                     </Rectangle>
-
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -434,7 +436,7 @@
                                 </Border>
                             </Popup>
 
-                            <TextBlock Text="Escolha entre custo adicional ou custo&#x0A;fixo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
+                            <TextBlock Text="Escolha entre custo adicional ou custo fixo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
                         </StackPanel>
                     </Grid>
 
@@ -444,13 +446,13 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="30" VerticalAlignment="Top" Margin="0,2,15,0"/>
+                            <Image Grid.Column="0" Source="/Assets/Images/IconeInfoLaranja.png" Height="24" VerticalAlignment="Top" Margin="0,2,15,0"/>
                             <TextBlock Grid.Column="1" Text="O valor será aplicado aos cálculos conforme o tipo de&#x0A;custo selecionado." Foreground="#4A2A1A" FontSize="14" TextWrapping="Wrap" LineHeight="18"/>
                         </Grid>
                     </Border>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand">
+                        <Button Width="150" Height="45" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnLimpar_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
@@ -463,7 +465,7 @@
                                 <TextBlock Text="Limpar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand">
+                        <Button Width="180" Height="45" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarCadastro_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="8">

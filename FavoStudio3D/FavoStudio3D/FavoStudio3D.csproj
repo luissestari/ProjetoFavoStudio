@@ -20,9 +20,12 @@
     <None Remove="Assets\Images\IconeInfoLaranja.png" />
     <None Remove="Assets\Images\IconeLimpar.png" />
     <None Remove="Assets\Images\IconeMais.png" />
+    <None Remove="Assets\Images\IconePesquisa.png" />
     <None Remove="Assets\Images\IconeProdutos.png" />
+    <None Remove="Assets\Images\IconeResumo.png" />
     <None Remove="Assets\Images\IconeSair.png" />
     <None Remove="Assets\Images\IconeSalvar.png" />
+    <None Remove="Assets\Images\IconeSetaDropdown %282%29.png" />
     <None Remove="Assets\Images\IconeSetaDropdown.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
     <None Remove="Assets\Images\Logo.png" />
@@ -46,9 +49,12 @@
     <Resource Include="Assets\Images\IconeInfoLaranja.png" />
     <Resource Include="Assets\Images\IconeLimpar.png" />
     <Resource Include="Assets\Images\IconeMais.png" />
+    <Resource Include="Assets\Images\IconePesquisa.png" />
     <Resource Include="Assets\Images\IconeProdutos.png" />
+    <Resource Include="Assets\Images\IconeResumo.png" />
     <Resource Include="Assets\Images\IconeSair.png" />
     <Resource Include="Assets\Images\IconeSalvar.png" />
+    <Resource Include="Assets\Images\IconeSetaDropdown (2).png" />
     <Resource Include="Assets\Images\IconeSetaDropdown.png" />
     <Resource Include="Assets\Images\ImagemTelaInicio.png" />
     <Resource Include="Assets\Images\Logo.png" />
