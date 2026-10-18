@@ -6,337 +6,489 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1100">
 
-    <Grid Margin="40,20,40,20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="30"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <!-- O SEU CÓDIGO INTACTO DA TELA -->
+        <Grid Margin="40,20,40,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- ========================================== -->
-        <!-- CARTÃO 1: FILAMENTOS                       -->
-        <!-- ========================================== -->
-        <Border Grid.Column="0" CornerRadius="20" Padding="25" Background="#FFFFFF" Opacity="0.95">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.10" BlurRadius="30" ShadowDepth="0"/>
-            </Border.Effect>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- ========================================== -->
+            <!-- CARTÃO 1: FILAMENTOS                       -->
+            <!-- ========================================== -->
+            <Border Grid.Column="0" CornerRadius="20" Padding="25">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.70"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.10" BlurRadius="30" ShadowDepth="0"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Cabeçalho -->
-                <Grid Grid.Row="0" Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Ellipse Grid.Column="0" Width="45" Height="45" Fill="#F4DDB5" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                    <Image Grid.Column="0" Source="/Assets/Images/IconeAbaFilamento.png" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <Ellipse Grid.Column="0" Width="50" Height="50" Fill="#F4DDB5" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                        <Image Grid.Column="0" Source="/Assets/Images/IconeAbaFilamento.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,15,0"/>
 
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Filamentos" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
-                        <TextBlock Text="Cadastre, visualize e gerencie os filamentos utilizados." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
-                    </StackPanel>
-
-                    <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoFilamento_Click" VerticalAlignment="Top">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="15,8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Novo filamento" FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Filamentos" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
+                            <TextBlock Text="Cadastre, visualize e gerencie os filamentos utilizados." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Button>
-                </Grid>
 
-                <!-- Pesquisa e Filtro (ATUALIZADO COM IMAGENS REAIS) -->
-                <Grid Grid.Row="1" Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="130"/>
-                    </Grid.ColumnDefinitions>
+                        <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoFilamento_Click" VerticalAlignment="Top">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="15,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Novo filamento" FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
 
-                    <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
+                    <Grid Grid.Row="1" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.7"/>
+                                <TextBlock Grid.Column="1" Text="Pesquisar filamento..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaFilamento}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="TxtPesquisaFilamento" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+                            </Grid>
+                        </Border>
+
+                        <ToggleButton x:Name="BtnToggleFiltroFilamento" Grid.Column="2" Height="38" Cursor="Hand">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Padding="10,0">
+                                        <Grid>
+                                            <TextBlock Text="{Binding FiltroFilamentoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <Image Source="/Assets/Images/IconeSetaDropdown.png" Height="16" Width="16" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.6"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <Popup x:Name="PopupFiltroFilamento" IsOpen="{Binding IsChecked, ElementName=BtnToggleFiltroFilamento}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnToggleFiltroFilamento}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
+                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="140">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
+                                </Border.Effect>
+                                <ItemsControl ItemsSource="{Binding FiltrosFilamentos}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnFiltroFilamento_Click" Height="30">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="Transparent" Padding="5,0">
+                                                            <TextBlock Text="{Binding}" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <Border Grid.Row="2" Background="#FCEBD3" CornerRadius="8,8,0,0" Padding="15,10" Margin="0,0,0,0">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2.5*"/>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-
-                            <!-- Imagem da Lupa -->
-                            <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="14" Width="14" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
-
-                            <!-- Placeholder Dinâmico -->
-                            <TextBlock Grid.Column="1" Text="Pesquisar filamento..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaFilamento}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- Caixa de Texto -->
-                            <TextBox x:Name="TxtPesquisaFilamento" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+                            <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
+                            <TextBlock Grid.Column="1" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Cor" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="Preço (R$/kg)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
-                    <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0" Cursor="Hand">
-                        <Grid>
-                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <!-- Imagem da Seta -->
-                            <Image Source="/Assets/Images/IconeSetaDropdown (2).png" Height="8" Width="12" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
-                        </Grid>
-                    </Border>
-                </Grid>
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ListaFilamentos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E5D8C5" BorderThickness="0,0,0,1" Padding="15,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2.5*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
 
-                <!-- Títulos da Tabela -->
-                <Border Grid.Row="2" Background="#FDF8F0" CornerRadius="8" Padding="15,10" Margin="0,0,0,10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
-                        <TextBlock Grid.Column="1" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Cor" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="Preço (R$/kg)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="4" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                    </Grid>
-                </Border>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse Width="12" Height="12" Fill="{Binding CorHex}" Stroke="#E0E0E0" StrokeThickness="1" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding Nome}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold"/>
+                                            </StackPanel>
 
-                <!-- Lista de Filamentos -->
-                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding ListaFilamentos}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="15,12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2.5*"/>
-                                            <ColumnDefinition Width="1.5*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                        </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="1" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
+                                            </Border>
 
-                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Ellipse Width="12" Height="12" Fill="{Binding CorHex}" Stroke="#E0E0E0" StrokeThickness="1" Margin="0,0,8,0"/>
-                                            <TextBlock Text="{Binding Nome}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
+                                            <Ellipse Grid.Column="2" Width="16" Height="16" Fill="{Binding CorHex}" Stroke="#E0E0E0" StrokeThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding PrecoFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                                        <Border Grid.Column="1" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
-                                        </Border>
+                                            <ToggleButton x:Name="BtnAcoesFilamento" Grid.Column="4" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5">
+                                                <ToggleButton.Template>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <TextBlock Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
+                                                    </ControlTemplate>
+                                                </ToggleButton.Template>
+                                            </ToggleButton>
 
-                                        <Ellipse Grid.Column="2" Width="16" Height="16" Fill="{Binding CorHex}" Stroke="#E0E0E0" StrokeThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnAcoesFilamento}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAcoesFilamento}" Placement="Left" HorizontalOffset="-5" AllowsTransparency="True">
+                                                <Border Background="White" CornerRadius="8" Padding="5" Margin="5" Width="100">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
+                                                    </Border.Effect>
+                                                    <StackPanel>
+                                                        <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="AcaoEditarFilamento_Click" Height="30">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="Transparent" Padding="10,0">
+                                                                        <TextBlock Text="Editar" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                        <Rectangle Height="1" Fill="#F0F0F0"/>
+                                                        <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="AcaoExcluirFilamento_Click" Height="30">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="Transparent" Padding="10,0">
+                                                                        <TextBlock Text="Excluir" Foreground="#D32F2F" FontSize="13" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
 
-                                        <TextBlock Grid.Column="3" Text="{Binding PrecoFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                                        <!-- Três Pontinhos para Excluir -->
-                                        <TextBlock Grid.Column="4" Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="MenuAcoesFilamento_Click"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <!-- Paginação -->
-                <Grid Grid.Row="4" Margin="0,20,0,0">
-                    <TextBlock Text="{Binding TextoTotalFilamentos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoFilamentos}">
-                        <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
-                            <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
-                        </Border>
-                        <Border Background="#EBB45D" CornerRadius="4" Width="25" Height="25" Margin="0,0,5,0">
-                            <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#3E2723" FontWeight="Bold"/>
-                        </Border>
-                        <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Cursor="Hand">
-                            <TextBlock Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </Border>
-
-
-        <!-- ========================================== -->
-        <!-- CARTÃO 2: OUTROS CUSTOS                    -->
-        <!-- ========================================== -->
-        <Border Grid.Column="2" CornerRadius="20" Padding="25" Background="#FFFFFF" Opacity="0.95">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.10" BlurRadius="30" ShadowDepth="0"/>
-            </Border.Effect>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- Cabeçalho -->
-                <Grid Grid.Row="0" Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Ellipse Grid.Column="0" Width="45" Height="45" Fill="#F4DDB5" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                    <Image Grid.Column="0" Source="/Assets/Images/IconeAbaCusto.png" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,15,0"/>
-
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Outros custos" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
-                        <TextBlock Text="Adicione e gerencie os custos extras." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
-                    </StackPanel>
-
-                    <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCusto_Click" VerticalAlignment="Top">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="15,8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Novo custo" FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                    <Grid Grid.Row="4" Margin="0,20,0,0">
+                        <TextBlock Text="{Binding TextoTotalFilamentos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoFilamentos}">
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
+                                <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
+                            </Border>
+                            <Border Background="#EBB45D" CornerRadius="4" Width="25" Height="25" Margin="0,0,5,0">
+                                <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#3E2723" FontWeight="Bold"/>
+                            </Border>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Cursor="Hand">
+                                <TextBlock Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
+                            </Border>
                         </StackPanel>
-                    </Button>
+                    </Grid>
                 </Grid>
+            </Border>
 
-                <!-- Pesquisa e Filtro (ATUALIZADO COM IMAGENS REAIS) -->
-                <Grid Grid.Row="1" Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="130"/>
-                    </Grid.ColumnDefinitions>
+            <!-- ========================================== -->
+            <!-- CARTÃO 2: OUTROS CUSTOS                    -->
+            <!-- ========================================== -->
+            <Border Grid.Column="2" CornerRadius="20" Padding="25">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.70"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.10" BlurRadius="30" ShadowDepth="0"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
+                    <Grid Grid.Row="0" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Ellipse Grid.Column="0" Width="50" Height="50" Fill="#F4DDB5" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                        <Image Grid.Column="0" Source="/Assets/Images/IconeAbaCusto.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,15,0"/>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Outros custos" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
+                            <TextBlock Text="Adicione e gerencie os custos extras." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCusto_Click" VerticalAlignment="Top">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="15,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Novo custo" FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.7"/>
+                                <TextBlock Grid.Column="1" Text="Pesquisar custo..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaCusto}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="TxtPesquisaCusto" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+                            </Grid>
+                        </Border>
+
+                        <ToggleButton x:Name="BtnToggleFiltroCusto" Grid.Column="2" Height="38" Cursor="Hand">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Padding="10,0">
+                                        <Grid>
+                                            <TextBlock Text="{Binding FiltroCustoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <Image Source="/Assets/Images/IconeSetaDropdown.png" Height="16" Width="16" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.6"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <Popup x:Name="PopupFiltroCusto" IsOpen="{Binding IsChecked, ElementName=BtnToggleFiltroCusto}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnToggleFiltroCusto}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
+                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="140">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
+                                </Border.Effect>
+                                <ItemsControl ItemsSource="{Binding FiltrosCustos}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnFiltroCusto_Click" Height="30">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="Transparent" Padding="5,0">
+                                                            <TextBlock Text="{Binding}" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <Border Grid.Row="2" Background="#FCEBD3" CornerRadius="8,8,0,0" Padding="15,10" Margin="0,0,0,0">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2.5*"/>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-
-                            <!-- Imagem da Lupa -->
-                            <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="14" Width="14" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
-
-                            <!-- Placeholder Dinâmico -->
-                            <TextBlock Grid.Column="1" Text="Pesquisar custo..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaCusto}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- Caixa de Texto -->
-                            <TextBox x:Name="TxtPesquisaCusto" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+                            <TextBlock Grid.Column="0" Text="Descrição" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
+                            <TextBlock Grid.Column="1" Text="Valor (R$)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
-                    <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0" Cursor="Hand">
-                        <Grid>
-                            <TextBlock Text="Todos os tipos" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <!-- Imagem da Seta -->
-                            <Image Source="/Assets/Images/IconeSetaDropdown (2).png" Height="8" Width="12" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
-                        </Grid>
-                    </Border>
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ListaOutrosCustos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E5D8C5" BorderThickness="0,0,0,1" Padding="15,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2.5*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="{Binding Descricao}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding ValorFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                            <Border Grid.Column="2" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
+                                            </Border>
+
+                                            <ToggleButton x:Name="BtnAcoesCusto" Grid.Column="3" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5">
+                                                <ToggleButton.Template>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <TextBlock Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
+                                                    </ControlTemplate>
+                                                </ToggleButton.Template>
+                                            </ToggleButton>
+
+                                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnAcoesCusto}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAcoesCusto}" Placement="Left" HorizontalOffset="-5" AllowsTransparency="True">
+                                                <Border Background="White" CornerRadius="8" Padding="5" Margin="5" Width="100">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
+                                                    </Border.Effect>
+                                                    <StackPanel>
+                                                        <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="AcaoEditarCusto_Click" Height="30">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="Transparent" Padding="10,0">
+                                                                        <TextBlock Text="Editar" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                        <Rectangle Height="1" Fill="#F0F0F0"/>
+                                                        <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Click="AcaoExcluirCusto_Click" Height="30">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="Transparent" Padding="10,0">
+                                                                        <TextBlock Text="Excluir" Foreground="#D32F2F" FontSize="13" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="4" Margin="0,20,0,0">
+                        <TextBlock Text="{Binding TextoTotalCustos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoCustos}">
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
+                                <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
+                            </Border>
+                            <Border Background="#EBB45D" CornerRadius="4" Width="25" Height="25" Margin="0,0,5,0">
+                                <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#3E2723" FontWeight="Bold"/>
+                            </Border>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Cursor="Hand">
+                                <TextBlock Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
+            </Border>
+        </Grid>
 
-                <!-- Títulos da Tabela -->
-                <Border Grid.Row="2" Background="#FDF8F0" CornerRadius="8" Padding="15,10" Margin="0,0,0,10">
+        <!-- ========================================== -->
+        <!-- CAMADA 3: MODAL DE EXCLUSÃO PERSONALIZADO  -->
+        <!-- ========================================== -->
+        <!-- Removido o Background="#66000000" para não deixar a tela cinza -->
+        <Grid Visibility="{Binding VisibilidadeModalExclusao}" Background="Transparent">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="16" Padding="30" Width="400">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" Opacity="0.15" ShadowDepth="4"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Confirmar Exclusão" FontSize="20" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding MensagemExclusao}" FontSize="15" Foreground="#795548" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,30"/>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Descrição" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
-                        <TextBlock Grid.Column="1" Text="Valor (R$)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+
+                        <!-- BOTÃO CANCELAR -->
+                        <Button Grid.Column="0" Height="45" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnCancelarExclusao_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- BOTÃO EXCLUIR -->
+                        <Button Grid.Column="2" Height="45" Background="#D32F2F" BorderThickness="0" Cursor="Hand" Click="BtnConfirmarExclusao_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <TextBlock Text="Excluir" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </Grid>
-                </Border>
-
-                <!-- Lista de Custos -->
-                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding ListaOutrosCustos}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="15,12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2.5*"/>
-                                            <ColumnDefinition Width="1.5*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0" Text="{Binding Descricao}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding ValorFormatado}" Foreground="#3E2723" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                                        <Border Grid.Column="2" Background="{Binding CorFundoTipo}" CornerRadius="4" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Tipo}" Foreground="#3E2723" FontSize="11" FontWeight="Bold"/>
-                                        </Border>
-
-                                        <TextBlock Grid.Column="3" Text="⋮" FontSize="20" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="MenuAcoesCusto_Click"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <!-- Paginação -->
-                <Grid Grid.Row="4" Margin="0,20,0,0">
-                    <TextBlock Text="{Binding TextoTotalCustos}" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding VisibilidadePaginacaoCustos}">
-                        <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Margin="0,0,5,0" Cursor="Hand">
-                            <TextBlock Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
-                        </Border>
-                        <Border Background="#EBB45D" CornerRadius="4" Width="25" Height="25" Margin="0,0,5,0">
-                            <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#3E2723" FontWeight="Bold"/>
-                        </Border>
-                        <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Width="25" Height="25" Background="White" Cursor="Hand">
-                            <TextBlock Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#795548"/>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
 
     </Grid>
 </UserControl>

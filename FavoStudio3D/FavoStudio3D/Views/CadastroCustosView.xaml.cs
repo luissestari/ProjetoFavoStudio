@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,13 @@ namespace FavoStudio3D.Views
     public partial class CadastroCustosView : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private string _subtituloCadastro = "Cadastre seus filamentos e mantenha os sempre atualizados";
+        public string SubtituloCadastro
+        {
+            get { return _subtituloCadastro; }
+            set { _subtituloCadastro = value; OnPropertyChanged(nameof(SubtituloCadastro)); }
+        }
 
         public ObservableCollection<CorFilamento> ListaCores { get; set; } = new ObservableCollection<CorFilamento>();
 
@@ -71,6 +79,12 @@ namespace FavoStudio3D.Views
             set { _visibilidadeCusto = value; OnPropertyChanged(nameof(VisibilidadeCusto)); }
         }
 
+        // ==========================================
+        // VARIÁVEIS DE CONTROLO DO MODO DE EDIÇÃO
+        // ==========================================
+        private FilamentoModel? _filamentoEmEdicao = null;
+        private CustoModel? _custoEmEdicao = null;
+
         public CadastroCustosView()
         {
             InitializeComponent();
@@ -78,18 +92,55 @@ namespace FavoStudio3D.Views
 
             CarregarCores();
             CarregarTiposCusto();
-            AtivarAbaFilamento(); // Garante o estado inicial correto
+            AtivarAbaFilamento();
         }
 
         // ==========================================
-        // FUNÇÕES DE CONTROLO DAS ABAS (CORES E TELAS)
+        // NOVAS FUNÇÕES PARA CARREGAR OS DADOS DO RESUMO PARA A EDIÇÃO
         // ==========================================
+        public void CarregarFilamentoParaEdicao(FilamentoModel filamento)
+        {
+            _filamentoEmEdicao = filamento;
+            AtivarAbaFilamento();
+
+            TxtNome.Text = filamento.Nome;
+            TxtTipo.Text = filamento.Tipo;
+            TxtPreco.Text = filamento.PrecoFormatado.Replace("R$", "").Trim();
+
+            var corCorreta = ListaCores.FirstOrDefault(c => c.Hex.Equals(filamento.CorHex, System.StringComparison.OrdinalIgnoreCase));
+            if (corCorreta != null)
+            {
+                CorSelecionada = corCorreta;
+            }
+            else
+            {
+                var novaCor = new CorFilamento { Nome = "Cor Personalizada", Hex = filamento.CorHex, Borda = "Transparent", VisibilidadeExcluir = Visibility.Visible };
+                ListaCores.Add(novaCor);
+                CorSelecionada = novaCor;
+            }
+        }
+
+        public void CarregarCustoParaEdicao(CustoModel custo)
+        {
+            _custoEmEdicao = custo;
+            AtivarAbaCusto();
+
+            TxtDescricaoCusto.Text = custo.Descricao;
+            TxtValorCusto.Text = custo.ValorFormatado.Replace("R$", "").Trim();
+
+            if (ListaTiposCusto.Contains(custo.Tipo))
+                TipoCustoSelecionado = custo.Tipo;
+            else
+                TipoCustoSelecionado = custo.Tipo;
+        }
+
         public void AtivarAbaFilamento()
         {
             VisibilidadeFilamento = Visibility.Visible;
             VisibilidadeCusto = Visibility.Collapsed;
             TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabCusto.Background = Brushes.Transparent;
+            SubtituloCadastro = "Cadastre seus filamentos e mantenha os sempre atualizados.";
         }
 
         public void AtivarAbaCusto()
@@ -98,17 +149,11 @@ namespace FavoStudio3D.Views
             VisibilidadeCusto = Visibility.Visible;
             TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabFilamento.Background = Brushes.Transparent;
+            SubtituloCadastro = "Cadastre seus custos e mantenha os sempre atualizados.";
         }
 
-        private void TabFilamento_Click(object sender, MouseButtonEventArgs e)
-        {
-            AtivarAbaFilamento();
-        }
-
-        private void TabCusto_Click(object sender, MouseButtonEventArgs e)
-        {
-            AtivarAbaCusto();
-        }
+        private void TabFilamento_Click(object sender, MouseButtonEventArgs e) => AtivarAbaFilamento();
+        private void TabCusto_Click(object sender, MouseButtonEventArgs e) => AtivarAbaCusto();
 
         private void TabResumo_Click(object sender, MouseButtonEventArgs e)
         {
@@ -126,9 +171,6 @@ namespace FavoStudio3D.Views
             }
         }
 
-        // ==========================================
-        // LÓGICA INTERNA DE DADOS
-        // ==========================================
         private void CarregarCores()
         {
             ListaCores.Add(new CorFilamento { Nome = "Selecione uma cor", Hex = "Transparent", Borda = "Transparent", VisibilidadeExcluir = Visibility.Collapsed, VisibilidadeCirculo = Visibility.Collapsed });
@@ -231,28 +273,53 @@ namespace FavoStudio3D.Views
         {
             TxtNome.Text = ""; TxtTipo.Text = ""; TxtPreco.Text = ""; TxtQuantidade.Text = "";
             TxtDescricaoCusto.Text = ""; TxtValorCusto.Text = ""; TipoCustoSelecionado = "Selecione o tipo";
+            _filamentoEmEdicao = null;
+            _custoEmEdicao = null;
         }
 
+        // ==========================================
+        // ATUALIZADO: SALVA NOVO OU ATUALIZA O EXISTENTE
+        // ==========================================
         private void BtnSalvarCadastro_Click(object sender, RoutedEventArgs e)
         {
             if (VisibilidadeFilamento == Visibility.Visible)
             {
-                ResumoCustosMateriaisView.FilamentosBancoDados.Add(new FilamentoModel
+                var filamentoAtualizado = new FilamentoModel
                 {
                     Nome = string.IsNullOrWhiteSpace(TxtNome.Text) ? "Sem Nome" : TxtNome.Text,
                     Tipo = string.IsNullOrWhiteSpace(TxtTipo.Text) ? "PLA" : TxtTipo.Text,
                     CorHex = CorSelecionada.Hex,
                     PrecoFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtPreco.Text) ? "0,00" : TxtPreco.Text)
-                });
+                };
+
+                if (_filamentoEmEdicao != null) // Atualizar existente
+                {
+                    int index = ResumoCustosMateriaisView.FilamentosBancoDados.IndexOf(_filamentoEmEdicao);
+                    if (index >= 0) ResumoCustosMateriaisView.FilamentosBancoDados[index] = filamentoAtualizado;
+                }
+                else // Criar novo
+                {
+                    ResumoCustosMateriaisView.FilamentosBancoDados.Add(filamentoAtualizado);
+                }
             }
             else
             {
-                ResumoCustosMateriaisView.CustosBancoDados.Add(new CustoModel
+                var custoAtualizado = new CustoModel
                 {
                     Descricao = string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ? "Sem Descrição" : TxtDescricaoCusto.Text,
                     ValorFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtValorCusto.Text) ? "0,00" : TxtValorCusto.Text),
                     Tipo = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado
-                });
+                };
+
+                if (_custoEmEdicao != null) // Atualizar existente
+                {
+                    int index = ResumoCustosMateriaisView.CustosBancoDados.IndexOf(_custoEmEdicao);
+                    if (index >= 0) ResumoCustosMateriaisView.CustosBancoDados[index] = custoAtualizado;
+                }
+                else // Criar novo
+                {
+                    ResumoCustosMateriaisView.CustosBancoDados.Add(custoAtualizado);
+                }
             }
 
             var telaResumo = new ResumoCustosMateriaisView();
