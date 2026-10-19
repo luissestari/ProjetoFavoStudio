@@ -16,6 +16,7 @@
     <None Remove="Assets\Images\IconeCaixaNovo.png" />
     <None Remove="Assets\Images\IconeCalculadora.png" />
     <None Remove="Assets\Images\IconeCustos.png" />
+    <None Remove="Assets\Images\IconeFiltro.png" />
     <None Remove="Assets\Images\IconeImpressora.png" />
     <None Remove="Assets\Images\IconeInfoLaranja.png" />
     <None Remove="Assets\Images\IconeLimpar.png" />
@@ -45,6 +46,7 @@
     <Resource Include="Assets\Images\IconeCaixaNovo.png" />
     <Resource Include="Assets\Images\IconeCalculadora.png" />
     <Resource Include="Assets\Images\IconeCustos.png" />
+    <Resource Include="Assets\Images\IconeFiltro.png" />
     <Resource Include="Assets\Images\IconeImpressora.png" />
     <Resource Include="Assets\Images\IconeInfoLaranja.png" />
     <Resource Include="Assets\Images\IconeLimpar.png" />

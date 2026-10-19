@@ -8,8 +8,9 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid>
+        <!-- AQUI ESTÁ A CORREÇÃO: AlignmentX="Left" ancora a imagem na esquerda sem deixar buracos -->
         <Grid.Background>
-            <ImageBrush ImageSource="/Assets/Images/FundoDashboard.png" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+            <ImageBrush ImageSource="/Assets/Images/FundoDashboard.png" Stretch="UniformToFill" AlignmentX="Left" AlignmentY="Center"/>
         </Grid.Background>
 
         <Grid>

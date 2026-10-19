@@ -125,6 +125,29 @@ namespace FavoStudio3D.Views
             AtualizarFiltrosCustos();
             AplicarFiltroFilamentos();
             AplicarFiltroCustos();
+
+            // Atualiza o subtítulo sempre que esta tela for carregada na interface
+            this.Loaded += (s, e) => AtualizarSubtituloDashboard();
+        }
+
+        // =========================================================
+        // MÉTODOS DE ATUALIZAÇÃO E COMUNICAÇÃO COM O DASHBOARD
+        // =========================================================
+
+        private void AtualizarSubtituloDashboard()
+        {
+            // Procura a janela mãe (DashboardWindow) para atualizar o texto do cabeçalho
+            if (Window.GetWindow(this) is DashboardWindow dashboard)
+            {
+                if (FilamentosBancoDados.Count > 0 || CustosBancoDados.Count > 0)
+                {
+                    dashboard.TextoSubtituloPagina.Text = "Gerencie os valores dos seus custos e filamentos para manter os cálculos sempre atualizados.";
+                }
+                else
+                {
+                    dashboard.TextoSubtituloPagina.Text = "Cadastre seus filamentos e custos para manter os valores sempre atualizados.";
+                }
+            }
         }
 
         private void AtualizarPropriedadesFilamentos()
@@ -133,6 +156,7 @@ namespace FavoStudio3D.Views
             AplicarFiltroFilamentos();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeEstadoVazio)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeConteudo)));
+            AtualizarSubtituloDashboard(); // Mantém o texto atualizado se deletar tudo
         }
 
         private void AtualizarPropriedadesCustos()
@@ -141,7 +165,12 @@ namespace FavoStudio3D.Views
             AplicarFiltroCustos();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeEstadoVazio)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeConteudo)));
+            AtualizarSubtituloDashboard(); // Mantém o texto atualizado se deletar tudo
         }
+
+        // =========================================================
+        // RESTANTE DO CÓDIGO
+        // =========================================================
 
         private void AtualizarFiltrosFilamentos()
         {

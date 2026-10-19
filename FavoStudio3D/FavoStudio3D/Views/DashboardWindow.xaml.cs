@@ -85,9 +85,24 @@ namespace FavoStudio3D.Views
             AtivarBotaoMenu(MenuCustosBorder, MenuCustosTexto);
 
             TextoTituloPagina.Text = "Custos e materiais";
-            TextoSubtituloPagina.Text = "Cadastre seus filamentos e mantenha os custos atualizados.";
 
-            AreaConteudo.Content = new CustosMateriaisView();
+            // LÓGICA INTELIGENTE DO SUBTÍTULO
+            // Verifica se as listas (bancos de dados temporários) estão vazias.
+            bool temFilamentos = ResumoCustosMateriaisView.FilamentosBancoDados.Count > 0;
+            bool temCustos = ResumoCustosMateriaisView.CustosBancoDados.Count > 0;
+
+            if (temFilamentos || temCustos)
+            {
+                // Mostra o texto atualizado para gerir os custos
+                TextoSubtituloPagina.Text = "Gerencie os valores dos seus custos e filamentos para manter os cálculos sempre atualizados.";
+                AreaConteudo.Content = new ResumoCustosMateriaisView(); // Carrega a tela com as listas
+            }
+            else
+            {
+                // Mostra o texto original para primeiro registo
+                TextoSubtituloPagina.Text = "Cadastre seus filamentos e custos para manter os valores sempre atualizados.";
+                AreaConteudo.Content = new CustosMateriaisView(); // Carrega a tela vazia (botão gigante)
+            }
         }
 
         private void NavegarParaCalculadora()

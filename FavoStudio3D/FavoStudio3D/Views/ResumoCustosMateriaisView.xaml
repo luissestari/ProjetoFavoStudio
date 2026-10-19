@@ -15,7 +15,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- CARTÃO 1: FILAMENTOS -->
+            <!-- ========================================== -->
+            <!-- CARTÃO 1: FILAMENTOS                       -->
+            <!-- ========================================== -->
             <Border Grid.Column="0" CornerRadius="20" Padding="25">
                 <Border.Background>
                     <SolidColorBrush Color="White" Opacity="0.70"/>
@@ -66,7 +68,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="170"/>
+                            <!-- Aumentado para 170 para caber o ícone, o texto e a seta -->
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
@@ -76,7 +79,20 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.7"/>
-                                <TextBox Text="{Binding TextoPesquisaFilamento, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+
+                                <TextBlock Grid.Column="1" Text="Pesquisar filamento..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaFilamento}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="TxtPesquisaFilamento" Text="{Binding TextoPesquisaFilamento, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
                             </Grid>
                         </Border>
 
@@ -85,15 +101,23 @@
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Padding="10,0">
                                         <Grid>
-                                            <TextBlock Text="{Binding FiltroFilamentoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <!-- Ícone de Filtro + Texto -->
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Image Source="/Assets/Images/IconeFiltro.png" Height="16" Width="16" Stretch="Uniform" VerticalAlignment="Center" Opacity="0.6" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding FiltroFilamentoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <!-- Ícone da Seta Dropdown -->
                                             <Image Source="/Assets/Images/IconeSetaDropdown.png" Height="16" Width="16" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.6"/>
                                         </Grid>
                                     </Border>
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
+
                         <Popup IsOpen="{Binding IsChecked, ElementName=BtnFiltroFilaToggle}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnFiltroFilaToggle}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
-                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="140">
+                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="170">
+                                <!-- Largura do Popup ajustada para 170 -->
                                 <Border.Effect>
                                     <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
                                 </Border.Effect>
@@ -217,7 +241,9 @@
                 </Grid>
             </Border>
 
-            <!-- CARTÃO 2: OUTROS CUSTOS -->
+            <!-- ========================================== -->
+            <!-- CARTÃO 2: OUTROS CUSTOS                    -->
+            <!-- ========================================== -->
             <Border Grid.Column="2" CornerRadius="20" Padding="25">
                 <Border.Background>
                     <SolidColorBrush Color="White" Opacity="0.70"/>
@@ -246,7 +272,7 @@
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Outros custos" FontSize="20" FontWeight="Bold" Foreground="#3E2723"/>
-                            <TextBlock Text="Adicione e gerencie os custos extras." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
+                            <TextBlock Text="Cadastre, visualize e gerencie os custos utilizados." FontSize="12" Foreground="#795548" TextWrapping="Wrap"/>
                         </StackPanel>
 
                         <Button Grid.Column="2" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCusto_Click" VerticalAlignment="Top">
@@ -268,7 +294,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="170"/>
+                            <!-- Aumentado para 170 para caber o ícone, o texto e a seta -->
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Height="38" Padding="10,0">
@@ -278,7 +305,20 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="20" Width="20" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" Opacity="0.7"/>
-                                <TextBox Text="{Binding TextoPesquisaCusto, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
+
+                                <TextBlock Grid.Column="1" Text="Pesquisar custo..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisaCusto}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="TxtPesquisaCusto" Text="{Binding TextoPesquisaCusto, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13"/>
                             </Grid>
                         </Border>
 
@@ -287,15 +327,23 @@
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Background="White" Padding="10,0">
                                         <Grid>
-                                            <TextBlock Text="{Binding FiltroCustoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <!-- Ícone de Filtro + Texto -->
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Image Source="/Assets/Images/IconeFiltro.png" Height="16" Width="16" Stretch="Uniform" VerticalAlignment="Center" Opacity="0.6" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding FiltroCustoSelecionado}" Foreground="#795548" FontSize="13" VerticalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <!-- Ícone da Seta Dropdown -->
                                             <Image Source="/Assets/Images/IconeSetaDropdown.png" Height="16" Width="16" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.6"/>
                                         </Grid>
                                     </Border>
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
+
                         <Popup IsOpen="{Binding IsChecked, ElementName=BtnFiltroCustoToggle}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnFiltroCustoToggle}" Placement="Bottom" VerticalOffset="5" AllowsTransparency="True">
-                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="140">
+                            <Border Background="White" CornerRadius="8" Padding="10" Margin="5" Width="170">
+                                <!-- Largura do Popup ajustada para 170 -->
                                 <Border.Effect>
                                     <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.15" ShadowDepth="2"/>
                                 </Border.Effect>
@@ -412,7 +460,9 @@
             </Border>
         </Grid>
 
-        <!-- CAMADA 2: MODAL DE EXCLUSÃO PERSONALIZADO -->
+        <!-- ========================================== -->
+        <!-- CAMADA 2: MODAL DE EXCLUSÃO PERSONALIZADO  -->
+        <!-- ========================================== -->
         <Grid Visibility="{Binding VisibilidadeModalExclusao}" Background="Transparent">
             <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="16" Padding="30" Width="400">
                 <Border.Effect>

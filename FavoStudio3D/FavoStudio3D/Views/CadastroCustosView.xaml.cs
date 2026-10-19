@@ -12,13 +12,6 @@ namespace FavoStudio3D.Views
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string _subtituloCadastro = "Cadastre seus filamentos e mantenha os sempre atualizados";
-        public string SubtituloCadastro
-        {
-            get { return _subtituloCadastro; }
-            set { _subtituloCadastro = value; OnPropertyChanged(nameof(SubtituloCadastro)); }
-        }
-
         public ObservableCollection<CorFilamento> ListaCores { get; set; } = new ObservableCollection<CorFilamento>();
 
         private CorFilamento _corSelecionada = new CorFilamento();
@@ -96,7 +89,7 @@ namespace FavoStudio3D.Views
         }
 
         // ==========================================
-        // NOVAS FUNÇÕES PARA CARREGAR OS DADOS DO RESUMO PARA A EDIÇÃO
+        // MÉTODOS PARA CARREGAR OS DADOS DO RESUMO PARA A EDIÇÃO
         // ==========================================
         public void CarregarFilamentoParaEdicao(FilamentoModel filamento)
         {
@@ -134,13 +127,17 @@ namespace FavoStudio3D.Views
                 TipoCustoSelecionado = custo.Tipo;
         }
 
+        // ==========================================
+        // MÉTODOS QUE ATUALIZAM O SUBTÍTULO DO DASHBOARD
+        // ==========================================
         public void AtivarAbaFilamento()
         {
             VisibilidadeFilamento = Visibility.Visible;
             VisibilidadeCusto = Visibility.Collapsed;
             TabFilamento.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabCusto.Background = Brushes.Transparent;
-            SubtituloCadastro = "Cadastre seus filamentos e mantenha os sempre atualizados.";
+
+            AtualizarSubtituloDashboard("Cadastre seus filamentos para atualizar os cálculos.");
         }
 
         public void AtivarAbaCusto()
@@ -149,7 +146,20 @@ namespace FavoStudio3D.Views
             VisibilidadeCusto = Visibility.Visible;
             TabCusto.Background = (Brush)new BrushConverter().ConvertFromString("#EBB45D")!;
             TabFilamento.Background = Brushes.Transparent;
-            SubtituloCadastro = "Cadastre seus custos e mantenha os sempre atualizados.";
+
+            AtualizarSubtituloDashboard("Cadastre custos fixos e adicionais para atualizar os cálculos.");
+        }
+
+        private void AtualizarSubtituloDashboard(string novoSubtitulo)
+        {
+            // Usa o Dispatcher para garantir que procura o Window apenas depois do UserControl estar carregado
+            Dispatcher.BeginInvoke(new System.Action(() =>
+            {
+                if (Window.GetWindow(this) is DashboardWindow dashboard)
+                {
+                    dashboard.TextoSubtituloPagina.Text = novoSubtitulo;
+                }
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void TabFilamento_Click(object sender, MouseButtonEventArgs e) => AtivarAbaFilamento();
@@ -277,9 +287,6 @@ namespace FavoStudio3D.Views
             _custoEmEdicao = null;
         }
 
-        // ==========================================
-        // ATUALIZADO: SALVA NOVO OU ATUALIZA O EXISTENTE
-        // ==========================================
         private void BtnSalvarCadastro_Click(object sender, RoutedEventArgs e)
         {
             if (VisibilidadeFilamento == Visibility.Visible)
