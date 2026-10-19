@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -23,6 +24,38 @@ namespace FavoStudio3D.Views
         public ObservableCollection<string> FiltrosFilamentos { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<string> FiltrosCustos { get; set; } = new ObservableCollection<string>();
 
+        private const int ItensPorPagina = 6;
+
+        private int _totalPaginasFilamentos = 1;
+        private int _paginaAtualFilamentos = 1;
+        public int PaginaAtualFilamentos
+        {
+            get => _paginaAtualFilamentos;
+            set { _paginaAtualFilamentos = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PaginaAtualFilamentos))); }
+        }
+
+        private int _totalPaginasCustos = 1;
+        private int _paginaAtualCustos = 1;
+        public int PaginaAtualCustos
+        {
+            get => _paginaAtualCustos;
+            set { _paginaAtualCustos = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PaginaAtualCustos))); }
+        }
+
+        private string _textoPesquisaFilamento = string.Empty;
+        public string TextoPesquisaFilamento
+        {
+            get => _textoPesquisaFilamento;
+            set { _textoPesquisaFilamento = value; PaginaAtualFilamentos = 1; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextoPesquisaFilamento))); AplicarFiltroFilamentos(); }
+        }
+
+        private string _textoPesquisaCusto = string.Empty;
+        public string TextoPesquisaCusto
+        {
+            get => _textoPesquisaCusto;
+            set { _textoPesquisaCusto = value; PaginaAtualCustos = 1; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextoPesquisaCusto))); AplicarFiltroCustos(); }
+        }
+
         private string _filtroFilamentoSelecionado = "Todos os tipos";
         public string FiltroFilamentoSelecionado
         {
@@ -30,6 +63,7 @@ namespace FavoStudio3D.Views
             set
             {
                 _filtroFilamentoSelecionado = value;
+                PaginaAtualFilamentos = 1;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FiltroFilamentoSelecionado)));
                 AplicarFiltroFilamentos();
             }
@@ -42,25 +76,26 @@ namespace FavoStudio3D.Views
             set
             {
                 _filtroCustoSelecionado = value;
+                PaginaAtualCustos = 1;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FiltroCustoSelecionado)));
                 AplicarFiltroCustos();
             }
         }
 
-        public string TextoTotalFilamentos => ListaFilamentos.Count == 0 ? "Nenhum filamento encontrado" :
-                                              ListaFilamentos.Count == 1 ? "1 filamento cadastrado" :
-                                              $"{ListaFilamentos.Count} filamentos cadastrados";
+        public string TextoTotalFilamentos => FilamentosBancoDados.Count == 0 ? "Nenhum filamento encontrado" :
+                                              FilamentosBancoDados.Count == 1 ? "1 filamento cadastrado" :
+                                              $"{FilamentosBancoDados.Count} filamentos cadastrados";
 
-        public string TextoTotalCustos => ListaOutrosCustos.Count == 0 ? "Nenhum custo encontrado" :
-                                          ListaOutrosCustos.Count == 1 ? "1 custo cadastrado" :
-                                          $"{ListaOutrosCustos.Count} custos cadastrados";
+        public string TextoTotalCustos => CustosBancoDados.Count == 0 ? "Nenhum custo encontrado" :
+                                          CustosBancoDados.Count == 1 ? "1 custo cadastrado" :
+                                          $"{CustosBancoDados.Count} custos cadastrados";
 
-        public Visibility VisibilidadePaginacaoFilamentos => ListaFilamentos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility VisibilidadePaginacaoCustos => ListaOutrosCustos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VisibilidadePaginacaoFilamentos => FilamentosBancoDados.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VisibilidadePaginacaoCustos => CustosBancoDados.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-        // ==========================================
-        // VARIÁVEIS PARA O MODAL DE EXCLUSÃO
-        // ==========================================
+        public Visibility VisibilidadeEstadoVazio => (FilamentosBancoDados.Count == 0 && CustosBancoDados.Count == 0) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VisibilidadeConteudo => (FilamentosBancoDados.Count > 0 || CustosBancoDados.Count > 0) ? Visibility.Visible : Visibility.Collapsed;
+
         private Visibility _visibilidadeModalExclusao = Visibility.Collapsed;
         public Visibility VisibilidadeModalExclusao
         {
@@ -96,12 +131,16 @@ namespace FavoStudio3D.Views
         {
             AtualizarFiltrosFilamentos();
             AplicarFiltroFilamentos();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeEstadoVazio)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeConteudo)));
         }
 
         private void AtualizarPropriedadesCustos()
         {
             AtualizarFiltrosCustos();
             AplicarFiltroCustos();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeEstadoVazio)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadeConteudo)));
         }
 
         private void AtualizarFiltrosFilamentos()
@@ -129,13 +168,21 @@ namespace FavoStudio3D.Views
         private void AplicarFiltroFilamentos()
         {
             ListaFilamentos.Clear();
-            foreach (var item in FilamentosBancoDados)
-            {
-                if (FiltroFilamentoSelecionado == "Todos os tipos" || item.Tipo == FiltroFilamentoSelecionado)
-                {
-                    ListaFilamentos.Add(item);
-                }
-            }
+            string termoPesquisa = TextoPesquisaFilamento?.ToLower() ?? "";
+
+            var filtrados = FilamentosBancoDados.Where(item =>
+                (FiltroFilamentoSelecionado == "Todos os tipos" || item.Tipo == FiltroFilamentoSelecionado) &&
+                (string.IsNullOrWhiteSpace(termoPesquisa) || item.Nome.ToLower().Contains(termoPesquisa))
+            ).ToList();
+
+            _totalPaginasFilamentos = (int)Math.Ceiling(filtrados.Count / (double)ItensPorPagina);
+            if (_totalPaginasFilamentos == 0) _totalPaginasFilamentos = 1;
+            if (PaginaAtualFilamentos > _totalPaginasFilamentos) PaginaAtualFilamentos = _totalPaginasFilamentos;
+
+            var paginados = filtrados.Skip((PaginaAtualFilamentos - 1) * ItensPorPagina).Take(ItensPorPagina);
+
+            foreach (var item in paginados) ListaFilamentos.Add(item);
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextoTotalFilamentos)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadePaginacaoFilamentos)));
         }
@@ -143,15 +190,43 @@ namespace FavoStudio3D.Views
         private void AplicarFiltroCustos()
         {
             ListaOutrosCustos.Clear();
-            foreach (var item in CustosBancoDados)
-            {
-                if (FiltroCustoSelecionado == "Todos os tipos" || item.Tipo == FiltroCustoSelecionado)
-                {
-                    ListaOutrosCustos.Add(item);
-                }
-            }
+            string termoPesquisa = TextoPesquisaCusto?.ToLower() ?? "";
+
+            var filtrados = CustosBancoDados.Where(item =>
+                (FiltroCustoSelecionado == "Todos os tipos" || item.Tipo == FiltroCustoSelecionado) &&
+                (string.IsNullOrWhiteSpace(termoPesquisa) || item.Descricao.ToLower().Contains(termoPesquisa))
+            ).ToList();
+
+            _totalPaginasCustos = (int)Math.Ceiling(filtrados.Count / (double)ItensPorPagina);
+            if (_totalPaginasCustos == 0) _totalPaginasCustos = 1;
+            if (PaginaAtualCustos > _totalPaginasCustos) PaginaAtualCustos = _totalPaginasCustos;
+
+            var paginados = filtrados.Skip((PaginaAtualCustos - 1) * ItensPorPagina).Take(ItensPorPagina);
+
+            foreach (var item in paginados) ListaOutrosCustos.Add(item);
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextoTotalCustos)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibilidadePaginacaoCustos)));
+        }
+
+        private void PaginaAnteriorFilamento_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (PaginaAtualFilamentos > 1) { PaginaAtualFilamentos--; AplicarFiltroFilamentos(); }
+        }
+
+        private void PaginaProximaFilamento_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (PaginaAtualFilamentos < _totalPaginasFilamentos) { PaginaAtualFilamentos++; AplicarFiltroFilamentos(); }
+        }
+
+        private void PaginaAnteriorCusto_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (PaginaAtualCustos > 1) { PaginaAtualCustos--; AplicarFiltroCustos(); }
+        }
+
+        private void PaginaProximaCusto_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (PaginaAtualCustos < _totalPaginasCustos) { PaginaAtualCustos++; AplicarFiltroCustos(); }
         }
 
         private void BtnFiltroFilamento_Click(object sender, RoutedEventArgs e)
@@ -172,9 +247,6 @@ namespace FavoStudio3D.Views
             }
         }
 
-        // ==========================================
-        // FUNÇÃO ROBUSTA PARA FECHAR TODOS OS POPUPS
-        // ==========================================
         private void FecharTodosOsPopups(DependencyObject parent)
         {
             int childCount = VisualTreeHelper.GetChildrenCount(parent);
@@ -184,13 +256,8 @@ namespace FavoStudio3D.Views
                 if (child is Popup popup && popup.IsOpen)
                 {
                     popup.IsOpen = false;
-                    // Se o popup tiver sido aberto por um ToggleButton, temos de o desligar também
-                    if (popup.PlacementTarget is ToggleButton toggleBtn)
-                    {
-                        toggleBtn.IsChecked = false;
-                    }
+                    if (popup.PlacementTarget is ToggleButton toggleBtn) toggleBtn.IsChecked = false;
                 }
-                // Continua a procurar recursivamente
                 FecharTodosOsPopups(child);
             }
         }
@@ -250,19 +317,15 @@ namespace FavoStudio3D.Views
 
         private void BtnConfirmarExclusao_Click(object sender, RoutedEventArgs e)
         {
-            if (_filamentoParaExcluir != null)
-            {
-                FilamentosBancoDados.Remove(_filamentoParaExcluir);
-            }
-            else if (_custoParaExcluir != null)
-            {
-                CustosBancoDados.Remove(_custoParaExcluir);
-            }
+            if (_filamentoParaExcluir != null) FilamentosBancoDados.Remove(_filamentoParaExcluir);
+            else if (_custoParaExcluir != null) CustosBancoDados.Remove(_custoParaExcluir);
 
             VisibilidadeModalExclusao = Visibility.Collapsed;
             _filamentoParaExcluir = null;
             _custoParaExcluir = null;
         }
+
+        private void BtnPrimeiroCadastro_Click(object sender, RoutedEventArgs e) => BtnNovoFilamento_Click(sender, e);
 
         private void BtnNovoFilamento_Click(object sender, RoutedEventArgs e)
         {
