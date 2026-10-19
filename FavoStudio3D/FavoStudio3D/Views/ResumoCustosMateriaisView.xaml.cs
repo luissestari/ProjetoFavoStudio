@@ -118,6 +118,19 @@ namespace FavoStudio3D.Views
             InitializeComponent();
             DataContext = this;
 
+            // Alimenta a memória compartilhada inicial se estiver vazia
+            if (FilamentosBancoDados.Count == 0)
+            {
+                FilamentosBancoDados.Add(new FilamentoModel { Nome = "PLA Branco", Tipo = "PLA", CorHex = "#FFFFFF", PrecoFormatado = "R$ 100,00" });
+                FilamentosBancoDados.Add(new FilamentoModel { Nome = "PETG Preto", Tipo = "PETG", CorHex = "#000000", PrecoFormatado = "R$ 120,00" });
+            }
+
+            if (CustosBancoDados.Count == 0)
+            {
+                CustosBancoDados.Add(new CustoModel { Descricao = "Saco a vácuo", ValorFormatado = "R$ 135,00", Tipo = "Custo Fixo" });
+                CustosBancoDados.Add(new CustoModel { Descricao = "Lixas", ValorFormatado = "R$ 30,00", Tipo = "Custo Adicional" });
+            }
+
             FilamentosBancoDados.CollectionChanged += (s, e) => AtualizarPropriedadesFilamentos();
             CustosBancoDados.CollectionChanged += (s, e) => AtualizarPropriedadesCustos();
 
