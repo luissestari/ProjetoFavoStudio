@@ -152,7 +152,6 @@ namespace FavoStudio3D.Views
 
         private void AtualizarSubtituloDashboard(string novoSubtitulo)
         {
-            // Usa o Dispatcher para garantir que procura o Window apenas depois do UserControl estar carregado
             Dispatcher.BeginInvoke(new System.Action(() =>
             {
                 if (Window.GetWindow(this) is DashboardWindow dashboard)
@@ -289,14 +288,39 @@ namespace FavoStudio3D.Views
 
         private void BtnSalvarCadastro_Click(object sender, RoutedEventArgs e)
         {
+            // ==============================================================
+            // VALIDAÇÃO INTELIGENTE (Depende da aba que está aberta)
+            // ==============================================================
+            if (VisibilidadeFilamento == Visibility.Visible)
+            {
+                // Se a aba filamento estiver visível, valida os campos de filamento
+                if (string.IsNullOrWhiteSpace(TxtNome.Text) ||
+                    string.IsNullOrWhiteSpace(TxtTipo.Text) ||
+                    string.IsNullOrWhiteSpace(TxtPreco.Text))
+                {
+                    ModalValidacao.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+            else
+            {
+                // Se a aba custo estiver visível, valida os campos de custo
+                if (string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ||
+                    string.IsNullOrWhiteSpace(TxtValorCusto.Text))
+                {
+                    ModalValidacao.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+
             if (VisibilidadeFilamento == Visibility.Visible)
             {
                 var filamentoAtualizado = new FilamentoModel
                 {
-                    Nome = string.IsNullOrWhiteSpace(TxtNome.Text) ? "Sem Nome" : TxtNome.Text,
-                    Tipo = string.IsNullOrWhiteSpace(TxtTipo.Text) ? "PLA" : TxtTipo.Text,
+                    Nome = TxtNome.Text,
+                    Tipo = TxtTipo.Text,
                     CorHex = CorSelecionada.Hex,
-                    PrecoFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtPreco.Text) ? "0,00" : TxtPreco.Text)
+                    PrecoFormatado = "R$ " + TxtPreco.Text
                 };
 
                 if (_filamentoEmEdicao != null) // Atualizar existente
@@ -313,8 +337,8 @@ namespace FavoStudio3D.Views
             {
                 var custoAtualizado = new CustoModel
                 {
-                    Descricao = string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ? "Sem Descrição" : TxtDescricaoCusto.Text,
-                    ValorFormatado = "R$ " + (string.IsNullOrWhiteSpace(TxtValorCusto.Text) ? "0,00" : TxtValorCusto.Text),
+                    Descricao = TxtDescricaoCusto.Text,
+                    ValorFormatado = "R$ " + TxtValorCusto.Text,
                     Tipo = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado
                 };
 
@@ -341,6 +365,12 @@ namespace FavoStudio3D.Views
                 }
                 parent = VisualTreeHelper.GetParent(parent);
             }
+        }
+
+        // Função que fecha o modal de aviso quando o utilizador clica em OK (Posicionada na classe correta agora)
+        private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
+        {
+            ModalValidacao.Visibility = Visibility.Collapsed;
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

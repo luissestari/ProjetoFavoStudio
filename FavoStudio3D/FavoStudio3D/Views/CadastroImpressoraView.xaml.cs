@@ -6,30 +6,85 @@ namespace FavoStudio3D.Views
 {
     public partial class CadastroImpressoraView : UserControl
     {
-        public CadastroImpressoraView()
+        private ImpressoraModel? _impressoraEmEdicao = null;
+
+        public CadastroImpressoraView(ImpressoraModel? impressoraSelecionada = null)
         {
             InitializeComponent();
-        }
 
-        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
-        {
-            VoltarParaImpressoras();
+            _impressoraEmEdicao = impressoraSelecionada;
+
+            // Preenche os campos corretamente se for edição
+            if (_impressoraEmEdicao != null)
+            {
+                TxtNomeImpressora.Text = _impressoraEmEdicao.Nome;
+                TxtModelo.Text = _impressoraEmEdicao.Modelo;
+
+                TxtPotencia.Text = _impressoraEmEdicao.PotenciaFormatada;
+                TxtCustoKwh.Text = _impressoraEmEdicao.CustoKwhFormatado.Replace("R$ ", "").Trim();
+                TxtObservacoes.Text = _impressoraEmEdicao.Observacoes == "-" ? "" : _impressoraEmEdicao.Observacoes;
+            }
         }
 
         private void BtnSalvarImpressora_Click(object sender, RoutedEventArgs e)
         {
-            // Adiciona a nova impressora à lista em memória para aparecer na listagem
-            var novaImpressora = new ImpressoraModel
+            // ==============================================================
+            // VALIDAÇÃO: Chama o seu novo modal bonito em vez do MessageBox
+            // ==============================================================
+            if (string.IsNullOrWhiteSpace(TxtNomeImpressora.Text) ||
+                string.IsNullOrWhiteSpace(TxtModelo.Text) ||
+                string.IsNullOrWhiteSpace(TxtPotencia.Text) ||
+                string.IsNullOrWhiteSpace(TxtCustoKwh.Text))
             {
-                NomeModelo = $"{TxtNomeImpressora.Text} {TxtModelo.Text}".Trim(),
-                PotenciaFormatada = TxtPotencia.Text,
-                CustoKwhFormatado = $"R$ {TxtCustoKwh.Text}",
-                Observacoes = string.IsNullOrWhiteSpace(TxtObservacoes.Text) ? "-" : TxtObservacoes.Text
-            };
+                ModalValidacao.Visibility = Visibility.Visible; // Abre o modal
+                return; // Impede que o código continue e salve os dados
+            }
 
-            ResumoImpressorasView.ImpressorasBancoDados.Add(novaImpressora);
+            string nomeOriginal = TxtNomeImpressora.Text.Trim();
+            string modeloOriginal = TxtModelo.Text.Trim();
 
-            // Retorna para a tela de listagem de impressoras
+            // Junta os dois apenas para mostrar na tabela depois
+            string nomeCompleto = string.IsNullOrWhiteSpace(modeloOriginal)
+                                ? nomeOriginal
+                                : $"{nomeOriginal} {modeloOriginal}";
+
+            if (_impressoraEmEdicao != null)
+            {
+                // MODO EDIÇÃO
+                _impressoraEmEdicao.Nome = nomeOriginal;
+                _impressoraEmEdicao.Modelo = modeloOriginal;
+                _impressoraEmEdicao.NomeModelo = nomeCompleto;
+                _impressoraEmEdicao.PotenciaFormatada = TxtPotencia.Text;
+                _impressoraEmEdicao.CustoKwhFormatado = $"R$ {TxtCustoKwh.Text}";
+                _impressoraEmEdicao.Observacoes = string.IsNullOrWhiteSpace(TxtObservacoes.Text) ? "-" : TxtObservacoes.Text;
+            }
+            else
+            {
+                // MODO CRIAÇÃO
+                var novaImpressora = new ImpressoraModel
+                {
+                    Nome = nomeOriginal,
+                    Modelo = modeloOriginal,
+                    NomeModelo = nomeCompleto,
+                    PotenciaFormatada = TxtPotencia.Text,
+                    CustoKwhFormatado = $"R$ {TxtCustoKwh.Text}",
+                    Observacoes = string.IsNullOrWhiteSpace(TxtObservacoes.Text) ? "-" : TxtObservacoes.Text,
+                    CaminhoImagem = string.Empty
+                };
+                ResumoImpressorasView.ImpressorasBancoDados.Add(novaImpressora);
+            }
+
+            // Só chega aqui (e muda de tela) se a validação lá em cima passou
+            VoltarParaResumo();
+        }
+
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            VoltarParaResumo();
+        }
+
+        private void VoltarParaResumo()
+        {
             var telaResumo = new ResumoImpressorasView();
             DependencyObject parent = VisualTreeHelper.GetParent(this);
             while (parent != null)
@@ -43,21 +98,10 @@ namespace FavoStudio3D.Views
                 parent = VisualTreeHelper.GetParent(parent);
             }
         }
-
-        private void VoltarParaImpressoras()
+        // Função que fecha o modal de aviso quando o utilizador clica em OK
+        private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
         {
-            var telaImpressoras = new ImpressorasView();
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
-            while (parent != null)
-            {
-                if (parent is ContentControl cc) { cc.Content = telaImpressoras; return; }
-                if (parent is Panel panel)
-                {
-                    int index = panel.Children.IndexOf(this);
-                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaImpressoras); return; }
-                }
-                parent = VisualTreeHelper.GetParent(parent);
-            }
+            ModalValidacao.Visibility = Visibility.Collapsed;
         }
     }
 }

@@ -6,207 +6,245 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900">
 
-    <!-- Margem idêntica à tela de Cadastro de Custos -->
-    <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,15,0,0">
+    <!-- GRID RAIZ INVISÍVEL QUE OCUPA A TELA INTEIRA -->
+    <Grid>
 
-        <!-- CARD PRINCIPAL DO FORMULÁRIO -->
-        <Border Width="950" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
-            <Border.Background>
-                <SolidColorBrush Color="White" Opacity="0.70"/>
-            </Border.Background>
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
-            </Border.Effect>
+        <!-- CONTEÚDO PRINCIPAL DO FORMULÁRIO (Com as margens originais) -->
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,15,0,0">
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- CARD PRINCIPAL DO FORMULÁRIO -->
+            <Border Width="950" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.70"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
+                </Border.Effect>
 
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="45"/>
-                        <!-- Espaçamento maior entre os lados -->
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- COLUNA ESQUERDA: CAMPOS DO FORMULÁRIO -->
-                    <StackPanel Grid.Column="0">
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="45"/>
+                            <!-- Espaçamento maior entre os lados -->
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                        <!-- Nome da impressora -->
-                        <StackPanel Margin="0,0,0,18">
-                            <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
-                                Nome da impressora <Run Text="*" Foreground="#D32F2F"/>
-                            </TextBlock>
-                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
-                                <Grid>
-                                    <TextBlock Text="Ex: Bambu Lab" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtNomeImpressora}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBox x:Name="TxtNomeImpressora" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
+                        <!-- COLUNA ESQUERDA: CAMPOS DO FORMULÁRIO -->
+                        <StackPanel Grid.Column="0">
 
-                        <!-- Modelo (com asterisco vermelho obrigatório) -->
-                        <StackPanel Margin="0,0,0,18">
-                            <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
-                                Modelo <Run Text="*" Foreground="#D32F2F"/>
-                            </TextBlock>
-                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
-                                <Grid>
-                                    <TextBlock Text="Ex: A1" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtModelo}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBox x:Name="TxtModelo" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
-
-                        <!-- Potência (W) e Custo por kWh (R$) -->
-                        <Grid Margin="0,0,0,18">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="15"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0">
+                            <!-- Nome da impressora -->
+                            <StackPanel Margin="0,0,0,18">
                                 <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
-                                    Potência (W) <Run Text="*" Foreground="#D32F2F"/>
+                                    Nome da impressora <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                                 <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
                                     <Grid>
-                                        <TextBlock Text="Ex: 550" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock Text="Ex: Bambu Lab" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Text, ElementName=TxtPotencia}" Value="">
+                                                        <DataTrigger Binding="{Binding Text, ElementName=TxtNomeImpressora}" Value="">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                        <TextBox x:Name="TxtPotencia" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                        <TextBox x:Name="TxtNomeImpressora" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
                                     </Grid>
                                 </Border>
-                                <TextBlock Text="Potência média em watts" FontSize="11" Foreground="#795548" Margin="0,4,0,0"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Column="2">
+                            <!-- Modelo -->
+                            <StackPanel Margin="0,0,0,18">
                                 <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
-                                    Custo por kWh (R$) <Run Text="*" Foreground="#D32F2F"/>
+                                    Modelo <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                                 <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
                                     <Grid>
-                                        <TextBlock Text="Ex: 0,80" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock Text="Ex: A1" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Text, ElementName=TxtCustoKwh}" Value="">
+                                                        <DataTrigger Binding="{Binding Text, ElementName=TxtModelo}" Value="">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                        <TextBox x:Name="TxtCustoKwh" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                        <TextBox x:Name="TxtModelo" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
-                        </Grid>
 
-                        <!-- Observações -->
-                        <StackPanel Margin="0,0,0,5">
-                            <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">Observações</TextBlock>
-                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="90" Padding="12,8">
-                                <Grid>
-                                    <TextBlock Text="Observações adicionais..." Foreground="#A99F96" FontSize="14" VerticalAlignment="Top" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtObservacoes}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                            <!-- Potência (W) e Custo por kWh (R$) -->
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
+                                        Potência (W) <Run Text="*" Foreground="#D32F2F"/>
                                     </TextBlock>
-                                    <TextBox x:Name="TxtObservacoes" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" Foreground="#3E2723" FontSize="14"/>
-                                </Grid>
+                                    <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                        <Grid>
+                                            <TextBlock Text="Ex: 550" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Text, ElementName=TxtPotencia}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBox x:Name="TxtPotencia" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Text="Potência média em watts" FontSize="11" Foreground="#795548" Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">
+                                        Custo por kWh (R$) <Run Text="*" Foreground="#D32F2F"/>
+                                    </TextBlock>
+                                    <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                        <Grid>
+                                            <TextBlock Text="Ex: 0,80" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Text, ElementName=TxtCustoKwh}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBox x:Name="TxtCustoKwh" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Observações -->
+                            <StackPanel Margin="0,0,0,5">
+                                <TextBlock FontSize="15" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,6">Observações</TextBlock>
+                                <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="90" Padding="12,8">
+                                    <Grid>
+                                        <TextBlock Text="Observações adicionais..." Foreground="#A99F96" FontSize="14" VerticalAlignment="Top" IsHitTestVisible="False">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=TxtObservacoes}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBox x:Name="TxtObservacoes" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" Foreground="#3E2723" FontSize="14"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- COLUNA DIREITA: UPLOAD DE IMAGEM DA IMPRESSORA -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="0,24,0,0" Width="240">
+                            <TextBlock Text="Imagem da impressora" FontSize="15" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,12"/>
+
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1.5" CornerRadius="12" Background="#FFF5E9" Height="225" Cursor="Hand">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15">
+                                    <Image Source="/Assets/Images/IconeUploadImagem.png" Height="90" Margin="0,0,0,12" Stretch="Uniform"/>
+                                    <TextBlock Text="Clique para adicionar uma imagem" FontSize="12" FontWeight="SemiBold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,4"/>
+                                    <TextBlock Text="PNG, JPG OU WEBP (máx. 5 MB)" FontSize="10" Foreground="#000000" TextAlignment="Center"/>
+                                </StackPanel>
                             </Border>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
 
-                    <!-- COLUNA DIREITA: UPLOAD DE IMAGEM DA IMPRESSORA -->
-                    <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="0,24,0,0" Width="240">
-                        <TextBlock Text="Imagem da impressora" FontSize="15" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,12"/>
-
-                        <Border BorderBrush="#C7BCAE" BorderThickness="1.5" CornerRadius="12" Background="#FFF5E9" Height="225" Cursor="Hand">
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15">
-                                <Image Source="/Assets/Images/IconeUploadImagem.png" Height="90" Margin="0,0,0,12" Stretch="Uniform"/>
-                                <TextBlock Text="Clique para adicionar uma imagem" FontSize="12" FontWeight="SemiBold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,4"/>
-                                <TextBlock Text="PNG, JPG OU WEBP (máx. 5 MB)" FontSize="10" Foreground="#000000" TextAlignment="Center"/>
+                    <!-- BOTÕES INFERIORES: CANCELAR E SALVAR -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+                        <Button Width="180" Height="48" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnCancelar_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeLimpar.png" Height="16" Margin="0,0,10,0"/>
+                                <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                             </StackPanel>
-                        </Border>
+                        </Button>
+
+                        <Button Width="210" Height="48" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarImpressora_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/IconeSalvar.png" Height="18" Margin="0,0,10,0"/>
+                                <TextBlock Text="Salvar impressora" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
+            </Border>
+        </Grid>
 
-                <!-- BOTÕES INFERIORES: CANCELAR E SALVAR -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
-                    <Button Width="180" Height="48" Margin="0,0,20,0" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnCancelar_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Assets/Images/IconeLimpar.png" Height="16" Margin="0,0,10,0"/>
-                            <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+        <!-- ========================================== -->
+        <!-- CAMADA: MODAL DE AVISO (Campos Vazios)     -->
+        <!-- ========================================== -->
+        <Grid x:Name="ModalValidacao" Visibility="Collapsed" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="16" Padding="30" Width="400">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" Opacity="0.15" ShadowDepth="4"/>
+                </Border.Effect>
+                <StackPanel>
+                    <!-- Título -->
+                    <TextBlock Text="Atenção" FontSize="20" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-                    <Button Width="210" Height="48" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvarImpressora_Click">
+                    <!-- Mensagem com asterisco vermelho -->
+                    <TextBlock FontSize="15" Foreground="#795548" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,30">
+                        <Run Text="Por favor, preencha todos os campos obrigatórios marcados com ("/>
+                        <Run Text="*" Foreground="#D32F2F" FontWeight="Bold"/>
+                        <Run Text=")."/>
+                    </TextBlock>
+
+                    <!-- Botão OK -->
+                    <Button Height="45" Width="150" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnFecharValidacao_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="OK" Foreground="#3E2723" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Assets/Images/IconeSalvar.png" Height="18" Margin="0,0,10,0"/>
-                            <TextBlock Text="Salvar impressora" Foreground="#3E2723" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
                     </Button>
                 </StackPanel>
-            </Grid>
-        </Border>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>

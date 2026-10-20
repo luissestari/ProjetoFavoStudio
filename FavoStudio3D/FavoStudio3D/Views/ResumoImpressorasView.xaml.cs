@@ -29,6 +29,8 @@ namespace FavoStudio3D.Views
                                               ImpressorasBancoDados.Count == 1 ? "1 impressora cadastrada" :
                                               $"{ImpressorasBancoDados.Count} impressoras cadastradas";
 
+        private ImpressoraModel? _impressoraParaExcluir = null;
+
         public ResumoImpressorasView()
         {
             InitializeComponent();
@@ -40,7 +42,21 @@ namespace FavoStudio3D.Views
             };
 
             AplicarFiltro();
-            this.Loaded += (s, e) => AtualizarSubtituloDashboard();
+
+            this.Loaded += (s, e) =>
+            {
+                // ==============================================================
+                // NOVA REGRA: Se não houver impressoras cadastradas, redireciona 
+                // automaticamente para a tela de Cadastro de Impressora.
+                // ==============================================================
+                if (ImpressorasBancoDados.Count == 0)
+                {
+                    MudarDeTela(new CadastroImpressoraView());
+                    return; // Para a execução aqui para não carregar o resto da tela
+                }
+
+                AtualizarSubtituloDashboard();
+            };
         }
 
         private void AtualizarSubtituloDashboard()
@@ -75,20 +91,68 @@ namespace FavoStudio3D.Views
             MudarDeTela(new CadastroImpressoraView());
         }
 
+        // --- FUNÇÃO PARA FECHAR O POPUP ---
+        private void FecharPopupAcoes(FrameworkElement elemento)
+        {
+            FrameworkElement? atual = elemento;
+            while (atual != null)
+            {
+                if (atual.Parent is System.Windows.Controls.Primitives.Popup popup)
+                {
+                    popup.IsOpen = false;
+                    return;
+                }
+                atual = atual.Parent as FrameworkElement;
+            }
+        }
+
         private void AcaoEditar_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is ImpressoraModel impressora)
+            if (sender is Button btn)
             {
-                MudarDeTela(new CadastroImpressoraView());
+                FecharPopupAcoes(btn);
+                if (btn.DataContext is ImpressoraModel impressora)
+                {
+                    // Passa a impressora para a tela de cadastro
+                    MudarDeTela(new CadastroImpressoraView(impressora));
+                }
             }
         }
 
         private void AcaoExcluir_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is ImpressoraModel impressora)
+            if (sender is Button btn)
             {
-                ImpressorasBancoDados.Remove(impressora);
+                FecharPopupAcoes(btn);
+                if (btn.DataContext is ImpressoraModel impressora)
+                {
+                    _impressoraParaExcluir = impressora;
+                    TxtMensagemExclusao.Text = $"Tem certeza que deseja excluir a impressora '{impressora.NomeModelo}'?";
+                    ModalConfirmacaoExclusao.Visibility = Visibility.Visible;
+                }
             }
+        }
+
+        private void BtnCancelarExclusao_Click(object sender, RoutedEventArgs e)
+        {
+            _impressoraParaExcluir = null;
+            ModalConfirmacaoExclusao.Visibility = Visibility.Collapsed;
+        }
+
+        private void BtnConfirmarExclusao_Click(object sender, RoutedEventArgs e)
+        {
+            if (_impressoraParaExcluir != null)
+            {
+                ImpressorasBancoDados.Remove(_impressoraParaExcluir);
+                _impressoraParaExcluir = null;
+
+                // Regra extra: Se excluir a ÚLTIMA impressora, volta para o cadastro sozinho
+                if (ImpressorasBancoDados.Count == 0)
+                {
+                    MudarDeTela(new CadastroImpressoraView());
+                }
+            }
+            ModalConfirmacaoExclusao.Visibility = Visibility.Collapsed;
         }
 
         private void MudarDeTela(UserControl novaTela)
@@ -109,7 +173,9 @@ namespace FavoStudio3D.Views
 
     public class ImpressoraModel
     {
-        public string CaminhoImagem { get; set; } = "/Assets/Images/IconeImpressoraCard.png";
+        public string CaminhoImagem { get; set; } = string.Empty;
+        public string Nome { get; set; } = string.Empty;
+        public string Modelo { get; set; } = string.Empty;
         public string NomeModelo { get; set; } = string.Empty;
         public string PotenciaFormatada { get; set; } = string.Empty;
         public string CustoKwhFormatado { get; set; } = string.Empty;

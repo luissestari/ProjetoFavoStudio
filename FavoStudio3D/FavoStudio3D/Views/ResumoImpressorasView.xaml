@@ -6,163 +6,243 @@
              mc:Ignorable="d" 
              d:DesignHeight="650" d:DesignWidth="950">
 
-    <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="40,15,0,0">
+    <Grid>
+        <!-- CONTEÚDO DA TELA DE IMPRESSORAS -->
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="40,15,0,0">
 
-        <!-- CARTÃO PRINCIPAL -->
-        <Border Width="925" MinHeight="510" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
-            <Border.Background>
-                <SolidColorBrush Color="White" Opacity="0.70"/>
-            </Border.Background>
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
-            </Border.Effect>
+            <!-- CARTÃO PRINCIPAL -->
+            <Border Width="925" MinHeight="520" CornerRadius="20" Padding="35" HorizontalAlignment="Left">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.70"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
+                </Border.Effect>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- LINHA 0: BARRA DE PESQUISA E BOTÃO NOVA IMPRESSORA -->
-                <Grid Grid.Row="0" Margin="0,0,0,22">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="380"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <!-- LINHA 0: BARRA DE PESQUISA E BOTÃO NOVA IMPRESSORA -->
+                    <Grid Grid.Row="0" Margin="0,0,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="380"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Caixa de Pesquisa -->
-                    <Border Grid.Column="0" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="42" Padding="12,0">
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" IsHitTestVisible="False">
-                                <Image Source="/Assets/Images/IconePesquisa.png" Height="15" Width="15" Margin="0,0,8,0"/>
-                                <TextBlock Text="Buscar impressora..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center"/>
+                        <!-- Caixa de Pesquisa com Placeholder Inteligente -->
+                        <Border Grid.Column="0" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="42" Padding="12,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Ícone Fixo -->
+                                <Image Grid.Column="0" Source="/Assets/Images/IconePesquisa.png" Height="15" Width="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+
+                                <!-- Placeholder que some automaticamente -->
+                                <TextBlock Grid.Column="1" Text="Buscar impressora..." Foreground="#A99F96" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPesquisa}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- Campo de Digitação -->
+                                <TextBox Grid.Column="1" x:Name="TxtPesquisa" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13" Text="{Binding TextoPesquisa, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Botão Nova Impressora -->
+                        <Button Grid.Column="2" Width="175" Height="42" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovaImpressora_Click" VerticalAlignment="Center">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Nova impressora" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox x:Name="TxtPesquisa" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="13" Text="{Binding TextoPesquisa, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- LINHA 1: CABEÇALHO DA TABELA -->
+                    <Border Grid.Row="1" Background="#F0D1A7" CornerRadius="8" Height="38" Padding="15,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="220"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Imagem" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="Nome / Modelo" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Potência (W)" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="Custo por kwh (R$)" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="Observações" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="Ações" FontWeight="Bold" Foreground="#393021" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
-                    <!-- Botão Nova Impressora -->
-                    <Button Grid.Column="2" Width="175" Height="42" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovaImpressora_Click" VerticalAlignment="Center">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Nova impressora" Foreground="#3E2723" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
+                    <!-- LINHA 2: LISTAGEM DE ITENS -->
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding ListaImpressoras}" Margin="0,4,0,10">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <!-- A cor da borda foi alterada de #F0E6D8 para #D7CCC8 para maior visibilidade -->
+                                <Border BorderBrush="#D7CCC8" BorderThickness="0,0,0,1" Padding="15,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="220"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
 
-                <!-- LINHA 1: CABEÇALHO DA TABELA -->
-                <Border Grid.Row="1" Background="#F9EEDD" CornerRadius="8" Height="38" Padding="15,0">
+                                        <!-- Imagem da Impressora -->
+                                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" HorizontalAlignment="Left" ClipToBounds="True">
+                                            <Image Source="{Binding CaminhoImagem}" Stretch="UniformToFill"/>
+                                        </Border>
+
+                                        <!-- Nome / Modelo -->
+                                        <TextBlock Grid.Column="1" Text="{Binding NomeModelo}" FontWeight="SemiBold" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
+
+                                        <!-- Potência -->
+                                        <TextBlock Grid.Column="2" Text="{Binding PotenciaFormatada}" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
+
+                                        <!-- Custo kWh -->
+                                        <TextBlock Grid.Column="3" Text="{Binding CustoKwhFormatado}" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
+
+                                        <!-- Observações -->
+                                        <TextBlock Grid.Column="4" Text="{Binding Observacoes}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- Botão de Ações -->
+                                        <Grid Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <ToggleButton x:Name="BtnMenuAcoes" Background="Transparent" BorderThickness="0" Cursor="Hand" Width="28" Height="28">
+                                                <TextBlock Text="⋮" FontSize="16" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </ToggleButton>
+
+                                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnMenuAcoes}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnMenuAcoes}" Placement="Bottom" PopupAnimation="Fade" AllowsTransparency="True">
+                                                <Border Background="White" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="10" Padding="6" Width="110">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="15" ShadowDepth="2"/>
+                                                    </Border.Effect>
+                                                    <StackPanel>
+                                                        <!-- Botão Editar Customizado -->
+                                                        <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="6,4" Cursor="Hand" Click="AcaoEditar_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="6,4">
+                                                                        <TextBlock Text="Editar" Foreground="#3E2723" FontSize="13"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+
+                                                        <Rectangle Height="1" Fill="#F0E6D8" Margin="4,2,4,2"/>
+
+                                                        <!-- Botão Excluir Customizado -->
+                                                        <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="6,4" Cursor="Hand" Click="AcaoExcluir_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="6,4">
+                                                                        <TextBlock Text="Excluir" Foreground="#D32F2F" FontSize="13"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- LINHA 3: RODAPÉ -->
+                    <Grid Grid.Row="3" Margin="0,15,0,0" VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding TextoTotalImpressoras}" Foreground="#A99F96" FontSize="13" VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="28" Height="28" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" Margin="0,0,6,0" Cursor="Hand">
+                                <TextBlock Text="&lt;" FontSize="12" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Width="28" Height="28" CornerRadius="6" Background="#EBB45D" Margin="0,0,6,0">
+                                <TextBlock Text="1" FontSize="12" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Width="28" Height="28" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" Cursor="Hand">
+                                <TextBlock Text="&gt;" FontSize="12" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- CAMADA 2: MODAL DE EXCLUSÃO (Fundo Transparente) -->
+        <Grid x:Name="ModalConfirmacaoExclusao" Visibility="Collapsed" Background="Transparent">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="16" Padding="30" Width="400">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" Opacity="0.15" ShadowDepth="4"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Confirmar Exclusão" FontSize="20" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TxtMensagemExclusao" Text="Tem certeza que deseja excluir esta impressora?" FontSize="15" Foreground="#795548" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,30"/>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="90"/>
-                            <ColumnDefinition Width="220"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="160"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Imagem" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Nome / Modelo" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Potência (W)" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="Custo por kwh (R$)" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="4" Text="Observações" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="5" Text="Ações" FontWeight="Bold" Foreground="#8D6E63" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
-                </Border>
 
-                <!-- LINHA 2: LISTAGEM DE ITENS -->
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding ListaImpressoras}" Margin="0,4,0,10">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="#F0E6D8" BorderThickness="0,0,0,1" Padding="15,10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="90"/>
-                                        <ColumnDefinition Width="220"/>
-                                        <ColumnDefinition Width="130"/>
-                                        <ColumnDefinition Width="160"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="60"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Imagem da Impressora -->
-                                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" HorizontalAlignment="Left" ClipToBounds="True">
-                                        <Image Source="{Binding CaminhoImagem}" Stretch="UniformToFill"/>
+                        <Button Grid.Column="0" Height="45" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnCancelarExclusao_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <TextBlock Text="Cancelar" Foreground="#3E2723" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
 
-                                    <!-- Nome / Modelo -->
-                                    <TextBlock Grid.Column="1" Text="{Binding NomeModelo}" FontWeight="SemiBold" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
-
-                                    <!-- Potência -->
-                                    <TextBlock Grid.Column="2" Text="{Binding PotenciaFormatada}" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
-
-                                    <!-- Custo kWh -->
-                                    <TextBlock Grid.Column="3" Text="{Binding CustoKwhFormatado}" Foreground="#3E2723" FontSize="13" VerticalAlignment="Center"/>
-
-                                    <!-- Observações -->
-                                    <TextBlock Grid.Column="4" Text="{Binding Observacoes}" Foreground="#795548" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-
-                                    <!-- Botão de Ações (Menu pop-up padronizado) -->
-                                    <Grid Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <ToggleButton x:Name="BtnMenuAcoes" Background="Transparent" BorderThickness="0" Cursor="Hand" Width="28" Height="28">
-                                            <TextBlock Text="⋮" FontSize="16" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </ToggleButton>
-
-                                        <Popup IsOpen="{Binding IsChecked, ElementName=BtnMenuAcoes}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnMenuAcoes}" Placement="Bottom" PopupAnimation="Fade">
-                                            <Border Background="White" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="10" Padding="8,6" Width="120">
-                                                <Border.Effect>
-                                                    <DropShadowEffect Color="Black" Opacity="0.12" BlurRadius="12" ShadowDepth="2"/>
-                                                </Border.Effect>
-                                                <StackPanel>
-                                                    <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="8,6" Cursor="Hand" Click="AcaoEditar_Click">
-                                                        <TextBlock Text="Editar" Foreground="#3E2723" FontSize="13"/>
-                                                    </Button>
-                                                    <Rectangle Height="1" Fill="#F0E6D8" Margin="0,4,0,4"/>
-                                                    <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="8,6" Cursor="Hand" Click="AcaoExcluir_Click">
-                                                        <TextBlock Text="Excluir" Foreground="#D32F2F" FontSize="13"/>
-                                                    </Button>
-                                                </StackPanel>
-                                            </Border>
-                                        </Popup>
-                                    </Grid>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <!-- LINHA 3: RODAPÉ COM CONTADOR DINÂMICO E PAGINAÇÃO -->
-                <Grid Grid.Row="3" Margin="0,15,0,0" VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" Text="{Binding TextoTotalImpressoras}" Foreground="#A99F96" FontSize="13" VerticalAlignment="Center"/>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" Margin="0,0,6,0" Cursor="Hand">
-                            <TextBlock Text="&lt;" FontSize="12" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#EBB45D" Margin="0,0,6,0">
-                            <TextBlock Text="1" FontSize="12" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <Border Width="28" Height="28" CornerRadius="6" Background="White" BorderBrush="#EADCC9" BorderThickness="1" Cursor="Hand">
-                            <TextBlock Text="&gt;" FontSize="12" FontWeight="Bold" Foreground="#795548" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </Border>
+                        <Button Grid.Column="2" Height="45" Background="#D32F2F" BorderThickness="0" Cursor="Hand" Click="BtnConfirmarExclusao_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <TextBlock Text="Excluir" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

@@ -140,7 +140,7 @@
                         </Popup>
                     </Grid>
 
-                    <Border Grid.Row="2" Background="#FCEBD3" CornerRadius="8,8,0,0" Padding="15,10">
+                    <Border Grid.Row="2" Background="#F0D1A7" CornerRadius="8,8,0,0" Padding="15,10">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2.5*"/>
@@ -149,11 +149,11 @@
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
-                            <TextBlock Grid.Column="1" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="Cor" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="Preço (R$/kg)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold" Foreground="#393021" FontSize="12"/>
+                            <TextBlock Grid.Column="1" Text="Tipo" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Cor" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="Preço (R$/kg)" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="Ações" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
@@ -366,7 +366,7 @@
                         </Popup>
                     </Grid>
 
-                    <Border Grid.Row="2" Background="#FCEBD3" CornerRadius="8,8,0,0" Padding="15,10">
+                    <Border Grid.Row="2" Background="#F0D1A7" CornerRadius="8,8,0,0" Padding="15,10">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2.5*"/>
@@ -374,10 +374,10 @@
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Descrição" FontWeight="Bold" Foreground="#795548" FontSize="12"/>
-                            <TextBlock Grid.Column="1" Text="Valor (R$)" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="Tipo" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="Ações" FontWeight="Bold" Foreground="#795548" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="Descrição" FontWeight="Bold" Foreground="#393021" FontSize="12"/>
+                            <TextBlock Grid.Column="1" Text="Valor (R$)" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Tipo" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="Ações" FontWeight="Bold" Foreground="#393021" FontSize="12" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
