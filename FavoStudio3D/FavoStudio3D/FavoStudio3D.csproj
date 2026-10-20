@@ -18,6 +18,7 @@
     <None Remove="Assets\Images\IconeCustos.png" />
     <None Remove="Assets\Images\IconeFiltro.png" />
     <None Remove="Assets\Images\IconeImpressora.png" />
+    <None Remove="Assets\Images\IconeImpressoraCard.png" />
     <None Remove="Assets\Images\IconeInfoLaranja.png" />
     <None Remove="Assets\Images\IconeLimpar.png" />
     <None Remove="Assets\Images\IconeMais.png" />
@@ -28,6 +29,7 @@
     <None Remove="Assets\Images\IconeSalvar.png" />
     <None Remove="Assets\Images\IconeSetaDropdown %282%29.png" />
     <None Remove="Assets\Images\IconeSetaDropdown.png" />
+    <None Remove="Assets\Images\IconeUploadImagem.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
     <None Remove="Assets\Images\Logo.png" />
     <None Remove="Assets\Images\LogoMini.png" />
@@ -47,6 +49,7 @@
     <Resource Include="Assets\Images\IconeCustos.png" />
     <Resource Include="Assets\Images\IconeFiltro.png" />
     <Resource Include="Assets\Images\IconeImpressora.png" />
+    <Resource Include="Assets\Images\IconeImpressoraCard.png" />
     <Resource Include="Assets\Images\IconeInfoLaranja.png" />
     <Resource Include="Assets\Images\IconeLimpar.png" />
     <Resource Include="Assets\Images\IconeMais.png" />
@@ -57,6 +60,7 @@
     <Resource Include="Assets\Images\IconeSalvar.png" />
     <Resource Include="Assets\Images\IconeSetaDropdown (2).png" />
     <Resource Include="Assets\Images\IconeSetaDropdown.png" />
+    <Resource Include="Assets\Images\IconeUploadImagem.png" />
     <Resource Include="Assets\Images\ImagemTelaInicio.png" />
     <Resource Include="Assets\Images\Logo.png" />
     <Resource Include="Assets\Images\LogoMini.png" />

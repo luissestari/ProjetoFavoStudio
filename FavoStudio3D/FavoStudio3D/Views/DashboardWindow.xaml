@@ -59,7 +59,7 @@
                         </Border>
 
                         <!-- Botão: Impressora (Preparado para o futuro) -->
-                        <Border x:Name="MenuImpressoraBorder" Background="Transparent" CornerRadius="12" Width="98" Height="77" Margin="0,0,0,10" Cursor="Hand">
+                        <Border x:Name="MenuImpressoraBorder" Background="Transparent" CornerRadius="12" Width="98" Height="77" Margin="0,0,0,10" Cursor="Hand" MouseLeftButtonUp="BotaoMenuImpressora_Click">
                             <StackPanel VerticalAlignment="Center">
                                 <Image Source="/Assets/Images/IconeImpressora.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
                                 <TextBlock x:Name="MenuImpressoraTexto" Text="Impressora" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
