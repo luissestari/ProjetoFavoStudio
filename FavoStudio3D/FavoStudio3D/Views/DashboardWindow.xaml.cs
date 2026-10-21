@@ -112,7 +112,21 @@ namespace FavoStudio3D.Views
             TextoTituloPagina.Text = "Calculadora";
             TextoSubtituloPagina.Text = "Calcule os custos de produção e defina o preço de venda dos seus produtos 3D.";
 
-            AreaConteudo.Content = new CalculadoraBloqueadaView();
+            // ==========================================================
+            // LÓGICA INTELIGENTE DE DESBLOQUEIO DA CALCULADORA
+            // ==========================================================
+            bool temImpressoras = ResumoImpressorasView.ImpressorasBancoDados.Count > 0;
+            bool temFilamentos = ResumoCustosMateriaisView.FilamentosBancoDados.Count > 0;
+
+            // Só libera a tela da calculadora se houver pelo menos 1 impressora e 1 filamento cadastrados
+            if (temImpressoras && temFilamentos)
+            {
+                AreaConteudo.Content = new CalculadoraView();
+            }
+            else
+            {
+                AreaConteudo.Content = new CalculadoraBloqueadaView();
+            }
         }
 
         private void BotaoSair_Click(object sender, MouseButtonEventArgs e)
@@ -121,6 +135,7 @@ namespace FavoStudio3D.Views
             telaInicio.Show();
             this.Close();
         }
+
         private void BotaoMenuImpressora_Click(object sender, MouseButtonEventArgs e)
         {
             AtivarBotaoMenu(MenuImpressoraBorder, MenuImpressoraTexto);
@@ -128,7 +143,7 @@ namespace FavoStudio3D.Views
             TextoTituloPagina.Text = "Impressoras";
             TextoSubtituloPagina.Text = "Cadastre e gerencie as impressoras utilizadas na produção.";
 
-            AreaConteudo.Content = new ImpressorasView();
+            AreaConteudo.Content = new ImpressorasView(); // Ou ResumoImpressorasView, dependendo do estado
         }
     }
 }
