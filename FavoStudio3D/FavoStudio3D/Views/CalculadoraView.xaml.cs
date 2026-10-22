@@ -348,12 +348,104 @@ namespace FavoStudio3D.Views
                 return;
             }
 
-            // Exemplo de como você vai usar o valor do backend na hora do cálculo real:
-            // double somaDosFixos = _totalCustosFixos;
+            try
+            {
+                // 1. Obter dados do Filamento selecionado
+                dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
+                double precoKgFilamento = 100.0; // Valor padrão de segurança
+                if (filamentoEscolhido != null)
+                {
+                    object? rawPreco = ObterValorDeObjeto(filamentoEscolhido, "preco", "valor");
+                    if (rawPreco != null) precoKgFilamento = ConverterParaDouble(rawPreco);
+                }
 
-            MessageBox.Show("Cálculo efetuado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                // 2. Obter dados da Impressora selecionada
+                dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
+                double potenciaWatts = 350.0; // Padrão
+                double custoKwh = 0.85;      // Padrão
+                if (impressoraEscolhida != null)
+                {
+                    object? rawPotencia = ObterValorDeObjeto(impressoraEscolhida, "potencia", "consumo", "watts");
+                    if (rawPotencia != null) potenciaWatts = ConverterParaDouble(rawPotencia);
+
+                    object? rawKwh = ObterValorDeObjeto(impressoraEscolhida, "kwh", "custokwh");
+                    if (rawKwh != null) custoKwh = ConverterParaDouble(rawKwh);
+                }
+
+                // 3. Ler entradas do usuário com segurança (aceitando ponto e vírgula)
+                double.TryParse(TxtPeso.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double pesoGramas);
+                double.TryParse(TxtHoras.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horas);
+                double.TryParse(TxtMinutos.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutos);
+                int.TryParse(TxtQuantidade.Text, out int quantidade);
+                if (quantidade <= 1) quantidade = 1;
+                double.TryParse(TxtMargem.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double margemLucro);
+
+                // 4. Executar os cálculos
+                double tempoTotalHoras = horas + (minutos / 60.0);
+                double custoFilamento = (pesoGramas / 1000.0) * precoKgFilamento;
+                double custoEnergia = tempoTotalHoras * (potenciaWatts / 1000.0) * custoKwh;
+
+                // Somar custos adicionais selecionados na UI
+                double somaCustosAdicionais = 0;
+                foreach (var c in custosSelecionados)
+                {
+                    somaCustosAdicionais += c.Valor;
+                }
+
+                // Custo Unitário Total = Filamento + Energia + Adicionais Selecionados
+                double custoUnitarioTotal = custoFilamento + custoEnergia + somaCustosAdicionais;
+
+                // Preço de Venda com base na Margem de Lucro (%)
+                double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
+                double precoTotalLote = precoVendaUnitario * quantidade;
+
+                // Exibir resultado detalhado
+                string mensagemResultado = $"Produto: {TxtNomeProduto.Text}\n" +
+                                           $"Custo de Produção (Unit.): R$ {custoUnitarioTotal:N2}\n" +
+                                           $"Preço de Venda Sugerido (Unit.): R$ {precoVendaUnitario:N2}\n" +
+                                           $"Valor Total para {quantidade} un.: R$ {precoTotalLote:N2}";
+
+                MessageBox.Show(mensagemResultado, "Cálculo Efetuado com Sucesso! 🚀", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao realizar o cálculo: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
+        // Métodos auxiliares de apoio para leitura dinâmica
+        private object? ObterValorDeObjeto(object objeto, params string[] termosBuscados)
+        {
+            Type tipo = objeto.GetType();
+            foreach (var prop in tipo.GetProperties())
+            {
+                string nomeProp = prop.Name.ToLower();
+                foreach (var termo in termosBuscados)
+                {
+                    if (nomeProp.Contains(termo.ToLower()))
+                        return prop.GetValue(objeto);
+                }
+            }
+            return null;
+        }
+
+        private double ConverterParaDouble(object valorBruto)
+        {
+            if (valorBruto is double d) return d;
+            if (valorBruto is decimal dec) return (double)dec;
+            if (valorBruto is float f) return (double)f;
+            if (valorBruto is int i) return i;
+
+            string texto = valorBruto.ToString() ?? "0";
+            texto = texto.Replace("R$", "").Replace(" ", "").Trim();
+
+            if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
+                return valPt;
+            if (double.TryParse(texto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
+                return valInv;
+
+            return 0;
+        }
         private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
         {
             ModalValidacao.Visibility = Visibility.Collapsed;

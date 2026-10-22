@@ -1,29 +1,27 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using FavoStudio3D.Models;
 
 namespace FavoStudio3D.Data
 {
     public static class DadosNaMemoriaData
     {
-        // Usamos ObservableCollection para que a tela no WPF se atualize automaticamente quando um item for inserido ou removido
-        public static ObservableCollection<Filamento> Filamentos { get; set; } = new ObservableCollection<Filamento>();
-        public static ObservableCollection<CustoAdicional> Custos { get; set; } = new ObservableCollection<CustoAdicional>();
-
-        static DadosNaMemoriaData()
+        public static List<Filamento> Filamentos { get; set; } = new List<Filamento>
         {
-            // Carrega alguns dados de teste em memória ao iniciar o aplicativo
-            CarregarDadosExemplo();
-        }
+            new Filamento { Nome = "PLA Branco Premium", Tipo = "PLA", PrecoPorKg = 110.00m },
+            new Filamento { Nome = "PETG Preto Resistente", Tipo = "PETG", PrecoPorKg = 130.00m }
+        };
 
-        private static void CarregarDadosExemplo()
+        public static List<CustoAdicional> Custos { get; set; } = new List<CustoAdicional>
         {
-            // Filamentos Iniciais
-            Filamentos.Add(new Filamento { Id = 1, Nome = "PLA Branco", Tipo = "PLA", CorHex = "#FFFFFF", PrecoPorKg = 100.00m });
-            Filamentos.Add(new Filamento { Id = 2, Nome = "PETG Preto", Tipo = "PETG", CorHex = "#000000", PrecoPorKg = 120.00m });
+            new CustoAdicional { Descricao = "Embalagem / Caixas", Tipo = "Adicional", Valor = 5.00m },
+            new CustoAdicional { Descricao = "Energia Elétrica Base", Tipo = "Fixo", Valor = 150.00m }
+        };
 
-            // Custos Iniciais
-            Custos.Add(new CustoAdicional { Id = 1, Descricao = "Saco a vácuo", Valor = 135.00m, Tipo = "Custo Fixo" });
-            Custos.Add(new CustoAdicional { Id = 2, Descricao = "Lixas", Valor = 30.00m, Tipo = "Custo Adicional" });
-        }
+        // Nova lista de impressoras em memória
+        public static List<Impressora> Impressoras { get; set; } = new List<Impressora>
+        {
+            new Impressora { Nome = "Ender 3 V2", MarcaModelo = "Creality", ConsumoWatts = 350, CustoKwh = 0.85m, Status = "Ativa" },
+            new Impressora { Nome = "Bambu Lab X1-Carbon", MarcaModelo = "Bambu Lab", ConsumoWatts = 1000, CustoKwh = 0.85m, Status = "Ativa" }
+        };
     }
 }

@@ -36,6 +36,13 @@ namespace FavoStudio3D.Views
             InitializeComponent();
             DataContext = this;
 
+            // Alimenta a memória inicial de impressoras se estiver vazia
+            if (ImpressorasBancoDados.Count == 0)
+            {
+                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Ender 3", Modelo = "V2", NomeModelo = "Ender 3 V2", PotenciaFormatada = "350 W", CustoKwhFormatado = "R$ 0,85/kWh", Observacoes = "Principal" });
+                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Bambu Lab", Modelo = "X1-Carbon", NomeModelo = "Bambu Lab X1-Carbon", PotenciaFormatada = "1000 W", CustoKwhFormatado = "R$ 0,85/kWh", Observacoes = "Alta velocidade" });
+            }
+
             ImpressorasBancoDados.CollectionChanged += (s, e) => {
                 AplicarFiltro();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextoTotalImpressoras)));
@@ -45,14 +52,12 @@ namespace FavoStudio3D.Views
 
             this.Loaded += (s, e) =>
             {
-                // ==============================================================
-                // NOVA REGRA: Se não houver impressoras cadastradas, redireciona 
-                // automaticamente para a tela de Cadastro de Impressora.
-                // ==============================================================
+                // Como adicionamos itens acima, a contagem não será zero, 
+                // então ela vai carregar o resumo bonitinho em vez de redirecionar direto.
                 if (ImpressorasBancoDados.Count == 0)
                 {
                     MudarDeTela(new CadastroImpressoraView());
-                    return; // Para a execução aqui para não carregar o resto da tela
+                    return;
                 }
 
                 AtualizarSubtituloDashboard();
