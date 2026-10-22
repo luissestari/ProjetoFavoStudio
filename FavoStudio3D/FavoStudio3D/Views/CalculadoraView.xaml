@@ -32,11 +32,10 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- Margem superior ligeiramente reduzida para ganhar espaço no ecrã -->
-        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="40,10,0,15">
+        <!-- Margens seguras para garantir que nada sai do ecrã -->
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="40,15,0,15">
 
-            <!-- PADDING INTERNO REDUZIDO: 30 nas laterais, 20 em cima e em baixo -->
-            <Border Width="920" CornerRadius="20" Padding="30,20,30,20" VerticalAlignment="Stretch">
+            <Border Width="920" CornerRadius="20" Padding="35,25" VerticalAlignment="Stretch">
                 <Border.Background>
                     <SolidColorBrush Color="White" Opacity="0.75"/>
                 </Border.Background>
@@ -51,12 +50,14 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
-                        <!-- Empurra os botões para o fundo, se houver espaço -->
+                        <!-- Mola natural que mantém os botões no fundo -->
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- LINHA 0: NOME E DESCRIÇÃO -->
+                    <!-- ========================================== -->
+                    <!-- LINHA 0: NOME E DESCRIÇÃO                  -->
+                    <!-- ========================================== -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -65,12 +66,12 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
+                            <!-- Nome do Produto -->
                             <StackPanel Margin="0,0,0,10">
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,4">
                                     Nome do produto <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
-                                <!-- Altura dos inputs ajustada para 34 -->
-                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="34" Padding="12,0">
+                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="36" Padding="12,0">
                                     <Grid>
                                         <TextBlock Text="Ex: Chaveiro Favo" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False">
                                             <TextBlock.Style>
@@ -89,10 +90,10 @@
                                 </Border>
                             </StackPanel>
 
+                            <!-- Descrição -->
                             <StackPanel>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,4">Descrição</TextBlock>
-                                <!-- Altura da Descrição bastante reduzida (de 72 para 55) para poupar espaço -->
-                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="55" Padding="12,6">
+                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="8" Background="White" Height="76" Padding="12,6">
                                     <Grid>
                                         <TextBlock Text="Descreva seu produto..." Foreground="#A99F96" FontSize="12" VerticalAlignment="Top" IsHitTestVisible="False">
                                             <TextBlock.Style>
@@ -112,24 +113,25 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Box de Imagem reduzida (Height 110) -->
-                        <Grid Grid.Column="2" Cursor="Hand" Height="110" Width="200" VerticalAlignment="Bottom">
+                        <!-- Box de Imagem -->
+                        <Grid Grid.Column="2" Cursor="Hand" Height="135" Width="200" VerticalAlignment="Bottom">
                             <Rectangle Stroke="#C7BCAE" StrokeThickness="1.5" StrokeDashArray="4 4" RadiusX="12" RadiusY="12" Fill="#FFFBF5"/>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Image Source="/Assets/Images/IconeUploadImagem.png" Height="36" Margin="0,0,0,6" Stretch="Uniform"/>
+                                <Image Source="/Assets/Images/IconeUploadImagem.png" Height="40" Margin="0,0,0,8" Stretch="Uniform"/>
                                 <TextBlock Text="Adicionar imagem" FontSize="13" FontWeight="Bold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,2"/>
                                 <TextBlock Text="PNG, JPG OU WEBP (máx. 5 MB)" FontSize="9" Foreground="#A99F96" TextAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
 
-                    <!-- Margem das divisórias reduzida -->
-                    <Rectangle Grid.Row="1" Height="1" Fill="#EADCC9" Margin="0,10,0,10"/>
+                    <Rectangle Grid.Row="1" Height="1" Fill="#EADCC9" Margin="0,15,0,10"/>
 
-                    <!-- LINHA 2: TÍTULO PARÂMETROS -->
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
-                        <Border Width="36" Height="36" CornerRadius="18" Background="#F4DDB5" Margin="0,0,10,0">
-                            <Image Source="/Assets/Images/IconeParametros.png" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <!-- ========================================== -->
+                    <!-- LINHA 2: TÍTULO PARÂMETROS                 -->
+                    <!-- ========================================== -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,15">
+                        <Border Width="40" Height="40" CornerRadius="19" Background="#F4DDB5" Margin="0,0,10,0">
+                            <Image Source="/Assets/Images/IconeParametros.png" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Parâmetros de cálculo" FontSize="15" FontWeight="Bold" Foreground="#3E2723"/>
@@ -137,7 +139,9 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- LINHA 3: CAMPOS DE CÁLCULO -->
+                    <!-- ========================================== -->
+                    <!-- LINHA 3: CAMPOS DE CÁLCULO ALINHADOS       -->
+                    <!-- ========================================== -->
                     <Grid Grid.Row="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -146,30 +150,29 @@
                             <ColumnDefinition Width="15"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <!-- Espaçamento entre as linhas de cálculo reduzido para 8 -->
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="8"/>
+                            <!-- Linha A -->
+                            <RowDefinition Height="12"/>
+                            <!-- Espaçador -->
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="8"/>
+                            <!-- Linha B -->
+                            <RowDefinition Height="12"/>
+                            <!-- Espaçador -->
                             <RowDefinition Height="Auto"/>
+                            <!-- Linha C -->
                         </Grid.RowDefinitions>
 
                         <!-- ================= LINHA A ================= -->
-                        <Grid Grid.Row="0" Grid.Column="0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <!-- Filamento -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeFilamentoForm.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Filamento <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <!-- Altura do input 34 -->
-                            <ToggleButton x:Name="BtnAbrirFilamento" Grid.Row="1" Height="34" Cursor="Hand">
+                            <ToggleButton x:Name="BtnAbrirFilamento" Height="36" Cursor="Hand">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Padding="10,0">
@@ -202,23 +205,17 @@
                                     </ListBox>
                                 </Border>
                             </Popup>
-                            <!-- Reserva das tags (reduzida para 24) -->
-                            <Border Grid.Row="2" MinHeight="24" Margin="0,4,0,0"/>
-                        </Grid>
+                        </StackPanel>
 
-                        <Grid Grid.Row="0" Grid.Column="2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <!-- Impressora -->
+                        <StackPanel Grid.Row="0" Grid.Column="2" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeImpressoraForm.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Tipo de impressora <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <ToggleButton x:Name="BtnAbrirImpressora" Grid.Row="1" Height="34" Cursor="Hand">
+                            <ToggleButton x:Name="BtnAbrirImpressora" Height="36" Cursor="Hand">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Padding="10,0">
@@ -251,22 +248,17 @@
                                     </ListBox>
                                 </Border>
                             </Popup>
-                            <Border Grid.Row="2" MinHeight="24" Margin="0,4,0,0"/>
-                        </Grid>
+                        </StackPanel>
 
-                        <Grid Grid.Row="0" Grid.Column="4">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <!-- Custos Adicionais + TAGS DINÂMICAS -->
+                        <StackPanel Grid.Row="0" Grid.Column="4" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeCustoAdicional.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Custo adicional (R$)
                                 </TextBlock>
                             </StackPanel>
-                            <ToggleButton x:Name="BtnAbrirCustosAdicionais" Grid.Row="1" Height="34" Cursor="Hand">
+                            <ToggleButton x:Name="BtnAbrirCustosAdicionais" Height="36" Cursor="Hand">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Padding="10,0">
@@ -302,6 +294,7 @@
                                                         <TextBlock Text="{Binding Valor, StringFormat=R$ \{0:N2\}}" Foreground="#A99F96" FontSize="11" VerticalAlignment="Center"/>
                                                     </StackPanel>
 
+                                                    <!-- CHECK VISUAL -->
                                                     <TextBlock Grid.Column="1" Text="✔" Foreground="#4CAF50" FontWeight="Bold" FontSize="14" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="{Binding CheckVisivel, FallbackValue=Collapsed}"/>
                                                 </Grid>
                                             </DataTemplate>
@@ -309,19 +302,20 @@
                                     </ListBox>
                                 </Border>
                             </Popup>
-                            <!-- WrapPanel de tags com altura ajustada -->
-                            <WrapPanel x:Name="PainelTagsCustos" Grid.Row="2" Margin="0,4,0,0" MinHeight="24"/>
-                        </Grid>
+
+                            <!-- Container livre para crescer APENAS quando há itens -->
+                            <WrapPanel x:Name="PainelTagsCustos" Margin="0,5,0,0"/>
+                        </StackPanel>
 
                         <!-- ================= LINHA B ================= -->
-                        <StackPanel Grid.Row="2" Grid.Column="0">
+                        <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconePeso.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Peso da peça (g) <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="34" Padding="10,0">
+                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="36" Padding="10,0">
                                 <Grid>
                                     <TextBlock Text="Ex: 50" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False">
                                         <TextBlock.Style>
@@ -340,7 +334,7 @@
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="2" Grid.Column="2">
+                        <StackPanel Grid.Row="2" Grid.Column="2" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeTempo.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
@@ -348,8 +342,8 @@
                                 </TextBlock>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <!-- HORAS -->
-                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Height="34" Width="100" Margin="0,0,15,0">
+                                <!-- BLOCO HORAS -->
+                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Height="36" Width="100" Margin="0,0,15,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -378,8 +372,8 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- MINUTOS -->
-                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Height="34" Width="110">
+                                <!-- BLOCO MINUTOS -->
+                                <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Height="36" Width="110">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -410,39 +404,39 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="2" Grid.Column="4">
+                        <StackPanel Grid.Row="2" Grid.Column="4" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeCustoFixo.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Custos fixos (R$) <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="#FFF6BE" Height="34" Padding="10,0">
+                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="#FFF6BE" Height="36" Padding="10,0">
                                 <TextBlock x:Name="TxtCustosFixos" Text="Calculado automaticamente" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
                             </Border>
                         </StackPanel>
 
                         <!-- ================= LINHA C ================= -->
-                        <StackPanel Grid.Row="4" Grid.Column="0">
+                        <StackPanel Grid.Row="4" Grid.Column="0" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeQuantidade.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Quantidade <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="34" Padding="10,0">
+                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="36" Padding="10,0">
                                 <TextBox x:Name="TxtQuantidade" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12" Text="1"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="4" Grid.Column="2">
+                        <StackPanel Grid.Row="4" Grid.Column="2" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeAcabamento.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Tipo de acabamento <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <ToggleButton x:Name="BtnAbrirAcabamento" Height="34" Cursor="Hand">
+                            <ToggleButton x:Name="BtnAbrirAcabamento" Height="36" Cursor="Hand">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Padding="10,0">
@@ -471,14 +465,14 @@
                             </Popup>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="4" Grid.Column="4">
+                        <StackPanel Grid.Row="4" Grid.Column="4" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Image Source="/Assets/Images/IconeMargem.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
                                     Margem de lucro (%) <Run Text="*" Foreground="#D32F2F"/>
                                 </TextBlock>
                             </StackPanel>
-                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="34" Padding="10,0">
+                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="36" Padding="10,0">
                                 <Grid>
                                     <TextBlock Text="Ex: 50" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False">
                                         <TextBlock.Style>
@@ -503,8 +497,7 @@
                     <Rectangle Grid.Row="5" Height="1" Fill="#EADCC9" Margin="0,10,0,10"/>
 
                     <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                        <!-- Altura do botão levemente reduzida para 38 -->
-                        <Button Width="130" Height="38" Margin="0,0,15,0" Cursor="Hand" Click="BtnLimpar_Click" BorderThickness="0" Background="Transparent">
+                        <Button Width="130" Height="40" Margin="0,0,15,0" Cursor="Hand" Click="BtnLimpar_Click" BorderThickness="0" Background="Transparent">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" CornerRadius="8">
@@ -517,7 +510,7 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Width="150" Height="38" Cursor="Hand" Click="BtnCalcular_Click" BorderThickness="0" Background="Transparent">
+                        <Button Width="150" Height="40" Cursor="Hand" Click="BtnCalcular_Click" BorderThickness="0" Background="Transparent">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="#EBB45D" CornerRadius="8">

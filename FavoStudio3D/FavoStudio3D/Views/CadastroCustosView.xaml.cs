@@ -1,5 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿// Substitua pelo seu namespace correto caso necessário
+using FavoStudio3D.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -98,7 +103,7 @@ namespace FavoStudio3D.Views
 
             TxtNome.Text = filamento.Nome;
             TxtTipo.Text = filamento.Tipo;
-            TxtPreco.Text = filamento.PrecoFormatado.Replace("R$", "").Trim();
+            TxtPreco.Text = filamento.PrecoFormatado?.Replace("R$", "").Trim();
 
             var corCorreta = ListaCores.FirstOrDefault(c => c.Hex.Equals(filamento.CorHex, System.StringComparison.OrdinalIgnoreCase));
             if (corCorreta != null)
@@ -107,7 +112,7 @@ namespace FavoStudio3D.Views
             }
             else
             {
-                var novaCor = new CorFilamento { Nome = "Cor Personalizada", Hex = filamento.CorHex, Borda = "Transparent", VisibilidadeExcluir = Visibility.Visible };
+                var novaCor = new CorFilamento { Nome = "Cor Personalizada", Hex = filamento.CorHex ?? "#FFFFFF", Borda = "Transparent", VisibilidadeExcluir = Visibility.Visible };
                 ListaCores.Add(novaCor);
                 CorSelecionada = novaCor;
             }
@@ -119,12 +124,12 @@ namespace FavoStudio3D.Views
             AtivarAbaCusto();
 
             TxtDescricaoCusto.Text = custo.Descricao;
-            TxtValorCusto.Text = custo.ValorFormatado.Replace("R$", "").Trim();
+            TxtValorCusto.Text = custo.ValorFormatado?.Replace("R$", "").Trim();
 
-            if (ListaTiposCusto.Contains(custo.Tipo))
-                TipoCustoSelecionado = custo.Tipo;
+            if (ListaTiposCusto.Contains(custo.Tipo ?? ""))
+                TipoCustoSelecionado = custo.Tipo ?? "";
             else
-                TipoCustoSelecionado = custo.Tipo;
+                TipoCustoSelecionado = custo.Tipo ?? "";
         }
 
         // ==========================================
@@ -293,7 +298,6 @@ namespace FavoStudio3D.Views
             // ==============================================================
             if (VisibilidadeFilamento == Visibility.Visible)
             {
-                // Se a aba filamento estiver visível, valida os campos de filamento
                 if (string.IsNullOrWhiteSpace(TxtNome.Text) ||
                     string.IsNullOrWhiteSpace(TxtTipo.Text) ||
                     string.IsNullOrWhiteSpace(TxtPreco.Text))
@@ -304,7 +308,6 @@ namespace FavoStudio3D.Views
             }
             else
             {
-                // Se a aba custo estiver visível, valida os campos de custo
                 if (string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ||
                     string.IsNullOrWhiteSpace(TxtValorCusto.Text))
                 {
@@ -315,39 +318,55 @@ namespace FavoStudio3D.Views
 
             if (VisibilidadeFilamento == Visibility.Visible)
             {
+                // CONVERSÃO SEGURA DE PREÇO (FILAMENTO)
+                string textoPreco = TxtPreco.Text.Replace("R$", "").Replace(" ", "").Trim();
+                textoPreco = textoPreco.Replace(",", ".");
+                double.TryParse(textoPreco, NumberStyles.Any, CultureInfo.InvariantCulture, out double precoFilamento);
+
+                // Formata de volta para o padrão limpo (Ex: 12,50)
+                string precoFinalFormatado = precoFilamento.ToString("N2", new CultureInfo("pt-BR"));
+
                 var filamentoAtualizado = new FilamentoModel
                 {
                     Nome = TxtNome.Text,
                     Tipo = TxtTipo.Text,
                     CorHex = CorSelecionada.Hex,
-                    PrecoFormatado = "R$ " + TxtPreco.Text
+                    PrecoFormatado = "R$ " + precoFinalFormatado
                 };
 
-                if (_filamentoEmEdicao != null) // Atualizar existente
+                if (_filamentoEmEdicao != null)
                 {
                     int index = ResumoCustosMateriaisView.FilamentosBancoDados.IndexOf(_filamentoEmEdicao);
                     if (index >= 0) ResumoCustosMateriaisView.FilamentosBancoDados[index] = filamentoAtualizado;
                 }
-                else // Criar novo
+                else
                 {
                     ResumoCustosMateriaisView.FilamentosBancoDados.Add(filamentoAtualizado);
                 }
             }
             else
             {
+                // CONVERSÃO SEGURA DE VALOR (CUSTO)
+                string textoCusto = TxtValorCusto.Text.Replace("R$", "").Replace(" ", "").Trim();
+                textoCusto = textoCusto.Replace(",", ".");
+                double.TryParse(textoCusto, NumberStyles.Any, CultureInfo.InvariantCulture, out double valorCusto);
+
+                // Formata de volta para o padrão limpo (Ex: 12,50)
+                string valorFinalFormatado = valorCusto.ToString("N2", new CultureInfo("pt-BR"));
+
                 var custoAtualizado = new CustoModel
                 {
                     Descricao = TxtDescricaoCusto.Text,
-                    ValorFormatado = "R$ " + TxtValorCusto.Text,
+                    ValorFormatado = "R$ " + valorFinalFormatado,
                     Tipo = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado
                 };
 
-                if (_custoEmEdicao != null) // Atualizar existente
+                if (_custoEmEdicao != null)
                 {
                     int index = ResumoCustosMateriaisView.CustosBancoDados.IndexOf(_custoEmEdicao);
                     if (index >= 0) ResumoCustosMateriaisView.CustosBancoDados[index] = custoAtualizado;
                 }
-                else // Criar novo
+                else
                 {
                     ResumoCustosMateriaisView.CustosBancoDados.Add(custoAtualizado);
                 }
@@ -367,7 +386,6 @@ namespace FavoStudio3D.Views
             }
         }
 
-        // Função que fecha o modal de aviso quando o utilizador clica em OK (Posicionada na classe correta agora)
         private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
         {
             ModalValidacao.Visibility = Visibility.Collapsed;

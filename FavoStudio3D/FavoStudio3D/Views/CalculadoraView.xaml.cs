@@ -15,7 +15,9 @@ namespace FavoStudio3D.Views
 {
     public partial class CalculadoraView : UserControl
     {
-        // Implementação do INotifyPropertyChanged corrigida para evitar avisos CS8612 e CS8618
+        // VARIÁVEL DE BACKEND: Guarda a soma real dos custos fixos para usar no cálculo sem mostrar na UI
+        private double _totalCustosFixos = 0;
+
         public class CustoVisual : INotifyPropertyChanged
         {
             public dynamic? ItemOriginal { get; set; }
@@ -71,7 +73,6 @@ namespace FavoStudio3D.Views
                     string tipoCusto = "";
                     Type tipoDoObjeto = custo.GetType();
 
-                    // Adicionado o '?' (PropertyInfo?) para evitar o aviso CS8600
                     PropertyInfo? propInfo = tipoDoObjeto.GetProperty("Tipo") ??
                                              tipoDoObjeto.GetProperty("TipoCusto") ??
                                              tipoDoObjeto.GetProperty("Categoria");
@@ -82,25 +83,84 @@ namespace FavoStudio3D.Views
                         tipoCusto = valorEncontrado != null ? valorEncontrado.ToString() : "";
                     }
 
+                    // LEITURA BLINDADA DO VALOR: Procura ativamente por qualquer campo numérico
                     double val = 0;
                     try
                     {
-                        string valorTexto = tipoDoObjeto.GetProperty("Valor")?.GetValue(custo)?.ToString() ?? "0";
-                        valorTexto = valorTexto.Replace("R$", "").Trim();
-                        valorTexto = valorTexto.Replace(",", ".");
-                        val = Convert.ToDouble(valorTexto, CultureInfo.InvariantCulture);
+                        object? rawValue = null;
+
+                        // 1. Procura nas Propriedades (get; set;)
+                        foreach (var prop in tipoDoObjeto.GetProperties())
+                        {
+                            string pName = prop.Name.ToLower();
+                            if (pName.Contains("valor") || pName.Contains("preco") || pName.Contains("custo"))
+                            {
+                                rawValue = prop.GetValue(custo);
+                                break;
+                            }
+                        }
+
+                        // 2. Procura nos Campos comuns (caso não tenha get; set;)
+                        if (rawValue == null)
+                        {
+                            foreach (var field in tipoDoObjeto.GetFields())
+                            {
+                                string fName = field.Name.ToLower();
+                                if (fName.Contains("valor") || fName.Contains("preco") || fName.Contains("custo"))
+                                {
+                                    rawValue = field.GetValue(custo);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // 3. Força a conversão matemática independente do formato de origem
+                        if (rawValue != null)
+                        {
+                            if (rawValue is double d) val = d;
+                            else if (rawValue is decimal dec) val = (double)dec;
+                            else if (rawValue is float f) val = (double)f;
+                            else if (rawValue is int i) val = i;
+                            else
+                            {
+                                string valorTexto = rawValue.ToString() ?? "0";
+                                valorTexto = valorTexto.Replace("R$", "").Replace(" ", "").Trim();
+
+                                // Tenta ler como PT-BR (12,50) ou Universal (12.50)
+                                if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
+                                    val = valPt;
+                                else if (double.TryParse(valorTexto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
+                                    val = valInv;
+                            }
+                        }
                     }
                     catch { }
 
-                    // Valida de forma segura contra strings vazias antes de usar o IndexOf
+                    // LEITURA BLINDADA DA DESCRIÇÃO
+                    string desc = "Custo Adicional";
+                    try
+                    {
+                        object? rawDesc = null;
+                        foreach (var prop in tipoDoObjeto.GetProperties())
+                        {
+                            string pName = prop.Name.ToLower();
+                            if (pName.Contains("desc") || pName.Contains("nome"))
+                            {
+                                rawDesc = prop.GetValue(custo);
+                                break;
+                            }
+                        }
+                        if (rawDesc != null) desc = rawDesc.ToString() ?? desc;
+                    }
+                    catch { }
+
+                    // Filtra os custos Fixos e Adicionais
                     if (!string.IsNullOrEmpty(tipoCusto) && tipoCusto.IndexOf("Fixo", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         somatorioCustosFixos += val;
                     }
                     else
                     {
-                        string desc = tipoDoObjeto.GetProperty("Descricao")?.GetValue(custo)?.ToString() ?? "Custo";
-
                         custosDisponiveisVisuais.Add(new CustoVisual
                         {
                             ItemOriginal = custo,
@@ -113,12 +173,8 @@ namespace FavoStudio3D.Views
 
                 ListaCustosAdicionais.ItemsSource = custosDisponiveisVisuais;
 
-                if (somatorioCustosFixos > 0)
-                {
-                    TxtCustosFixos.Text = $"R$ {somatorioCustosFixos:N2}";
-                    TxtCustosFixos.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3E2723"));
-                    TxtCustosFixos.FontWeight = FontWeights.Bold;
-                }
+                // GUARDA O VALOR PARA CÁLCULO, MAS MANTÉM A UI INTACTA ("Calculado automaticamente")
+                _totalCustosFixos = somatorioCustosFixos;
             }
         }
 
@@ -291,6 +347,9 @@ namespace FavoStudio3D.Views
                 ModalValidacao.Visibility = Visibility.Visible;
                 return;
             }
+
+            // Exemplo de como você vai usar o valor do backend na hora do cálculo real:
+            // double somaDosFixos = _totalCustosFixos;
 
             MessageBox.Show("Cálculo efetuado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
         }
