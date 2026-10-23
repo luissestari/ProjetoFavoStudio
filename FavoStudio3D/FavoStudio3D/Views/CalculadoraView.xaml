@@ -113,10 +113,15 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Box de Imagem -->
-                        <Grid Grid.Column="2" Cursor="Hand" Height="135" Width="200" VerticalAlignment="Bottom">
+                        <!-- Box de Imagem Clicável -->
+                        <Grid Grid.Column="2" Cursor="Hand" Height="135" Width="200" VerticalAlignment="Bottom" MouseLeftButtonDown="BoxImagem_MouseLeftButtonDown">
                             <Rectangle Stroke="#C7BCAE" StrokeThickness="1.5" StrokeDashArray="4 4" RadiusX="12" RadiusY="12" Fill="#FFFBF5"/>
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                            <!-- Imagem de Pré-visualização -->
+                            <Image x:Name="ImgProdutoPreview" Stretch="UniformToFill"/>
+
+                            <!-- Textos e Ícone padrão -->
+                            <StackPanel x:Name="PainelPlaceholderImagem" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Image Source="/Assets/Images/IconeUploadImagem.png" Height="40" Margin="0,0,0,8" Stretch="Uniform"/>
                                 <TextBlock Text="Adicionar imagem" FontSize="13" FontWeight="Bold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,2"/>
                                 <TextBlock Text="PNG, JPG OU WEBP (máx. 5 MB)" FontSize="9" Foreground="#A99F96" TextAlignment="Center"/>

@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Globalization;
+using Microsoft.Win32; 
+using System.Windows.Media.Imaging;
 
 // Substitua pelo seu namespace correto caso necessário
 using FavoStudio3D.Models;
@@ -329,6 +331,29 @@ namespace FavoStudio3D.Views
             ListaAcabamento.SelectedItem = null;
         }
 
+        private void BtnAdicionarImagem_Click(object sender, RoutedEventArgs e)
+        {
+            // Cria a janela de diálogo para escolher o arquivo
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Filtra apenas para os formatos de imagem aceitos
+            openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
+            openFileDialog.Title = "Selecione a imagem do produto 3D";
+
+            // Se o usuário selecionar uma imagem e clicar em "Abrir"
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string caminhoCompleto = openFileDialog.FileName;
+
+                // Opcional: Se você tiver um controle Image na tela chamado 'ImgProduto' para mostrar a pré-visualização:
+                // ImgProduto.Source = new BitmapImage(new Uri(caminhoCompleto));
+
+                // Aqui você também pode guardar o caminho 'caminhoCompleto' numa variável 
+                // ou no modelo do produto para salvar no banco/histórico depois!
+                MessageBox.Show($"Imagem selecionada com sucesso:\n{caminhoCompleto}", "Arquivo Carregado", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         private void BtnCalcular_Click(object sender, RoutedEventArgs e)
         {
             var txtFilamento = BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) as TextBlock;
@@ -352,7 +377,7 @@ namespace FavoStudio3D.Views
             {
                 // 1. Obter dados do Filamento selecionado
                 dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
-                double precoKgFilamento = 100.0; // Valor padrão de segurança
+                double precoKgFilamento = 100.0;
                 if (filamentoEscolhido != null)
                 {
                     object? rawPreco = ObterValorDeObjeto(filamentoEscolhido, "preco", "valor");
@@ -361,8 +386,8 @@ namespace FavoStudio3D.Views
 
                 // 2. Obter dados da Impressora selecionada
                 dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
-                double potenciaWatts = 350.0; // Padrão
-                double custoKwh = 0.85;      // Padrão
+                double potenciaWatts = 350.0;
+                double custoKwh = 0.85;
                 if (impressoraEscolhida != null)
                 {
                     object? rawPotencia = ObterValorDeObjeto(impressoraEscolhida, "potencia", "consumo", "watts");
@@ -372,38 +397,48 @@ namespace FavoStudio3D.Views
                     if (rawKwh != null) custoKwh = ConverterParaDouble(rawKwh);
                 }
 
-                // 3. Ler entradas do usuário com segurança (aceitando ponto e vírgula)
+                // 3. Ler entradas do usuário com segurança
                 double.TryParse(TxtPeso.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double pesoGramas);
                 double.TryParse(TxtHoras.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horas);
                 double.TryParse(TxtMinutos.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutos);
                 int.TryParse(TxtQuantidade.Text, out int quantidade);
-                if (quantidade <= 1) quantidade = 1;
+                if (quantidade <= 0) quantidade = 1;
                 double.TryParse(TxtMargem.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double margemLucro);
 
-                // 4. Executar os cálculos
+                // Tempo total de impressão em horas
                 double tempoTotalHoras = horas + (minutos / 60.0);
-                double custoFilamento = (pesoGramas / 1000.0) * precoKgFilamento;
-                double custoEnergia = tempoTotalHoras * (potenciaWatts / 1000.0) * custoKwh;
 
-                // Somar custos adicionais selecionados na UI
-                double somaCustosAdicionais = 0;
+                // 4. Seguindo estritamente a lógica da planilha:
+                // Custo do Filamento por peça = (Preço do Kg * Peso em gramas) / 1000
+                double custoFilamentoUnitario = (precoKgFilamento * pesoGramas) / 1000.0;
+
+                // Custo de Energia por peça = (Potência em kW * Custo do kWh) * Horas de impressão
+                double custoEnergiaPorHora = (potenciaWatts / 1000.0) * custoKwh;
+                double custoEnergiaUnitario = custoEnergiaPorHora * tempoTotalHoras;
+
+                // Soma dos custos adicionais / frete selecionados
+                double custosAdicionaisUnitarios = 0;
                 foreach (var c in custosSelecionados)
                 {
-                    somaCustosAdicionais += c.Valor;
+                    custosAdicionaisUnitarios += c.Valor;
                 }
 
-                // Custo Unitário Total = Filamento + Energia + Adicionais Selecionados
-                double custoUnitarioTotal = custoFilamento + custoEnergia + somaCustosAdicionais;
+                // Custo de Produção por Unidade (Base fixa da peça)
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custosAdicionaisUnitarios;
 
-                // Preço de Venda com base na Margem de Lucro (%)
+                // Preço de Venda Sugerido por Unidade
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
-                double precoTotalLote = precoVendaUnitario * quantidade;
 
-                // Exibir resultado detalhado
+                // Multiplicando pelo total da Quantidade do lote (E3 da planilha)
+                double custoTotalLote = custoUnitarioTotal * quantidade;
+                double valorTotalLote = precoVendaUnitario * quantidade;
+
+                // 5. Exibir resultado detalhado
                 string mensagemResultado = $"Produto: {TxtNomeProduto.Text}\n" +
+                                           $"Quantidade: {quantidade} un.\n" +
                                            $"Custo de Produção (Unit.): R$ {custoUnitarioTotal:N2}\n" +
-                                           $"Preço de Venda Sugerido (Unit.): R$ {precoVendaUnitario:N2}\n" +
-                                           $"Valor Total para {quantidade} un.: R$ {precoTotalLote:N2}";
+                                           $"Preço de Venda (Unit.): R$ {precoVendaUnitario:N2}\n" +
+                                           $"Valor Total do Lote: R$ {valorTotalLote:N2}";
 
                 MessageBox.Show(mensagemResultado, "Cálculo Efetuado com Sucesso! 🚀", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -449,6 +484,38 @@ namespace FavoStudio3D.Views
         private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
         {
             ModalValidacao.Visibility = Visibility.Collapsed;
+        }
+
+        private void BoxImagem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
+            openFileDialog.Title = "Selecione a imagem do produto 3D";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string caminhoCompleto = openFileDialog.FileName;
+
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(caminhoCompleto);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    ImgProdutoPreview.Source = bitmap;
+
+                    if (PainelPlaceholderImagem != null)
+                    {
+                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

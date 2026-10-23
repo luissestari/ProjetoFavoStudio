@@ -139,11 +139,18 @@ namespace FavoStudio3D.Views
         private void BotaoMenuImpressora_Click(object sender, MouseButtonEventArgs e)
         {
             AtivarBotaoMenu(MenuImpressoraBorder, MenuImpressoraTexto);
-
             TextoTituloPagina.Text = "Impressoras";
             TextoSubtituloPagina.Text = "Cadastre e gerencie as impressoras utilizadas na produção.";
 
-            AreaConteudo.Content = new ImpressorasView(); // Ou ResumoImpressorasView, dependendo do estado
+            // Verifica se já existem impressoras cadastradas
+            if (ResumoImpressorasView.ImpressorasBancoDados != null && ResumoImpressorasView.ImpressorasBancoDados.Count > 0)
+            {
+                AreaConteudo.Content = new ResumoImpressorasView();
+            }
+            else
+            {
+                AreaConteudo.Content = new ImpressorasView();
+            }
         }
     }
 }

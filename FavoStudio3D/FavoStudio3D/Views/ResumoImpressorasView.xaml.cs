@@ -39,8 +39,8 @@ namespace FavoStudio3D.Views
             // Alimenta a memória inicial de impressoras se estiver vazia
             if (ImpressorasBancoDados.Count == 0)
             {
-                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Ender 3", Modelo = "V2", NomeModelo = "Ender 3 V2", PotenciaFormatada = "350 W", CustoKwhFormatado = "R$ 0,85/kWh", Observacoes = "Principal" });
-                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Bambu Lab", Modelo = "X1-Carbon", NomeModelo = "Bambu Lab X1-Carbon", PotenciaFormatada = "1000 W", CustoKwhFormatado = "R$ 0,85/kWh", Observacoes = "Alta velocidade" });
+                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Ender 3", Modelo = "V2", NomeModelo = "Ender 3 V2", PotenciaFormatada = "350 W", CustoKwhFormatado = "R$ 0,85/kWh" });
+                ImpressorasBancoDados.Add(new ImpressoraModel { Nome = "Bambu Lab", Modelo = "X1-Carbon", NomeModelo = "Bambu Lab X1-Carbon", PotenciaFormatada = "1000 W", CustoKwhFormatado = "R$ 0,85/kWh" });
             }
 
             ImpressorasBancoDados.CollectionChanged += (s, e) => {
@@ -52,24 +52,8 @@ namespace FavoStudio3D.Views
 
             this.Loaded += (s, e) =>
             {
-                // Como adicionamos itens acima, a contagem não será zero, 
-                // então ela vai carregar o resumo bonitinho em vez de redirecionar direto.
-                if (ImpressorasBancoDados.Count == 0)
-                {
-                    MudarDeTela(new CadastroImpressoraView());
-                    return;
-                }
-
-                AtualizarSubtituloDashboard();
+                AplicarFiltro();
             };
-        }
-
-        private void AtualizarSubtituloDashboard()
-        {
-            if (Window.GetWindow(this) is DashboardWindow dashboard)
-            {
-                dashboard.TextoSubtituloPagina.Text = "Cadastre e gerencie as impressoras utilizadas na produção.";
-            }
         }
 
         private void AplicarFiltro()
