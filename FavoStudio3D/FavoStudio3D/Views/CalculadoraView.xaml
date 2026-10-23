@@ -436,38 +436,28 @@
 
                         <StackPanel Grid.Row="4" Grid.Column="2" VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                                <Image Source="/Assets/Images/IconeAcabamento.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <Image Source="/Assets/Images/IconeFrete.png" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                 <TextBlock FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center">
-                                    Tipo de acabamento <Run Text="*" Foreground="#D32F2F"/>
+                                    Frete (R$)
                                 </TextBlock>
                             </StackPanel>
-                            <ToggleButton x:Name="BtnAbrirAcabamento" Height="36" Cursor="Hand">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Padding="10,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock x:Name="TxtAcabamentoSelecionado" Text="Selecione o acabamento" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center"/>
-                                                <Image Grid.Column="1" Source="/Assets/Images/IconeSetaDropdown.png" Height="12" Width="12" Stretch="Uniform" VerticalAlignment="Center" Opacity="0.5"/>
-                                            </Grid>
-                                        </Border>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                            <Popup IsOpen="{Binding IsChecked, ElementName=BtnAbrirAcabamento}" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnAbrirAcabamento}" Placement="Bottom" VerticalOffset="2" AllowsTransparency="True">
-                                <Border Background="White" CornerRadius="6" Padding="5" Margin="5" Width="260" BorderBrush="#EADCC9" BorderThickness="1">
-                                    <Border.Effect>
-                                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.10" ShadowDepth="2"/>
-                                    </Border.Effect>
-                                    <ListBox x:Name="ListaAcabamento" BorderThickness="0" Background="Transparent" SelectionChanged="ListaAcabamento_SelectionChanged" ItemContainerStyle="{StaticResource EstiloItemLista}">
-                                        <ListBoxItem Content="Brilhoso" Foreground="#3E2723" FontSize="12"/>
-                                        <ListBoxItem Content="Fosco" Foreground="#3E2723" FontSize="12"/>
-                                    </ListBox>
-                                </Border>
-                            </Popup>
+                            <Border BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Background="White" Height="36" Padding="10,0">
+                                <Grid>
+                                    <TextBlock Text="Ex: 15,00" Foreground="#A99F96" FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtFrete}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtFrete" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="12"/>
+                                </Grid>
+                            </Border>
                         </StackPanel>
 
                         <StackPanel Grid.Row="4" Grid.Column="4" VerticalAlignment="Top">
