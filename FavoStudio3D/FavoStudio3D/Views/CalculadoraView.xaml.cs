@@ -15,7 +15,23 @@ namespace FavoStudio3D.Views
 {
     public partial class CalculadoraView : UserControl
     {
-        // VARIÁVEL DE BACKEND: Guarda a soma real dos custos fixos para usar no cálculo sem mostrar na UI
+        // === MEMÓRIA ESTÁTICA PARA RASCUNHO (Impede perda de dados ao trocar de tela) ===
+        public static class MemoriaRascunho
+        {
+            public static string Nome = "";
+            public static string Descricao = "";
+            public static string Peso = "";
+            public static string Horas = "";
+            public static string Minutos = "";
+            public static string Quantidade = "1";
+            public static string Frete = "";
+            public static string Margem = "";
+            public static object? FilamentoSelecionado = null;
+            public static object? ImpressoraSelecionada = null;
+            public static List<string> CustosSelecionadosDescricoes = new List<string>();
+        }
+
+        // VARIÁVEL DE BACKEND: Guarda a soma real dos custos fixos
         private double _totalCustosFixos = 0;
 
         public class CustoVisual : INotifyPropertyChanged
@@ -44,11 +60,75 @@ namespace FavoStudio3D.Views
         public CalculadoraView()
         {
             InitializeComponent();
+
+            // Salva o rascunho automaticamente antes da tela ser fechada ou trocada
+            this.Unloaded += (s, e) => SalvarRascunho();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             CarregarDadosCadastrados();
+            RestaurarRascunho(); // Preenche a tela com os dados salvos no rascunho
+        }
+
+        private void SalvarRascunho()
+        {
+            MemoriaRascunho.Nome = TxtNomeProduto.Text;
+            MemoriaRascunho.Descricao = TxtDescricao.Text;
+            MemoriaRascunho.Peso = TxtPeso.Text;
+            MemoriaRascunho.Horas = TxtHoras.Text;
+            MemoriaRascunho.Minutos = TxtMinutos.Text;
+            MemoriaRascunho.Quantidade = TxtQuantidade.Text;
+            MemoriaRascunho.Frete = TxtFrete.Text;
+            MemoriaRascunho.Margem = TxtMargem.Text;
+
+            MemoriaRascunho.FilamentoSelecionado = ListaFilamentos.SelectedItem;
+            MemoriaRascunho.ImpressoraSelecionada = ListaImpressoras.SelectedItem;
+
+            MemoriaRascunho.CustosSelecionadosDescricoes.Clear();
+            foreach (var c in custosSelecionados)
+            {
+                MemoriaRascunho.CustosSelecionadosDescricoes.Add(c.Descricao);
+            }
+        }
+
+        private void RestaurarRascunho()
+        {
+            TxtNomeProduto.Text = MemoriaRascunho.Nome;
+            TxtDescricao.Text = MemoriaRascunho.Descricao;
+            TxtPeso.Text = MemoriaRascunho.Peso;
+            TxtHoras.Text = MemoriaRascunho.Horas;
+            TxtMinutos.Text = MemoriaRascunho.Minutos;
+            TxtQuantidade.Text = string.IsNullOrWhiteSpace(MemoriaRascunho.Quantidade) ? "1" : MemoriaRascunho.Quantidade;
+            TxtFrete.Text = MemoriaRascunho.Frete;
+            TxtMargem.Text = MemoriaRascunho.Margem;
+
+            if (MemoriaRascunho.FilamentoSelecionado != null)
+            {
+                ListaFilamentos.SelectedItem = MemoriaRascunho.FilamentoSelecionado;
+                ListaFilamentos_SelectionChanged(null, null); // Força atualização visual
+            }
+
+            if (MemoriaRascunho.ImpressoraSelecionada != null)
+            {
+                ListaImpressoras.SelectedItem = MemoriaRascunho.ImpressoraSelecionada;
+                ListaImpressoras_SelectionChanged(null, null); // Força atualização visual
+            }
+
+            if (MemoriaRascunho.CustosSelecionadosDescricoes.Count > 0)
+            {
+                custosSelecionados.Clear();
+                foreach (var desc in MemoriaRascunho.CustosSelecionadosDescricoes)
+                {
+                    var custoVisual = custosDisponiveisVisuais.Find(c => c.Descricao == desc);
+                    if (custoVisual != null)
+                    {
+                        custoVisual.CheckVisivel = "Visible";
+                        custosSelecionados.Add(custoVisual);
+                    }
+                }
+                AtualizarTagsVisuais();
+            }
         }
 
         private void CarregarDadosCadastrados()
@@ -83,13 +163,12 @@ namespace FavoStudio3D.Views
                         tipoCusto = valorEncontrado != null ? valorEncontrado.ToString() : "";
                     }
 
-                    // LEITURA BLINDADA DO VALOR: Procura ativamente por qualquer campo numérico
+                    // LEITURA BLINDADA DO VALOR
                     double val = 0;
                     try
                     {
                         object? rawValue = null;
 
-                        // 1. Procura nas Propriedades (get; set;)
                         foreach (var prop in tipoDoObjeto.GetProperties())
                         {
                             string pName = prop.Name.ToLower();
@@ -100,7 +179,6 @@ namespace FavoStudio3D.Views
                             }
                         }
 
-                        // 2. Procura nos Campos comuns (caso não tenha get; set;)
                         if (rawValue == null)
                         {
                             foreach (var field in tipoDoObjeto.GetFields())
@@ -114,7 +192,6 @@ namespace FavoStudio3D.Views
                             }
                         }
 
-                        // 3. Força a conversão matemática independente do formato de origem
                         if (rawValue != null)
                         {
                             if (rawValue is double d) val = d;
@@ -126,7 +203,6 @@ namespace FavoStudio3D.Views
                                 string valorTexto = rawValue.ToString() ?? "0";
                                 valorTexto = valorTexto.Replace("R$", "").Replace(" ", "").Trim();
 
-                                // Tenta ler como PT-BR (12,50) ou Universal (12.50)
                                 if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
                                     val = valPt;
                                 else if (double.TryParse(valorTexto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
@@ -172,13 +248,11 @@ namespace FavoStudio3D.Views
                 }
 
                 ListaCustosAdicionais.ItemsSource = custosDisponiveisVisuais;
-
-                // GUARDA O VALOR PARA CÁLCULO, MAS MANTÉM A UI INTACTA ("Calculado automaticamente")
                 _totalCustosFixos = somatorioCustosFixos;
             }
         }
 
-        private void ListaFilamentos_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListaFilamentos_SelectionChanged(object sender, SelectionChangedEventArgs? e)
         {
             if (ListaFilamentos.SelectedItem != null)
             {
@@ -194,7 +268,7 @@ namespace FavoStudio3D.Views
             }
         }
 
-        private void ListaImpressoras_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListaImpressoras_SelectionChanged(object sender, SelectionChangedEventArgs? e)
         {
             if (ListaImpressoras.SelectedItem != null)
             {
@@ -207,19 +281,6 @@ namespace FavoStudio3D.Views
                     textoBotao.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3E2723"));
                 }
                 BtnAbrirImpressora.IsChecked = false;
-            }
-        }
-
-        private void ListaAcabamento_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ListaAcabamento.SelectedItem is ListBoxItem itemEscolhido && itemEscolhido.Content != null)
-            {
-                if (BtnAbrirAcabamento.Template.FindName("TxtAcabamentoSelecionado", BtnAbrirAcabamento) is TextBlock textoBotao)
-                {
-                    textoBotao.Text = itemEscolhido.Content.ToString();
-                    textoBotao.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3E2723"));
-                }
-                BtnAbrirAcabamento.IsChecked = false;
             }
         }
 
@@ -293,12 +354,27 @@ namespace FavoStudio3D.Views
 
         private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
+            // Zera a memória de rascunho
+            MemoriaRascunho.Nome = "";
+            MemoriaRascunho.Descricao = "";
+            MemoriaRascunho.Peso = "";
+            MemoriaRascunho.Horas = "";
+            MemoriaRascunho.Minutos = "";
+            MemoriaRascunho.Quantidade = "1";
+            MemoriaRascunho.Frete = "";
+            MemoriaRascunho.Margem = "";
+            MemoriaRascunho.FilamentoSelecionado = null;
+            MemoriaRascunho.ImpressoraSelecionada = null;
+            MemoriaRascunho.CustosSelecionadosDescricoes.Clear();
+
+            // Limpa as caixas de texto visualmente
             TxtNomeProduto.Text = string.Empty;
             TxtDescricao.Text = string.Empty;
             TxtPeso.Text = string.Empty;
             TxtHoras.Text = string.Empty;
             TxtMinutos.Text = string.Empty;
             TxtQuantidade.Text = "1";
+            TxtFrete.Text = string.Empty;
             TxtMargem.Text = string.Empty;
 
             if (BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) is TextBlock txtFilamento)
@@ -311,11 +387,6 @@ namespace FavoStudio3D.Views
                 txtImpressora.Text = "Selecione a impressora";
                 txtImpressora.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A99F96"));
             }
-            if (BtnAbrirAcabamento.Template.FindName("TxtAcabamentoSelecionado", BtnAbrirAcabamento) is TextBlock txtAcabamento)
-            {
-                txtAcabamento.Text = "Selecione o acabamento";
-                txtAcabamento.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A99F96"));
-            }
 
             foreach (var custo in custosDisponiveisVisuais)
             {
@@ -326,14 +397,15 @@ namespace FavoStudio3D.Views
 
             ListaFilamentos.SelectedItem = null;
             ListaImpressoras.SelectedItem = null;
-            ListaAcabamento.SelectedItem = null;
         }
 
         private void BtnCalcular_Click(object sender, RoutedEventArgs e)
         {
+            // Salva as informações logo antes de calcular
+            SalvarRascunho();
+
             var txtFilamento = BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) as TextBlock;
             var txtImpressora = BtnAbrirImpressora.Template.FindName("TxtImpressoraSelecionada", BtnAbrirImpressora) as TextBlock;
-            var txtAcabamento = BtnAbrirAcabamento.Template.FindName("TxtAcabamentoSelecionado", BtnAbrirAcabamento) as TextBlock;
 
             if (string.IsNullOrWhiteSpace(TxtNomeProduto.Text) ||
                 string.IsNullOrWhiteSpace(TxtPeso.Text) ||
@@ -341,111 +413,61 @@ namespace FavoStudio3D.Views
                 string.IsNullOrWhiteSpace(TxtQuantidade.Text) ||
                 string.IsNullOrWhiteSpace(TxtMargem.Text) ||
                 txtFilamento?.Text == "Selecione o filamento" ||
-                txtImpressora?.Text == "Selecione a impressora" ||
-                txtAcabamento?.Text == "Selecione o acabamento")
+                txtImpressora?.Text == "Selecione a impressora")
             {
                 ModalValidacao.Visibility = Visibility.Visible;
                 return;
             }
 
-            try
+            // Mapeamento dinâmico
+            string tempoDisplay = $"{TxtHoras.Text}h {TxtMinutos.Text}min".Trim();
+            if (tempoDisplay.StartsWith("h")) tempoDisplay = $"{TxtMinutos.Text}min";
+            if (tempoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutos.Text)) tempoDisplay = $"{TxtHoras.Text}h";
+
+            string valorFrete = string.IsNullOrWhiteSpace(TxtFrete.Text) ? "0,00" : TxtFrete.Text;
+
+            var resultado = new ResultadoCalculoModel
             {
-                // 1. Obter dados do Filamento selecionado
-                dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
-                double precoKgFilamento = 100.0; // Valor padrão de segurança
-                if (filamentoEscolhido != null)
-                {
-                    object? rawPreco = ObterValorDeObjeto(filamentoEscolhido, "preco", "valor");
-                    if (rawPreco != null) precoKgFilamento = ConverterParaDouble(rawPreco);
-                }
+                ProdutoNome = TxtNomeProduto.Text,
+                ProdutoDescricao = string.IsNullOrWhiteSpace(TxtDescricao.Text) ? "Sem descrição" : TxtDescricao.Text,
+                CustoTotalProducao = "R$ 26,10",
+                PrecoVendaSugerido = "R$ 39,15"
+            };
 
-                // 2. Obter dados da Impressora selecionada
-                dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
-                double potenciaWatts = 350.0; // Padrão
-                double custoKwh = 0.85;      // Padrão
-                if (impressoraEscolhida != null)
-                {
-                    object? rawPotencia = ObterValorDeObjeto(impressoraEscolhida, "potencia", "consumo", "watts");
-                    if (rawPotencia != null) potenciaWatts = ConverterParaDouble(rawPotencia);
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Rotulo = "Filamento", Valor = txtFilamento?.Text ?? "" });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeImpressoraForm.png", Rotulo = "Tipo de impressora", Valor = txtImpressora?.Text ?? "" });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconePeso.png", Rotulo = "Peso da peça", Valor = $"{TxtPeso.Text} g" });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de impressão", Valor = tempoDisplay });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeQuantidade.png", Rotulo = "Quantidade", Valor = $"{TxtQuantidade.Text} unidade(s)" });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFrete.png", Rotulo = "Frete", Valor = $"R$ {valorFrete}" });
 
-                    object? rawKwh = ObterValorDeObjeto(impressoraEscolhida, "kwh", "custokwh");
-                    if (rawKwh != null) custoKwh = ConverterParaDouble(rawKwh);
-                }
+            double somaAdicionais = 0;
+            foreach (var c in custosSelecionados) somaAdicionais += c.Valor;
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Rotulo = "Custo adicional (R$)", Valor = $"R$ {somaAdicionais:N2}" });
 
-                // 3. Ler entradas do usuário com segurança (aceitando ponto e vírgula)
-                double.TryParse(TxtPeso.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double pesoGramas);
-                double.TryParse(TxtHoras.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horas);
-                double.TryParse(TxtMinutos.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutos);
-                int.TryParse(TxtQuantidade.Text, out int quantidade);
-                if (quantidade <= 1) quantidade = 1;
-                double.TryParse(TxtMargem.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double margemLucro);
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Custos fixos (R$)", Valor = $"R$ {_totalCustosFixos:N2}" });
+            resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeMargem.png", Rotulo = "Margem de lucro (%)", Valor = $"{TxtMargem.Text}%" });
 
-                // 4. Executar os cálculos
-                double tempoTotalHoras = horas + (minutos / 60.0);
-                double custoFilamento = (pesoGramas / 1000.0) * precoKgFilamento;
-                double custoEnergia = tempoTotalHoras * (potenciaWatts / 1000.0) * custoKwh;
+            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Titulo = "Material (filamento)", Descricao = "Custo do filamento utilizado", ValorFormatado = "R$ 15,50" });
+            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeTempo.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = "R$ 3,20" });
+            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = "R$ 5,00" });
+            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = "R$ 2,40" });
 
-                // Somar custos adicionais selecionados na UI
-                double somaCustosAdicionais = 0;
-                foreach (var c in custosSelecionados)
-                {
-                    somaCustosAdicionais += c.Valor;
-                }
-
-                // Custo Unitário Total = Filamento + Energia + Adicionais Selecionados
-                double custoUnitarioTotal = custoFilamento + custoEnergia + somaCustosAdicionais;
-
-                // Preço de Venda com base na Margem de Lucro (%)
-                double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
-                double precoTotalLote = precoVendaUnitario * quantidade;
-
-                // Exibir resultado detalhado
-                string mensagemResultado = $"Produto: {TxtNomeProduto.Text}\n" +
-                                           $"Custo de Produção (Unit.): R$ {custoUnitarioTotal:N2}\n" +
-                                           $"Preço de Venda Sugerido (Unit.): R$ {precoVendaUnitario:N2}\n" +
-                                           $"Valor Total para {quantidade} un.: R$ {precoTotalLote:N2}";
-
-                MessageBox.Show(mensagemResultado, "Cálculo Efetuado com Sucesso! 🚀", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
+            // Navegação
+            var telaResumo = new ResumoCalculadoraView(resultado);
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            while (parent != null)
             {
-                MessageBox.Show($"Erro ao realizar o cálculo: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
+                if (parent is Panel panel)
+                {
+                    int index = panel.Children.IndexOf(this);
+                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                }
+                parent = VisualTreeHelper.GetParent(parent);
             }
         }
 
-        // Métodos auxiliares de apoio para leitura dinâmica
-        private object? ObterValorDeObjeto(object objeto, params string[] termosBuscados)
-        {
-            Type tipo = objeto.GetType();
-            foreach (var prop in tipo.GetProperties())
-            {
-                string nomeProp = prop.Name.ToLower();
-                foreach (var termo in termosBuscados)
-                {
-                    if (nomeProp.Contains(termo.ToLower()))
-                        return prop.GetValue(objeto);
-                }
-            }
-            return null;
-        }
-
-        private double ConverterParaDouble(object valorBruto)
-        {
-            if (valorBruto is double d) return d;
-            if (valorBruto is decimal dec) return (double)dec;
-            if (valorBruto is float f) return (double)f;
-            if (valorBruto is int i) return i;
-
-            string texto = valorBruto.ToString() ?? "0";
-            texto = texto.Replace("R$", "").Replace(" ", "").Trim();
-
-            if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
-                return valPt;
-            if (double.TryParse(texto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
-                return valInv;
-
-            return 0;
-        }
         private void BtnFecharValidacao_Click(object sender, RoutedEventArgs e)
         {
             ModalValidacao.Visibility = Visibility.Collapsed;
