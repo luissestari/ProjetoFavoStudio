@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Globalization;
-using Microsoft.Win32; 
+using Microsoft.Win32;
 using System.Windows.Media.Imaging;
 
 // Substitua pelo seu namespace correto caso necessário
@@ -108,13 +108,13 @@ namespace FavoStudio3D.Views
             if (MemoriaRascunho.FilamentoSelecionado != null)
             {
                 ListaFilamentos.SelectedItem = MemoriaRascunho.FilamentoSelecionado;
-                ListaFilamentos_SelectionChanged(null, null); // Força atualização visual
+                ListaFilamentos_SelectionChanged(this, null!); // Força atualização visual
             }
 
             if (MemoriaRascunho.ImpressoraSelecionada != null)
             {
                 ListaImpressoras.SelectedItem = MemoriaRascunho.ImpressoraSelecionada;
-                ListaImpressoras_SelectionChanged(null, null); // Força atualização visual
+                ListaImpressoras_SelectionChanged(this, null!); // Força atualização visual
             }
 
             if (MemoriaRascunho.CustosSelecionadosDescricoes.Count > 0)
@@ -403,30 +403,54 @@ namespace FavoStudio3D.Views
 
         private void BtnAdicionarImagem_Click(object sender, RoutedEventArgs e)
         {
-            // Cria a janela de diálogo para escolher o arquivo
             OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            // Filtra apenas para os formatos de imagem aceitos
             openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
             openFileDialog.Title = "Selecione a imagem do produto 3D";
 
-            // Se o usuário selecionar uma imagem e clicar em "Abrir"
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string caminhoCompleto = openFileDialog.FileName;
+                MessageBox.Show($"Imagem selecionada com sucesso:\n{caminhoCompleto}", "Arquivo Carregado", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void BoxImagem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
+            openFileDialog.Title = "Selecione a imagem do produto 3D";
+
             if (openFileDialog.ShowDialog() == true)
             {
                 string caminhoCompleto = openFileDialog.FileName;
 
-                // Opcional: Se você tiver um controle Image na tela chamado 'ImgProduto' para mostrar a pré-visualização:
-                // ImgProduto.Source = new BitmapImage(new Uri(caminhoCompleto));
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(caminhoCompleto);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
 
-                // Aqui você também pode guardar o caminho 'caminhoCompleto' numa variável 
-                // ou no modelo do produto para salvar no banco/histórico depois!
-                MessageBox.Show($"Imagem selecionada com sucesso:\n{caminhoCompleto}", "Arquivo Carregado", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview)
+                    {
+                        ImgProdutoPreview.Source = bitmap;
+                    }
+
+                    if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem)
+                    {
+                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
         private void BtnCalcular_Click(object sender, RoutedEventArgs e)
         {
-            // Salva as informações logo antes de calcular
             SalvarRascunho();
 
             var txtFilamento = BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) as TextBlock;
@@ -476,58 +500,72 @@ namespace FavoStudio3D.Views
                 if (quantidade <= 0) quantidade = 1;
                 double.TryParse(TxtMargem.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double margemLucro);
 
+                string valorFrete = string.IsNullOrWhiteSpace(TxtFrete.Text) ? "0,00" : TxtFrete.Text;
+
                 // Tempo total de impressão em horas
                 double tempoTotalHoras = horas + (minutos / 60.0);
 
-                // 4. Seguindo estritamente a lógica da planilha:
-                // Custo do Filamento por peça = (Preço do Kg * Peso em gramas) / 1000
+                // 4. Lógica de cálculo
                 double custoFilamentoUnitario = (precoKgFilamento * pesoGramas) / 1000.0;
-
-                // Custo de Energia por peça = (Potência em kW * Custo do kWh) * Horas de impressão
                 double custoEnergiaPorHora = (potenciaWatts / 1000.0) * custoKwh;
                 double custoEnergiaUnitario = custoEnergiaPorHora * tempoTotalHoras;
 
-                // Soma dos custos adicionais / frete selecionados
                 double custosAdicionaisUnitarios = 0;
                 foreach (var c in custosSelecionados)
                 {
                     custosAdicionaisUnitarios += c.Valor;
                 }
 
-                // Custo de Produção por Unidade (Base fixa da peça)
-                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custosAdicionaisUnitarios;
-
-                // Preço de Venda Sugerido por Unidade
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
 
-                // Multiplicando pelo total da Quantidade do lote (E3 da planilha)
-                double custoTotalLote = custoUnitarioTotal * quantidade;
-                double valorTotalLote = precoVendaUnitario * quantidade;
-
-                // 5. Exibir resultado detalhado
-                string mensagemResultado = $"Produto: {TxtNomeProduto.Text}\n" +
-                                           $"Quantidade: {quantidade} un.\n" +
-                                           $"Custo de Produção (Unit.): R$ {custoUnitarioTotal:N2}\n" +
-                                           $"Preço de Venda (Unit.): R$ {precoVendaUnitario:N2}\n" +
-                                           $"Valor Total do Lote: R$ {valorTotalLote:N2}";
-
-            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Titulo = "Material (filamento)", Descricao = "Custo do filamento utilizado", ValorFormatado = "R$ 15,50" });
-            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeTempo.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = "R$ 3,20" });
-            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = "R$ 5,00" });
-            resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = "R$ 2,40" });
-
-            // Navegação
-            var telaResumo = new ResumoCalculadoraView(resultado);
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
-            while (parent != null)
-            {
-                if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
-                if (parent is Panel panel)
+                // Montar objeto de resultado para enviar para a tela de Resumo
+                var resultado = new ResultadoCalculoModel
                 {
-                    int index = panel.Children.IndexOf(this);
-                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                    ProdutoNome = TxtNomeProduto.Text,
+                    ProdutoDescricao = string.IsNullOrWhiteSpace(TxtDescricao.Text) ? "Sem descrição" : TxtDescricao.Text,
+                    CustoTotalProducao = $"R$ {custoUnitarioTotal:N2}",
+                    PrecoVendaSugerido = $"R$ {precoVendaUnitario:N2}"
+                };
+
+                string tempoDisplay = $"{TxtHoras.Text}h {TxtMinutos.Text}min".Trim();
+                if (tempoDisplay.StartsWith("h")) tempoDisplay = $"{TxtMinutos.Text}min";
+                if (tempoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutos.Text)) tempoDisplay = $"{TxtHoras.Text}h";
+
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Rotulo = "Filamento", Valor = txtFilamento?.Text ?? "" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeImpressoraForm.png", Rotulo = "Tipo de impressora", Valor = txtImpressora?.Text ?? "" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconePeso.png", Rotulo = "Peso da peça", Valor = $"{pesoGramas} g" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de impressão", Valor = tempoDisplay });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeQuantidade.png", Rotulo = "Quantidade", Valor = $"{quantidade} unidade(s)" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFrete.png", Rotulo = "Frete", Valor = $"R$ {valorFrete}" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Rotulo = "Custo adicional (R$)", Valor = $"R$ {custosAdicionaisUnitarios:N2}" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Custos fixos (R$)", Valor = $"R$ {_totalCustosFixos:N2}" });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeMargem.png", Rotulo = "Margem de lucro (%)", Valor = $"{margemLucro}%" });
+
+                // Alimenta a lista da direita com os valores REAIS calculados acima
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Titulo = "Material (filamento)", Descricao = "Custo do filamento utilizado", ValorFormatado = $"R$ {custoFilamentoUnitario:N2}" });
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeTempo.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = $"R$ {custoEnergiaUnitario:N2}" });
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Titulo = "Custos Fixos da Produção", Descricao = "Base de custo alocada na peça", ValorFormatado = $"R$ {_totalCustosFixos:N2}" });
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
+
+                // Navegação
+                var telaResumo = new ResumoCalculadoraView(resultado);
+                DependencyObject parent = VisualTreeHelper.GetParent(this);
+                while (parent != null)
+                {
+                    if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
+                    if (parent is Panel panel)
+                    {
+                        int index = panel.Children.IndexOf(this);
+                        if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                    }
+                    parent = VisualTreeHelper.GetParent(parent);
                 }
-                parent = VisualTreeHelper.GetParent(parent);
+            }
+            // AQUI ESTÁ O BLOCO CATCH QUE FALTAVA
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocorreu um erro ao calcular: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -536,36 +574,38 @@ namespace FavoStudio3D.Views
             ModalValidacao.Visibility = Visibility.Collapsed;
         }
 
-        private void BoxImagem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // AQUI ESTÃO OS MÉTODOS AUXILIARES QUE TINHAM SUMIDO
+        private object? ObterValorDeObjeto(object objeto, params string[] termosBuscados)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
-            openFileDialog.Title = "Selecione a imagem do produto 3D";
-
-            if (openFileDialog.ShowDialog() == true)
+            Type tipo = objeto.GetType();
+            foreach (var prop in tipo.GetProperties())
             {
-                string caminhoCompleto = openFileDialog.FileName;
-
-                try
+                string nomeProp = prop.Name.ToLower();
+                foreach (var termo in termosBuscados)
                 {
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(caminhoCompleto);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-
-                    ImgProdutoPreview.Source = bitmap;
-
-                    if (PainelPlaceholderImagem != null)
-                    {
-                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (nomeProp.Contains(termo.ToLower()))
+                        return prop.GetValue(objeto);
                 }
             }
+            return null;
+        }
+
+        private double ConverterParaDouble(object valorBruto)
+        {
+            if (valorBruto is double d) return d;
+            if (valorBruto is decimal dec) return (double)dec;
+            if (valorBruto is float f) return (double)f;
+            if (valorBruto is int i) return i;
+
+            string texto = valorBruto.ToString() ?? "0";
+            texto = texto.Replace("R$", "").Replace(" ", "").Trim();
+
+            if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
+                return valPt;
+            if (double.TryParse(texto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
+                return valInv;
+
+            return 0;
         }
     }
 }
