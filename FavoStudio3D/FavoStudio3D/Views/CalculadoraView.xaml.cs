@@ -31,6 +31,7 @@ namespace FavoStudio3D.Views
             public static object? FilamentoSelecionado = null;
             public static object? ImpressoraSelecionada = null;
             public static List<string> CustosSelecionadosDescricoes = new List<string>();
+            public static string CaminhoImagem = "";
         }
 
         // VARIÁVEL DE BACKEND: Guarda a soma real dos custos fixos
@@ -492,7 +493,7 @@ namespace FavoStudio3D.Views
                     if (rawKwh != null) custoKwh = ConverterParaDouble(rawKwh);
                 }
 
-                // 3. Ler entradas do usuário com segurança
+                // 3. Ler entradas numéricas principais
                 double.TryParse(TxtPeso.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double pesoGramas);
                 double.TryParse(TxtHoras.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horas);
                 double.TryParse(TxtMinutos.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutos);
@@ -502,50 +503,76 @@ namespace FavoStudio3D.Views
 
                 string valorFrete = string.IsNullOrWhiteSpace(TxtFrete.Text) ? "0,00" : TxtFrete.Text;
 
-                // Tempo total de impressão em horas
-                double tempoTotalHoras = horas + (minutos / 60.0);
+                // 4. Ler entradas numéricas de Mão de Obra
+                double.TryParse(TxtValorHora.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valorHoraTrabalho);
+                double.TryParse(TxtHorasMaoDeObra.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horasMao);
+                double.TryParse(TxtMinutosMaoDeObra.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutosMao);
 
-                // 4. Lógica de cálculo
+                // 5. Cálculos de Tempo
+                double tempoImpressaoHoras = horas + (minutos / 60.0);
+                double tempoMaoDeObraHoras = horasMao + (minutosMao / 60.0);
+
+                // 6. Lógica de custos unitários
                 double custoFilamentoUnitario = (precoKgFilamento * pesoGramas) / 1000.0;
                 double custoEnergiaPorHora = (potenciaWatts / 1000.0) * custoKwh;
-                double custoEnergiaUnitario = custoEnergiaPorHora * tempoTotalHoras;
+                double custoEnergiaUnitario = custoEnergiaPorHora * tempoImpressaoHoras;
+                double custoMaoDeObraUnitario = valorHoraTrabalho * tempoMaoDeObraHoras;
 
                 double custosAdicionaisUnitarios = 0;
-                foreach (var c in custosSelecionados)
-                {
-                    custosAdicionaisUnitarios += c.Valor;
-                }
+                foreach (var c in custosSelecionados) custosAdicionaisUnitarios += c.Valor;
 
-                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
+                // Total e Preço
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
 
-                // Montar objeto de resultado para enviar para a tela de Resumo
+                // Formatando o tempo da Mão de Obra para exibir
+                string tempoMaoDisplay = $"{TxtHorasMaoDeObra.Text}h {TxtMinutosMaoDeObra.Text}min".Trim();
+                if (tempoMaoDisplay.StartsWith("h")) tempoMaoDisplay = $"{TxtMinutosMaoDeObra.Text}min";
+                if (tempoMaoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutosMaoDeObra.Text)) tempoMaoDisplay = $"{TxtHorasMaoDeObra.Text}h";
+                if (string.IsNullOrWhiteSpace(tempoMaoDisplay) || tempoMaoDisplay == "h") tempoMaoDisplay = "0 min";
+
+                string tempoImpressaoDisplay = $"{TxtHoras.Text}h {TxtMinutos.Text}min".Trim();
+                if (tempoImpressaoDisplay.StartsWith("h")) tempoImpressaoDisplay = $"{TxtMinutos.Text}min";
+                if (tempoImpressaoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutos.Text)) tempoImpressaoDisplay = $"{TxtHoras.Text}h";
+
+                // Montar o modelo de Resumo
                 var resultado = new ResultadoCalculoModel
                 {
                     ProdutoNome = TxtNomeProduto.Text,
+                    ProdutoCategoria = string.IsNullOrWhiteSpace(TxtCategoria.Text) ? "Sem categoria" : TxtCategoria.Text,
                     ProdutoDescricao = string.IsNullOrWhiteSpace(TxtDescricao.Text) ? "Sem descrição" : TxtDescricao.Text,
                     CustoTotalProducao = $"R$ {custoUnitarioTotal:N2}",
-                    PrecoVendaSugerido = $"R$ {precoVendaUnitario:N2}"
+                    PrecoVendaSugerido = $"R$ {precoVendaUnitario:N2}",
+                    CaminhoImagemProduto = MemoriaRascunho.CaminhoImagem
                 };
 
-                string tempoDisplay = $"{TxtHoras.Text}h {TxtMinutos.Text}min".Trim();
-                if (tempoDisplay.StartsWith("h")) tempoDisplay = $"{TxtMinutos.Text}min";
-                if (tempoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutos.Text)) tempoDisplay = $"{TxtHoras.Text}h";
-
+                // PARÂMETROS DA ESQUERDA (Adicionamos os de mão de obra)
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Rotulo = "Filamento", Valor = txtFilamento?.Text ?? "" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeImpressoraForm.png", Rotulo = "Tipo de impressora", Valor = txtImpressora?.Text ?? "" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconePeso.png", Rotulo = "Peso da peça", Valor = $"{pesoGramas} g" });
-                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de impressão", Valor = tempoDisplay });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de impressão", Valor = tempoImpressaoDisplay });
+
+                // Mão de Obra nos parâmetros
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de mão de obra", Valor = tempoMaoDisplay });
+                resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Mão de obra (R$/h)", Valor = $"R$ {valorHoraTrabalho:N2}" });
+
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeQuantidade.png", Rotulo = "Quantidade", Valor = $"{quantidade} unidade(s)" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFrete.png", Rotulo = "Frete", Valor = $"R$ {valorFrete}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Rotulo = "Custo adicional (R$)", Valor = $"R$ {custosAdicionaisUnitarios:N2}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Custos fixos (R$)", Valor = $"R$ {_totalCustosFixos:N2}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeMargem.png", Rotulo = "Margem de lucro (%)", Valor = $"{margemLucro}%" });
 
-                // Alimenta a lista da direita com os valores REAIS calculados acima
+                // CUSTOS DETALHADOS DA DIREITA
                 resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Titulo = "Material (filamento)", Descricao = "Custo do filamento utilizado", ValorFormatado = $"R$ {custoFilamentoUnitario:N2}" });
-                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeTempo.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = $"R$ {custoEnergiaUnitario:N2}" });
-                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Titulo = "Custos Fixos da Produção", Descricao = "Base de custo alocada na peça", ValorFormatado = $"R$ {_totalCustosFixos:N2}" });
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeEnergiaEletrica.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = $"R$ {custoEnergiaUnitario:N2}" });
+
+                if (custoMaoDeObraUnitario > 0)
+                {
+                    resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeMaoObra.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = $"R$ {custoMaoDeObraUnitario:N2}" });
+                }
+
+                // A linha do "Custos Fixos da Produção" foi deletada daqui.
+
                 resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
 
                 // Navegação
@@ -562,7 +589,6 @@ namespace FavoStudio3D.Views
                     parent = VisualTreeHelper.GetParent(parent);
                 }
             }
-            // AQUI ESTÁ O BLOCO CATCH QUE FALTAVA
             catch (Exception ex)
             {
                 MessageBox.Show($"Ocorreu um erro ao calcular: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);

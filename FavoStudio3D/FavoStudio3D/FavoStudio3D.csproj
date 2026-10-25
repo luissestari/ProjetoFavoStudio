@@ -20,6 +20,7 @@
     <None Remove="Assets\Images\IconeCustoAdicional.png" />
     <None Remove="Assets\Images\IconeCustoFixo.png" />
     <None Remove="Assets\Images\IconeCustos.png" />
+    <None Remove="Assets\Images\IconeEnergiaEletrica.png" />
     <None Remove="Assets\Images\IconeFilamentoForm.png" />
     <None Remove="Assets\Images\IconeFiltro.png" />
     <None Remove="Assets\Images\IconeFrete.png" />
@@ -29,6 +30,7 @@
     <None Remove="Assets\Images\IconeInfoLaranja.png" />
     <None Remove="Assets\Images\IconeLimpar.png" />
     <None Remove="Assets\Images\IconeMais.png" />
+    <None Remove="Assets\Images\IconeMaoObra.png" />
     <None Remove="Assets\Images\IconeMargem.png" />
     <None Remove="Assets\Images\IconeParametros.png" />
     <None Remove="Assets\Images\IconePeso.png" />
@@ -63,6 +65,7 @@
     <Resource Include="Assets\Images\IconeCustoAdicional.png" />
     <Resource Include="Assets\Images\IconeCustoFixo.png" />
     <Resource Include="Assets\Images\IconeCustos.png" />
+    <Resource Include="Assets\Images\IconeEnergiaEletrica.png" />
     <Resource Include="Assets\Images\IconeFilamentoForm.png" />
     <Resource Include="Assets\Images\IconeFiltro.png" />
     <Resource Include="Assets\Images\IconeFrete.png" />
@@ -72,6 +75,7 @@
     <Resource Include="Assets\Images\IconeInfoLaranja.png" />
     <Resource Include="Assets\Images\IconeLimpar.png" />
     <Resource Include="Assets\Images\IconeMais.png" />
+    <Resource Include="Assets\Images\IconeMaoObra.png" />
     <Resource Include="Assets\Images\IconeMargem.png" />
     <Resource Include="Assets\Images\IconeParametros.png" />
     <Resource Include="Assets\Images\IconePeso.png" />
