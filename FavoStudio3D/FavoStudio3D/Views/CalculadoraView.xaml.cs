@@ -10,14 +10,13 @@ using System.Globalization;
 using Microsoft.Win32;
 using System.Windows.Media.Imaging;
 
-// Substitua pelo seu namespace correto caso necessário
 using FavoStudio3D.Models;
 
 namespace FavoStudio3D.Views
 {
     public partial class CalculadoraView : UserControl
     {
-        // === MEMÓRIA ESTÁTICA PARA RASCUNHO (Impede perda de dados ao trocar de tela) ===
+        // === MEMÓRIA ESTÁTICA PARA RASCUNHO E PASSAGEM DE DADOS ===
         public static class MemoriaRascunho
         {
             public static string Nome = "";
@@ -32,9 +31,19 @@ namespace FavoStudio3D.Views
             public static object? ImpressoraSelecionada = null;
             public static List<string> CustosSelecionadosDescricoes = new List<string>();
             public static string CaminhoImagem = "";
+            public static string Categoria = "";
+            public static string ValorHora = "";
+            public static string HorasMao = "";
+            public static string MinutosMao = "";
+
+            // Variáveis visuais extras para usar na tela de resumo/tabela
+            public static string NomeFilamentoVisual = "PLA";
+            public static string CodigoHexVisual = "#000000"; // Guarda o texto exato do HEX
+            public static Brush CorFilamentoVisualBrush = Brushes.Black;
+            public static string NomeImpressoraVisual = "Impressora 3D";
+            public static string ModeloImpressoraVisual = "Principal";
         }
 
-        // VARIÁVEL DE BACKEND: Guarda a soma real dos custos fixos
         private double _totalCustosFixos = 0;
 
         public class CustoVisual : INotifyPropertyChanged
@@ -63,15 +72,13 @@ namespace FavoStudio3D.Views
         public CalculadoraView()
         {
             InitializeComponent();
-
-            // Salva o rascunho automaticamente antes da tela ser fechada ou trocada
             this.Unloaded += (s, e) => SalvarRascunho();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             CarregarDadosCadastrados();
-            RestaurarRascunho(); // Preenche a tela com os dados salvos no rascunho
+            RestaurarRascunho();
         }
 
         private void SalvarRascunho()
@@ -84,6 +91,10 @@ namespace FavoStudio3D.Views
             MemoriaRascunho.Quantidade = TxtQuantidade.Text;
             MemoriaRascunho.Frete = TxtFrete.Text;
             MemoriaRascunho.Margem = TxtMargem.Text;
+            MemoriaRascunho.Categoria = TxtCategoria.Text;
+            MemoriaRascunho.ValorHora = TxtValorHora.Text;
+            MemoriaRascunho.HorasMao = TxtHorasMaoDeObra.Text;
+            MemoriaRascunho.MinutosMao = TxtMinutosMaoDeObra.Text;
 
             MemoriaRascunho.FilamentoSelecionado = ListaFilamentos.SelectedItem;
             MemoriaRascunho.ImpressoraSelecionada = ListaImpressoras.SelectedItem;
@@ -105,17 +116,40 @@ namespace FavoStudio3D.Views
             TxtQuantidade.Text = string.IsNullOrWhiteSpace(MemoriaRascunho.Quantidade) ? "1" : MemoriaRascunho.Quantidade;
             TxtFrete.Text = MemoriaRascunho.Frete;
             TxtMargem.Text = MemoriaRascunho.Margem;
+            TxtCategoria.Text = MemoriaRascunho.Categoria;
+            TxtValorHora.Text = MemoriaRascunho.ValorHora;
+            TxtHorasMaoDeObra.Text = MemoriaRascunho.HorasMao;
+            TxtMinutosMaoDeObra.Text = MemoriaRascunho.MinutosMao;
+
+            if (!string.IsNullOrWhiteSpace(MemoriaRascunho.CaminhoImagem))
+            {
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(MemoriaRascunho.CaminhoImagem);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview)
+                        ImgProdutoPreview.Source = bitmap;
+
+                    if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem)
+                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
+                }
+                catch { }
+            }
 
             if (MemoriaRascunho.FilamentoSelecionado != null)
             {
                 ListaFilamentos.SelectedItem = MemoriaRascunho.FilamentoSelecionado;
-                ListaFilamentos_SelectionChanged(this, null!); // Força atualização visual
+                ListaFilamentos_SelectionChanged(this, null!);
             }
 
             if (MemoriaRascunho.ImpressoraSelecionada != null)
             {
                 ListaImpressoras.SelectedItem = MemoriaRascunho.ImpressoraSelecionada;
-                ListaImpressoras_SelectionChanged(this, null!); // Força atualização visual
+                ListaImpressoras_SelectionChanged(this, null!);
             }
 
             if (MemoriaRascunho.CustosSelecionadosDescricoes.Count > 0)
@@ -136,16 +170,8 @@ namespace FavoStudio3D.Views
 
         private void CarregarDadosCadastrados()
         {
-            if (ResumoCustosMateriaisView.FilamentosBancoDados != null)
-            {
-                ListaFilamentos.ItemsSource = ResumoCustosMateriaisView.FilamentosBancoDados;
-            }
-
-            if (ResumoImpressorasView.ImpressorasBancoDados != null)
-            {
-                ListaImpressoras.ItemsSource = ResumoImpressorasView.ImpressorasBancoDados;
-            }
-
+            if (ResumoCustosMateriaisView.FilamentosBancoDados != null) ListaFilamentos.ItemsSource = ResumoCustosMateriaisView.FilamentosBancoDados;
+            if (ResumoImpressorasView.ImpressorasBancoDados != null) ListaImpressoras.ItemsSource = ResumoImpressorasView.ImpressorasBancoDados;
             if (ResumoCustosMateriaisView.CustosBancoDados != null)
             {
                 custosDisponiveisVisuais.Clear();
@@ -156,22 +182,17 @@ namespace FavoStudio3D.Views
                     string tipoCusto = "";
                     Type tipoDoObjeto = custo.GetType();
 
-                    PropertyInfo? propInfo = tipoDoObjeto.GetProperty("Tipo") ??
-                                             tipoDoObjeto.GetProperty("TipoCusto") ??
-                                             tipoDoObjeto.GetProperty("Categoria");
-
+                    PropertyInfo? propInfo = tipoDoObjeto.GetProperty("Tipo") ?? tipoDoObjeto.GetProperty("TipoCusto") ?? tipoDoObjeto.GetProperty("Categoria");
                     if (propInfo != null)
                     {
                         var valorEncontrado = propInfo.GetValue(custo);
                         tipoCusto = valorEncontrado != null ? valorEncontrado.ToString() : "";
                     }
 
-                    // LEITURA BLINDADA DO VALOR
                     double val = 0;
                     try
                     {
                         object? rawValue = null;
-
                         foreach (var prop in tipoDoObjeto.GetProperties())
                         {
                             string pName = prop.Name.ToLower();
@@ -181,7 +202,6 @@ namespace FavoStudio3D.Views
                                 break;
                             }
                         }
-
                         if (rawValue == null)
                         {
                             foreach (var field in tipoDoObjeto.GetFields())
@@ -194,7 +214,6 @@ namespace FavoStudio3D.Views
                                 }
                             }
                         }
-
                         if (rawValue != null)
                         {
                             if (rawValue is double d) val = d;
@@ -205,17 +224,13 @@ namespace FavoStudio3D.Views
                             {
                                 string valorTexto = rawValue.ToString() ?? "0";
                                 valorTexto = valorTexto.Replace("R$", "").Replace(" ", "").Trim();
-
-                                if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
-                                    val = valPt;
-                                else if (double.TryParse(valorTexto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
-                                    val = valInv;
+                                if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt)) val = valPt;
+                                else if (double.TryParse(valorTexto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv)) val = valInv;
                             }
                         }
                     }
                     catch { }
 
-                    // LEITURA BLINDADA DA DESCRIÇÃO
                     string desc = "Custo Adicional";
                     try
                     {
@@ -233,7 +248,6 @@ namespace FavoStudio3D.Views
                     }
                     catch { }
 
-                    // Filtra os custos Fixos e Adicionais
                     if (!string.IsNullOrEmpty(tipoCusto) && tipoCusto.IndexOf("Fixo", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         somatorioCustosFixos += val;
@@ -260,7 +274,6 @@ namespace FavoStudio3D.Views
             if (ListaFilamentos.SelectedItem != null)
             {
                 dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
-
                 if (BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) is TextBlock textoBotao)
                 {
                     PropertyInfo? prop = filamentoEscolhido.GetType().GetProperty("Nome") ?? filamentoEscolhido.GetType().GetProperty("Descricao");
@@ -276,7 +289,6 @@ namespace FavoStudio3D.Views
             if (ListaImpressoras.SelectedItem != null)
             {
                 dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
-
                 if (BtnAbrirImpressora.Template.FindName("TxtImpressoraSelecionada", BtnAbrirImpressora) is TextBlock textoBotao)
                 {
                     PropertyInfo? prop = impressoraEscolhida.GetType().GetProperty("Nome") ?? impressoraEscolhida.GetType().GetProperty("Descricao");
@@ -294,11 +306,7 @@ namespace FavoStudio3D.Views
                 bool jaExiste = false;
                 foreach (var c in custosSelecionados)
                 {
-                    if (c.Descricao == custoEscolhido.Descricao)
-                    {
-                        jaExiste = true;
-                        break;
-                    }
+                    if (c.Descricao == custoEscolhido.Descricao) { jaExiste = true; break; }
                 }
 
                 if (!jaExiste)
@@ -313,7 +321,6 @@ namespace FavoStudio3D.Views
                     custoEscolhido.CheckVisivel = "Collapsed";
                     AtualizarTagsVisuais();
                 }
-
                 ListaCustosAdicionais.SelectedItem = null;
             }
         }
@@ -321,11 +328,9 @@ namespace FavoStudio3D.Views
         private void AtualizarTagsVisuais()
         {
             PainelTagsCustos.Children.Clear();
-
             for (int i = 0; i < custosSelecionados.Count; i++)
             {
                 var custo = custosSelecionados[i];
-
                 Border tagBorder = new Border
                 {
                     Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FCEBD3")),
@@ -341,7 +346,6 @@ namespace FavoStudio3D.Views
                     FontSize = 10,
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B57218"))
                 };
-
                 tagBorder.Child = tagText;
 
                 tagBorder.MouseLeftButtonDown += (s, args) =>
@@ -350,14 +354,12 @@ namespace FavoStudio3D.Views
                     custo.CheckVisivel = "Collapsed";
                     AtualizarTagsVisuais();
                 };
-
                 PainelTagsCustos.Children.Add(tagBorder);
             }
         }
 
         private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
-            // Zera a memória de rascunho
             MemoriaRascunho.Nome = "";
             MemoriaRascunho.Descricao = "";
             MemoriaRascunho.Peso = "";
@@ -366,11 +368,15 @@ namespace FavoStudio3D.Views
             MemoriaRascunho.Quantidade = "1";
             MemoriaRascunho.Frete = "";
             MemoriaRascunho.Margem = "";
+            MemoriaRascunho.Categoria = "";
+            MemoriaRascunho.ValorHora = "";
+            MemoriaRascunho.HorasMao = "";
+            MemoriaRascunho.MinutosMao = "";
+            MemoriaRascunho.CaminhoImagem = "";
             MemoriaRascunho.FilamentoSelecionado = null;
             MemoriaRascunho.ImpressoraSelecionada = null;
             MemoriaRascunho.CustosSelecionadosDescricoes.Clear();
 
-            // Limpa as caixas de texto visualmente
             TxtNomeProduto.Text = string.Empty;
             TxtDescricao.Text = string.Empty;
             TxtPeso.Text = string.Empty;
@@ -379,6 +385,13 @@ namespace FavoStudio3D.Views
             TxtQuantidade.Text = "1";
             TxtFrete.Text = string.Empty;
             TxtMargem.Text = string.Empty;
+            TxtCategoria.Text = string.Empty;
+            TxtValorHora.Text = string.Empty;
+            TxtHorasMaoDeObra.Text = string.Empty;
+            TxtMinutosMaoDeObra.Text = string.Empty;
+
+            if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview) ImgProdutoPreview.Source = null;
+            if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem) PainelPlaceholderImagem.Visibility = Visibility.Visible;
 
             if (BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) is TextBlock txtFilamento)
             {
@@ -391,10 +404,7 @@ namespace FavoStudio3D.Views
                 txtImpressora.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A99F96"));
             }
 
-            foreach (var custo in custosDisponiveisVisuais)
-            {
-                custo.CheckVisivel = "Collapsed";
-            }
+            foreach (var custo in custosDisponiveisVisuais) custo.CheckVisivel = "Collapsed";
             custosSelecionados.Clear();
             AtualizarTagsVisuais();
 
@@ -411,6 +421,7 @@ namespace FavoStudio3D.Views
             if (openFileDialog.ShowDialog() == true)
             {
                 string caminhoCompleto = openFileDialog.FileName;
+                MemoriaRascunho.CaminhoImagem = caminhoCompleto;
                 MessageBox.Show($"Imagem selecionada com sucesso:\n{caminhoCompleto}", "Arquivo Carregado", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
@@ -424,6 +435,7 @@ namespace FavoStudio3D.Views
             if (openFileDialog.ShowDialog() == true)
             {
                 string caminhoCompleto = openFileDialog.FileName;
+                MemoriaRascunho.CaminhoImagem = caminhoCompleto;
 
                 try
                 {
@@ -434,14 +446,10 @@ namespace FavoStudio3D.Views
                     bitmap.EndInit();
 
                     if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview)
-                    {
                         ImgProdutoPreview.Source = bitmap;
-                    }
 
                     if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem)
-                    {
                         PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -471,19 +479,51 @@ namespace FavoStudio3D.Views
 
             try
             {
-                // 1. Obter dados do Filamento selecionado
                 dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
                 double precoKgFilamento = 100.0;
+
+                // Salva o nome exato que está no botão (Ex: "PLA Preto")
+                MemoriaRascunho.NomeFilamentoVisual = txtFilamento?.Text ?? "PLA";
+                MemoriaRascunho.NomeImpressoraVisual = txtImpressora?.Text ?? "Impressora 3D";
+
+                // === LÓGICA 100% DINÂMICA DA COR ===
+                string hexExato = "#000000"; // Valor de segurança inicial
+                Brush brushDaCor = Brushes.Black;
+
                 if (filamentoEscolhido != null)
                 {
                     object? rawPreco = ObterValorDeObjeto(filamentoEscolhido, "preco", "valor");
                     if (rawPreco != null) precoKgFilamento = ConverterParaDouble(rawPreco);
+
+                    // Tenta puxar o texto HEX exato que você salvou no banco
+                    object? rawHex = ObterValorDeObjeto(filamentoEscolhido, "hex", "codigo", "corhex", "cor");
+                    object? rawBrush = ObterValorDeObjeto(filamentoEscolhido, "corbrush", "brush");
+
+                    if (rawHex != null)
+                    {
+                        string txtCor = rawHex.ToString()!.Trim();
+                        if (txtCor.StartsWith("#") || txtCor.Length == 6 || txtCor.Length == 8)
+                        {
+                            hexExato = txtCor.StartsWith("#") ? txtCor : "#" + txtCor;
+                        }
+                    }
+                    // Se não achar o texto HEX, extrai matematicamente o RGB exato da bolinha
+                    else if (rawBrush is SolidColorBrush sb)
+                    {
+                        hexExato = $"#{sb.Color.R:X2}{sb.Color.G:X2}{sb.Color.B:X2}";
+                    }
+
+                    // Transforma o HEX exato de volta para a pintura da bolinha visual
+                    try { brushDaCor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexExato)); } catch { }
                 }
 
-                // 2. Obter dados da Impressora selecionada
+                MemoriaRascunho.CodigoHexVisual = hexExato;
+                MemoriaRascunho.CorFilamentoVisualBrush = brushDaCor;
+
                 dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
                 double potenciaWatts = 350.0;
                 double custoKwh = 0.85;
+
                 if (impressoraEscolhida != null)
                 {
                     object? rawPotencia = ObterValorDeObjeto(impressoraEscolhida, "potencia", "consumo", "watts");
@@ -491,9 +531,10 @@ namespace FavoStudio3D.Views
 
                     object? rawKwh = ObterValorDeObjeto(impressoraEscolhida, "kwh", "custokwh");
                     if (rawKwh != null) custoKwh = ConverterParaDouble(rawKwh);
+
+                    MemoriaRascunho.ModeloImpressoraVisual = ObterValorDeObjeto(impressoraEscolhida, "modelo", "detalhe")?.ToString() ?? "Principal";
                 }
 
-                // 3. Ler entradas numéricas principais
                 double.TryParse(TxtPeso.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double pesoGramas);
                 double.TryParse(TxtHoras.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horas);
                 double.TryParse(TxtMinutos.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutos);
@@ -503,16 +544,13 @@ namespace FavoStudio3D.Views
 
                 string valorFrete = string.IsNullOrWhiteSpace(TxtFrete.Text) ? "0,00" : TxtFrete.Text;
 
-                // 4. Ler entradas numéricas de Mão de Obra
                 double.TryParse(TxtValorHora.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valorHoraTrabalho);
                 double.TryParse(TxtHorasMaoDeObra.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double horasMao);
                 double.TryParse(TxtMinutosMaoDeObra.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double minutosMao);
 
-                // 5. Cálculos de Tempo
                 double tempoImpressaoHoras = horas + (minutos / 60.0);
                 double tempoMaoDeObraHoras = horasMao + (minutosMao / 60.0);
 
-                // 6. Lógica de custos unitários
                 double custoFilamentoUnitario = (precoKgFilamento * pesoGramas) / 1000.0;
                 double custoEnergiaPorHora = (potenciaWatts / 1000.0) * custoKwh;
                 double custoEnergiaUnitario = custoEnergiaPorHora * tempoImpressaoHoras;
@@ -521,11 +559,9 @@ namespace FavoStudio3D.Views
                 double custosAdicionaisUnitarios = 0;
                 foreach (var c in custosSelecionados) custosAdicionaisUnitarios += c.Valor;
 
-                // Total e Preço
                 double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
 
-                // Formatando o tempo da Mão de Obra para exibir
                 string tempoMaoDisplay = $"{TxtHorasMaoDeObra.Text}h {TxtMinutosMaoDeObra.Text}min".Trim();
                 if (tempoMaoDisplay.StartsWith("h")) tempoMaoDisplay = $"{TxtMinutosMaoDeObra.Text}min";
                 if (tempoMaoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutosMaoDeObra.Text)) tempoMaoDisplay = $"{TxtHorasMaoDeObra.Text}h";
@@ -535,47 +571,46 @@ namespace FavoStudio3D.Views
                 if (tempoImpressaoDisplay.StartsWith("h")) tempoImpressaoDisplay = $"{TxtMinutos.Text}min";
                 if (tempoImpressaoDisplay.EndsWith("min") && string.IsNullOrWhiteSpace(TxtMinutos.Text)) tempoImpressaoDisplay = $"{TxtHoras.Text}h";
 
-                // Montar o modelo de Resumo
+                string? caminhoImagemLimpo = string.IsNullOrWhiteSpace(MemoriaRascunho.CaminhoImagem) ? null : MemoriaRascunho.CaminhoImagem;
+
                 var resultado = new ResultadoCalculoModel
                 {
-                    ProdutoNome = TxtNomeProduto.Text,
+                    ProdutoNome = string.IsNullOrWhiteSpace(TxtNomeProduto.Text) ? "Peça 3D" : TxtNomeProduto.Text,
                     ProdutoCategoria = string.IsNullOrWhiteSpace(TxtCategoria.Text) ? "Sem categoria" : TxtCategoria.Text,
                     ProdutoDescricao = string.IsNullOrWhiteSpace(TxtDescricao.Text) ? "Sem descrição" : TxtDescricao.Text,
                     CustoTotalProducao = $"R$ {custoUnitarioTotal:N2}",
                     PrecoVendaSugerido = $"R$ {precoVendaUnitario:N2}",
-                    CaminhoImagemProduto = MemoriaRascunho.CaminhoImagem
+                    CaminhoImagemProduto = caminhoImagemLimpo
                 };
 
-                // PARÂMETROS DA ESQUERDA (Adicionamos os de mão de obra)
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Rotulo = "Filamento", Valor = txtFilamento?.Text ?? "" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeImpressoraForm.png", Rotulo = "Tipo de impressora", Valor = txtImpressora?.Text ?? "" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconePeso.png", Rotulo = "Peso da peça", Valor = $"{pesoGramas} g" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de impressão", Valor = tempoImpressaoDisplay });
-
-                // Mão de Obra nos parâmetros
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeTempo.png", Rotulo = "Tempo de mão de obra", Valor = tempoMaoDisplay });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Mão de obra (R$/h)", Valor = $"R$ {valorHoraTrabalho:N2}" });
-
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeQuantidade.png", Rotulo = "Quantidade", Valor = $"{quantidade} unidade(s)" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFrete.png", Rotulo = "Frete", Valor = $"R$ {valorFrete}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Rotulo = "Custo adicional (R$)", Valor = $"R$ {custosAdicionaisUnitarios:N2}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Rotulo = "Custos fixos (R$)", Valor = $"R$ {_totalCustosFixos:N2}" });
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeMargem.png", Rotulo = "Margem de lucro (%)", Valor = $"{margemLucro}%" });
 
-                // CUSTOS DETALHADOS DA DIREITA
                 resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Titulo = "Material (filamento)", Descricao = "Custo do filamento utilizado", ValorFormatado = $"R$ {custoFilamentoUnitario:N2}" });
-                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeEnergiaEletrica.png", Titulo = "Energia elétrica", Descricao = "Custo estimado de energia", ValorFormatado = $"R$ {custoEnergiaUnitario:N2}" });
+                resultado.CustosDetalhados.Add(new CustoInfo
+                {
+                    Icone = "/Assets/Images/IconeEnergiaEletrica.png",
+                    Titulo = "Energia elétrica",
+                    Descricao = "Custo estimado de energia",
+                    ValorFormatado = $"R$ {custoEnergiaUnitario:N2}",
+                    TamanhoIcone = 24
+                });
 
                 if (custoMaoDeObraUnitario > 0)
                 {
                     resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeMaoObra.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = $"R$ {custoMaoDeObraUnitario:N2}" });
                 }
-
-                // A linha do "Custos Fixos da Produção" foi deletada daqui.
-
                 resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
 
-                // Navegação
                 var telaResumo = new ResumoCalculadoraView(resultado);
                 DependencyObject parent = VisualTreeHelper.GetParent(this);
                 while (parent != null)
@@ -600,7 +635,6 @@ namespace FavoStudio3D.Views
             ModalValidacao.Visibility = Visibility.Collapsed;
         }
 
-        // AQUI ESTÃO OS MÉTODOS AUXILIARES QUE TINHAM SUMIDO
         private object? ObterValorDeObjeto(object objeto, params string[] termosBuscados)
         {
             Type tipo = objeto.GetType();
@@ -626,10 +660,8 @@ namespace FavoStudio3D.Views
             string texto = valorBruto.ToString() ?? "0";
             texto = texto.Replace("R$", "").Replace(" ", "").Trim();
 
-            if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt))
-                return valPt;
-            if (double.TryParse(texto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv))
-                return valInv;
+            if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt)) return valPt;
+            if (double.TryParse(texto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv)) return valInv;
 
             return 0;
         }

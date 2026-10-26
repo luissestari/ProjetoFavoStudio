@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\BotaoMaisBranco.png" />
     <None Remove="Assets\Images\FundoDashboard.png" />
     <None Remove="Assets\Images\IconeAbaCusto.png" />
     <None Remove="Assets\Images\IconeAbaFilamento.png" />
@@ -35,13 +36,16 @@
     <None Remove="Assets\Images\IconeParametros.png" />
     <None Remove="Assets\Images\IconePeso.png" />
     <None Remove="Assets\Images\IconePesquisa.png" />
+    <None Remove="Assets\Images\IconeProdutoHexagono.png" />
     <None Remove="Assets\Images\IconeProdutos.png" />
     <None Remove="Assets\Images\IconeQuantidade.png" />
     <None Remove="Assets\Images\IconeResumo.png" />
     <None Remove="Assets\Images\IconeSair.png" />
     <None Remove="Assets\Images\IconeSalvar.png" />
+    <None Remove="Assets\Images\IconeSalvarMarrom.png" />
     <None Remove="Assets\Images\IconeSetaDropdown %282%29.png" />
     <None Remove="Assets\Images\IconeSetaDropdown.png" />
+    <None Remove="Assets\Images\IconeSetaEsquerda.png" />
     <None Remove="Assets\Images\IconeTempo.png" />
     <None Remove="Assets\Images\IconeUploadImagem.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
@@ -54,6 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\BotaoMaisBranco.png" />
     <Resource Include="Assets\Images\FundoDashboard.png" />
     <Resource Include="Assets\Images\IconeAbaCusto.png" />
     <Resource Include="Assets\Images\IconeAbaFilamento.png" />
@@ -80,13 +85,16 @@
     <Resource Include="Assets\Images\IconeParametros.png" />
     <Resource Include="Assets\Images\IconePeso.png" />
     <Resource Include="Assets\Images\IconePesquisa.png" />
+    <Resource Include="Assets\Images\IconeProdutoHexagono.png" />
     <Resource Include="Assets\Images\IconeProdutos.png" />
     <Resource Include="Assets\Images\IconeQuantidade.png" />
     <Resource Include="Assets\Images\IconeResumo.png" />
     <Resource Include="Assets\Images\IconeSair.png" />
     <Resource Include="Assets\Images\IconeSalvar.png" />
+    <Resource Include="Assets\Images\IconeSalvarMarrom.png" />
     <Resource Include="Assets\Images\IconeSetaDropdown (2).png" />
     <Resource Include="Assets\Images\IconeSetaDropdown.png" />
+    <Resource Include="Assets\Images\IconeSetaEsquerda.png" />
     <Resource Include="Assets\Images\IconeTempo.png" />
     <Resource Include="Assets\Images\IconeUploadImagem.png" />
     <Resource Include="Assets\Images\ImagemTelaInicio.png" />

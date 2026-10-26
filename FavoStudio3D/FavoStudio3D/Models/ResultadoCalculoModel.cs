@@ -28,5 +28,6 @@ namespace FavoStudio3D.Models
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public string ValorFormatado { get; set; } = string.Empty;
+        public int TamanhoIcone { get; set; } = 18;
     }
 }

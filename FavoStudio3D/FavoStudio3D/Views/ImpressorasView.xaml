@@ -36,7 +36,7 @@
             <!-- Subtítulo -->
             <TextBlock Text="Para utilizar os cálculos corretamente, cadastre&#x0A;primeiro uma impressora com suas especificações." 
                        FontSize="20" 
-                       Foreground="#000000" 
+                       Foreground="#3E2723" 
                        HorizontalAlignment="Center" 
                        TextAlignment="Center"
                        TextWrapping="Wrap"

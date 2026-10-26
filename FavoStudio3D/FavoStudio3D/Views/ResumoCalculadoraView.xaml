@@ -7,214 +7,252 @@
              d:DesignHeight="680" d:DesignWidth="950"
              Loaded="UserControl_Loaded">
 
-    <Grid Margin="35,20,0,25" HorizontalAlignment="Left">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="440"/>
-            <ColumnDefinition Width="25"/>
-            <ColumnDefinition Width="440"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <!-- NOVA GRID RAIZ PARA PERMITIR A SOBREPOSIÇÃO DO MODAL -->
+    <Grid>
 
-        <!-- CARTÃO ESQUERDO: INFORMAÇÕES DO PRODUTO -->
-        <Border Grid.Column="0" CornerRadius="16" Padding="25,20,25,20" VerticalAlignment="Stretch">
-            <Border.Background>
-                <SolidColorBrush Color="White" Opacity="0.75"/>
-            </Border.Background>
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="20" ShadowDepth="2"/>
-            </Border.Effect>
+        <!-- SUA TELA PRINCIPAL (Cartões esquerdo e direito) -->
+        <Grid Margin="45,20,0,25" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="440"/>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition Width="440"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="15"/>
-                    <RowDefinition Height="*"/>
-                    <!-- Deixa o conteúdo ditar a altura -->
-                </Grid.RowDefinitions>
+            <!-- CARTÃO ESQUERDO: INFORMAÇÕES DO PRODUTO -->
+            <Border Grid.Column="0" CornerRadius="16" Padding="25,20,25,20" VerticalAlignment="Stretch">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.75"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="20" ShadowDepth="2"/>
+                </Border.Effect>
 
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="15"/>
+                        <RowDefinition Height="*"/>
+                        <!-- Deixa o conteúdo ditar a altura -->
+                    </Grid.RowDefinitions>
 
-                    <Grid Grid.Column="0" Height="100" Width="100">
-                        <Rectangle Fill="#FFFBF5" RadiusX="12" RadiusY="12" Stroke="#C7BCAE" StrokeDashArray="4 4" StrokeThickness="1.5"/>
-                        <Image HorizontalAlignment="Center" Opacity="0.5" Source="/Assets/Images/IconeUploadImagem.png" Stretch="Uniform" VerticalAlignment="Center" Width="40"/>
-                        <Border Background="White" ClipToBounds="True" CornerRadius="12">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CaminhoImagemProduto}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding CaminhoImagemProduto}" Value="">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Image HorizontalAlignment="Center" Source="{Binding CaminhoImagemProduto}" Stretch="UniformToFill" VerticalAlignment="Center"/>
-                        </Border>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0" Height="100" Width="100">
+                            <Rectangle Fill="#FFFBF5" RadiusX="12" RadiusY="12" Stroke="#C7BCAE" StrokeDashArray="4 4" StrokeThickness="1.5"/>
+                            <Image HorizontalAlignment="Center" Opacity="0.5" Source="/Assets/Images/IconeUploadImagem.png" Stretch="Uniform" VerticalAlignment="Center" Width="40"/>
+                            <Border Background="White" ClipToBounds="True" CornerRadius="12">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CaminhoImagemProduto}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CaminhoImagemProduto}" Value="">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Image HorizontalAlignment="Center" Source="{Binding CaminhoImagemProduto}" Stretch="UniformToFill" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock Text="Nome do produto" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding ProdutoNome}" FontSize="16" FontWeight="Bold" Foreground="#3E2723" TextWrapping="Wrap" Margin="0,0,0,6"/>
+
+                            <TextBlock Text="Categoria" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding ProdutoCategoria}" FontSize="12" FontWeight="SemiBold" Foreground="#8D4925" TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Descrição" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding ProdutoDescricao}" FontSize="12" FontWeight="SemiBold" Foreground="#3E2723" TextWrapping="Wrap" MaxHeight="45" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
                     </Grid>
 
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                        <TextBlock Text="Nome do produto" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding ProdutoNome}" FontSize="16" FontWeight="Bold" Foreground="#3E2723" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <Rectangle Grid.Row="1" Height="1" Fill="#D9CBB8" Margin="0,10,0,10"/>
 
-                        <TextBlock Text="Categoria" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding ProdutoCategoria}" FontSize="12" FontWeight="SemiBold" Foreground="#8D4925" TextWrapping="Wrap" Margin="0,0,0,8"/>
-
-                        <TextBlock Text="Descrição" FontSize="11" Foreground="#A99F96" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding ProdutoDescricao}" FontSize="12" FontWeight="SemiBold" Foreground="#3E2723" TextWrapping="Wrap" MaxHeight="45" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                </Grid>
-
-                <Rectangle Grid.Row="1" Height="1" Fill="#EADCC9" Margin="0,10,0,10"/>
-
-                <!-- ITENS DE PARÂMETROS LIVRES PARA CRESCER (SEM SCROLL) -->
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding Parametros}" VerticalAlignment="Top" Margin="0,0,0,0">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="1"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="230"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="0,5">
-                                    <Border Width="26" Height="26" CornerRadius="13" Background="#EBBE83" Margin="0,0,10,0">
-                                        <Image Source="{Binding Icone}" Width="14" Height="14" Stretch="Uniform"/>
-                                    </Border>
-                                    <TextBlock Text="{Binding Rotulo}" Foreground="#5D4037" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="1" Text="{Binding Valor}" Foreground="#3E2723" FontSize="12" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                                <Rectangle Grid.ColumnSpan="2" Height="1" Fill="#F0E6D8" VerticalAlignment="Bottom"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </Border>
-
-        <!-- CARTÃO DIREITO: CUSTOS E FECHAMENTO -->
-        <Border Grid.Column="2" CornerRadius="16" Padding="25,20,25,20" VerticalAlignment="Stretch">
-            <Border.Background>
-                <SolidColorBrush Color="White" Opacity="0.75"/>
-            </Border.Background>
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="20" ShadowDepth="2"/>
-            </Border.Effect>
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="Custos da peça (por unidade)" FontSize="17" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,20"/>
-
-                <Grid Grid.Row="1">
-                    <!-- SCROLL MANTIDO AQUI POIS OS CUSTOS ADICIONAIS PODEM SER INFINITOS -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,-15,0" Padding="0,0,15,0">
-                        <ItemsControl ItemsSource="{Binding CustosDetalhados}" VerticalAlignment="Top">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,0,0,15">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Background="#EBBE83" Margin="0,0,12,0" VerticalAlignment="Top">
-                                            <Image Source="{Binding Icone}" Width="18" Height="18" Stretch="Uniform"/>
+                    <!-- ITENS DE PARÂMETROS LIVRES PARA CRESCER (SEM SCROLL) -->
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Parametros}" VerticalAlignment="Top" Margin="0,0,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="1"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="230"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="0,5">
+                                        <Border Width="26" Height="26" CornerRadius="13" Background="#EBBE83" Margin="0,0,10,0">
+                                            <Image Source="{Binding Icone}" Width="14" Height="14" Stretch="Uniform"/>
                                         </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
-                                            <TextBlock Text="{Binding Titulo}" FontSize="15" FontWeight="Bold" Foreground="#3E2723"/>
-                                            <TextBlock Text="{Binding Descricao}" FontSize="12" Foreground="#A99F96" TextWrapping="Wrap" Margin="0,2,0,0"/>
-                                        </StackPanel>
-                                        <Border Grid.Column="2" Background="White" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Padding="14,6" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding ValorFormatado}" FontSize="15" FontWeight="Bold" Foreground="#3E2723"/>
-                                        </Border>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-
-                    <StackPanel VerticalAlignment="Bottom" Margin="0,20,0,0">
-                        <Border Background="#F4DDB5" CornerRadius="8" Padding="15,12" Margin="0,0,0,10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="/Assets/Images/IconeCalculadora (2).png" Width="25" Height="25" Margin="0,5,12,0" VerticalAlignment="Top"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Custo total de produção" FontSize="13" FontWeight="Bold" Foreground="#3E2723"/>
-                                    <TextBlock Text="Soma de todos os custos por unidade" FontSize="11" Foreground="#8D4925" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="2" Text="{Binding CustoTotalProducao}" FontSize="18" FontWeight="Bold" Foreground="#8D4925" VerticalAlignment="Center"/>
-                            </Grid>
-                        </Border>
-                        <Border Background="#EBB45D" CornerRadius="8" Padding="15,12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="/Assets/Images/IconeMargem.png" Width="25" Height="25" Margin="0,5,12,0" VerticalAlignment="Top"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Preço de venda sugerido" FontSize="14" FontWeight="Bold" Foreground="#3E2723"/>
-                                    <TextBlock Text="(por unidade)" FontSize="11" Foreground="#795548" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="2" Text="{Binding PrecoVendaSugerido}" FontSize="22" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-
-                <Grid Grid.Row="2" Margin="0,20,0,0" VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Height="42" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnVoltar_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Text="←" FontWeight="Bold" Margin="0,0,8,0" Foreground="#3E2723" FontSize="16"/>
-                                        <TextBlock Text="Voltar" Foreground="#3E2723" FontSize="14" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Rotulo}" Foreground="#5D4037" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button Grid.Column="2" Height="42" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvar_Click">
+                                    <TextBlock Grid.Column="1" Text="{Binding Valor}" Foreground="#3E2723" FontSize="12" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                    <Rectangle Grid.ColumnSpan="2" Height="1" Fill="#EADCC9" VerticalAlignment="Bottom"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <!-- CARTÃO DIREITO: CUSTOS E FECHAMENTO -->
+            <Border Grid.Column="2" CornerRadius="16" Padding="25,20,25,20" VerticalAlignment="Stretch">
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.75"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.08" BlurRadius="20" ShadowDepth="2"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Custos da peça (por unidade)" FontSize="17" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,20"/>
+
+                    <Grid Grid.Row="1">
+                        <!-- SCROLL MANTIDO AQUI POIS OS CUSTOS ADICIONAIS PODEM SER INFINITOS -->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,-15,0" Padding="0,0,15,0">
+                            <ItemsControl ItemsSource="{Binding CustosDetalhados}" VerticalAlignment="Top">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,15">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Background="#EBBE83" Margin="0,0,12,0" VerticalAlignment="Top">
+                                                <Image Source="{Binding Icone}" Width="{Binding TamanhoIcone}" Height="{Binding TamanhoIcone}" Stretch="Uniform"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                <TextBlock Text="{Binding Titulo}" FontSize="15" FontWeight="Bold" Foreground="#3E2723"/>
+                                                <TextBlock Text="{Binding Descricao}" FontSize="12" Foreground="#A99F96" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+
+                                            <!-- Borda dos preços com largura fixa e alinhamento centralizado -->
+                                            <Border Grid.Column="2" Background="White" BorderBrush="#EADCC9" BorderThickness="1" CornerRadius="6" Padding="0,6" VerticalAlignment="Center" Width="95">
+                                                <TextBlock Text="{Binding ValorFormatado}" FontSize="15" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center"/>
+                                            </Border>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <StackPanel VerticalAlignment="Bottom" Margin="0,20,0,0">
+                            <Border Background="#F4DDB5" CornerRadius="8" Padding="15,12" Margin="0,0,0,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Assets/Images/IconeCalculadora (2).png" Width="30" Height="30" Margin="0,3,12,0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Custo total de produção" FontSize="13" FontWeight="Bold" Foreground="#3E2723"/>
+                                        <TextBlock Text="Soma de todos os custos por unidade" FontSize="11" Foreground="#8D4925" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" Text="{Binding CustoTotalProducao}" FontSize="18" FontWeight="Bold" Foreground="#8D4925" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <Border Background="#EBB45D" CornerRadius="8" Padding="15,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Assets/Images/IconeMargem.png" Width="26" Height="26" Margin="0,5,12,0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Preço de venda sugerido" FontSize="14" FontWeight="Bold" Foreground="#3E2723"/>
+                                        <TextBlock Text="(por unidade)" FontSize="11" Foreground="#795548" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" Text="{Binding PrecoVendaSugerido}" FontSize="22" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,20,0,0" VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Height="42" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" Cursor="Hand" Click="BtnVoltar_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Assets/Images/IconeSetaEsquerda.png" Height="20" Margin="0,0,8,0" Stretch="Uniform"/>
+                                            <TextBlock Text="Voltar" Foreground="#3E2723" FontSize="16" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Grid.Column="2" Height="42" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnSalvar_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Assets/Images/IconeSalvarMarrom.png" Height="24" Margin="0,0,8,0"/>
+                                            <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="16" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- NOVO MODAL DE SUCESSO (Fica oculto até clicar em Salvar) -->
+        <Grid x:Name="ModalSucesso" Visibility="Collapsed" Background="Transparent">
+            <Border Width="360" Height="200" Background="#FFFBF5" CornerRadius="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.12" BlurRadius="30" ShadowDepth="5"/>
+                </Border.Effect>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
+
+                    <!-- Ícone redondo de sucesso -->
+                    <Border Width="56" Height="56" CornerRadius="28" Background="#EBB45D" Margin="0,0,0,15">
+                        <TextBlock Text="✓" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                    </Border>
+
+                    <TextBlock Text="Produto salvo com sucesso!" FontSize="17" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,25"/>
+
+                    <Button Width="130" Height="42" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnFecharModal_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Image Source="/Assets/Images/IconeSalvar.png" Height="16" Margin="0,0,8,0"/>
-                                        <TextBlock Text="Salvar" Foreground="#3E2723" FontSize="14" FontWeight="Bold"/>
-                                    </StackPanel>
+                                    <TextBlock Text="OK" Foreground="#3E2723" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                </Grid>
-            </Grid>
-        </Border>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>

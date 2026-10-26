@@ -50,15 +50,15 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Botão: Produtos (Preparado para o futuro) -->
-                        <Border x:Name="MenuProdutosBorder" Background="Transparent" CornerRadius="12" Width="98" Height="77" Margin="0,0,0,10" Cursor="Hand">
+                        <!-- Botão: Produtos (Agora com ação de clique) -->
+                        <Border x:Name="MenuProdutosBorder" Background="Transparent" CornerRadius="12" Width="98" Height="77" Margin="0,0,0,10" Cursor="Hand" MouseLeftButtonUp="BotaoMenuProdutos_Click">
                             <StackPanel VerticalAlignment="Center">
                                 <Image Source="/Assets/Images/IconeProdutos.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
                                 <TextBlock x:Name="MenuProdutosTexto" Text="Produtos" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Botão: Impressora (Preparado para o futuro) -->
+                        <!-- Botão: Impressora -->
                         <Border x:Name="MenuImpressoraBorder" Background="Transparent" CornerRadius="12" Width="98" Height="77" Margin="0,0,0,10" Cursor="Hand" MouseLeftButtonUp="BotaoMenuImpressora_Click">
                             <StackPanel VerticalAlignment="Center">
                                 <Image Source="/Assets/Images/IconeImpressora.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
@@ -69,7 +69,7 @@
 
                     <!-- Botão Sair -->
                     <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,35" Cursor="Hand" Background="Transparent" MouseLeftButtonUp="BotaoSair_Click">
-                        <Image Source="/Assets/Images/IconeSair.png" Height="26" Margin="0,0,0,8" Stretch="Uniform"/>
+                        <Image Source="/Assets/Images/IconeSair.png" Height="26" Margin="7,0,0,8" Stretch="Uniform"/>
                         <TextBlock Text="Sair" FontSize="11" HorizontalAlignment="Center" Foreground="#4A2A1A"/>
                     </StackPanel>
                 </Grid>

@@ -105,6 +105,26 @@ namespace FavoStudio3D.Views
             }
         }
 
+        private void BotaoMenuProdutos_Click(object sender, MouseButtonEventArgs e)
+        {
+            // Ativa o destaque dourado no botão de Produtos no menu lateral
+            AtivarBotaoMenu(MenuProdutosBorder, MenuProdutosTexto);
+
+            TextoTituloPagina.Text = "Produtos";
+
+            // Verifica se já existem produtos salvos para alternar entre a tela vazia e o resumo
+            if (ResumoProdutosView.ProdutosBancoDados != null && ResumoProdutosView.ProdutosBancoDados.Count > 0)
+            {
+                TextoSubtituloPagina.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
+                AreaConteudo.Content = new ResumoProdutosView();
+            }
+            else
+            {
+                TextoSubtituloPagina.Text = "Estime o custo e defina o preço dos seus produtos 3D.";
+                AreaConteudo.Content = new ProdutosView();
+            }
+        }
+
         private void NavegarParaCalculadora()
         {
             AtivarBotaoMenu(MenuCalculadoraBorder, MenuCalculadoraTexto);
