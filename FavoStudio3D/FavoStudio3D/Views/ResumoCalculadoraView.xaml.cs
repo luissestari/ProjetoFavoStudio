@@ -9,10 +9,13 @@ namespace FavoStudio3D.Views
 {
     public partial class ResumoCalculadoraView : UserControl
     {
-        public ResumoCalculadoraView(ResultadoCalculoModel dados)
+        private bool _modoVisualizacao;
+
+        public ResumoCalculadoraView(ResultadoCalculoModel dados, bool modoVisualizacao = false)
         {
             InitializeComponent();
             DataContext = dados;
+            _modoVisualizacao = modoVisualizacao;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -24,89 +27,159 @@ namespace FavoStudio3D.Views
                     try
                     {
                         if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo)
-                            txtTitulo.Text = "Revisar e salvar";
+                            txtTitulo.Text = _modoVisualizacao ? "Detalhes do Produto" : "Revisar e salvar";
+
                         if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub)
-                            txtSub.Text = "Revise as informações antes de salvar o produto.";
+                            txtSub.Text = _modoVisualizacao ? "Visualize as informações e os custos completos desta peça." : "Revise as informações antes de salvar o produto.";
                     }
                     catch { }
+                }
+
+                if (_modoVisualizacao)
+                {
+                    EsconderBotaoSalvar(this);
                 }
             }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
-        private void BtnVoltar_Click(object sender, RoutedEventArgs e)
+        private void EsconderBotaoSalvar(DependencyObject parent)
         {
-            if (Window.GetWindow(this) is DashboardWindow dashboard)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
-                try
-                {
-                    if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo)
-                        txtTitulo.Text = "Calculadora";
-                    if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub)
-                        txtSub.Text = "Calcule os custos de produção e defina o preço de venda dos seus produtos 3D.";
-                }
-                catch { }
-            }
+                var child = VisualTreeHelper.GetChild(parent, i);
 
-            var telaCalculadora = new CalculadoraView();
+                if (child is Button btn)
+                {
+                    if (btn.Name == "BtnSalvar" || AcharTexto(btn, "Salvar"))
+                    {
+                        btn.Visibility = Visibility.Collapsed;
+                        continue;
+                    }
+                }
+                EsconderBotaoSalvar(child);
+            }
+        }
+
+        private bool AcharTexto(DependencyObject parent, string texto)
+        {
+            if (parent is TextBlock tb && tb.Text.Contains(texto)) return true;
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                if (AcharTexto(VisualTreeHelper.GetChild(parent, i), texto)) return true;
+            }
+            return false;
+        }
+
+        private void NavegarPara(UserControl novaTela)
+        {
             DependencyObject parent = VisualTreeHelper.GetParent(this);
             while (parent != null)
             {
-                if (parent is ContentControl cc) { cc.Content = telaCalculadora; return; }
+                if (parent is ContentControl cc) { cc.Content = novaTela; return; }
                 if (parent is Panel panel)
                 {
                     int index = panel.Children.IndexOf(this);
-                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaCalculadora); return; }
+                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, novaTela); return; }
                 }
                 parent = VisualTreeHelper.GetParent(parent);
             }
         }
 
+        private void SincronizarMenuLateral(string nomeBotao1, string nomeBotao2)
+        {
+            if (Window.GetWindow(this) is DashboardWindow dashboard)
+            {
+                // Tenta marcar o botão correspondente no menu lateral esquerdo
+                RadioButton? rb = (dashboard.FindName(nomeBotao1) as RadioButton) ?? (dashboard.FindName(nomeBotao2) as RadioButton);
+                if (rb != null)
+                {
+                    rb.IsChecked = true;
+                }
+            }
+        }
+
+        private void BtnVoltar_Click(object sender, RoutedEventArgs e)
+        {
+            if (_modoVisualizacao)
+            {
+                if (Window.GetWindow(this) is DashboardWindow dashboard)
+                {
+                    try
+                    {
+                        if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo) txtTitulo.Text = "Produtos";
+                        if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub) txtSub.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
+                    }
+                    catch { }
+                }
+
+                SincronizarMenuLateral("MenuProdutos", "BtnProdutos");
+                NavegarPara(new ResumoProdutosView());
+            }
+            else
+            {
+                CalculadoraView.MemoriaRascunho.CalculoPendente = false;
+                if (Window.GetWindow(this) is DashboardWindow dashboard)
+                {
+                    try
+                    {
+                        if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo) txtTitulo.Text = "Calculadora";
+                        if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub) txtSub.Text = "Calcule os custos de produção e defina o preço de venda dos seus produtos 3D.";
+                    }
+                    catch { }
+                }
+
+                SincronizarMenuLateral("MenuCalculadora", "BtnCalculadora");
+                NavegarPara(new CalculadoraView());
+            }
+        }
+
         private void BtnSalvar_Click(object sender, RoutedEventArgs e)
         {
-            // Exibe o modal customizado de sucesso
             ModalSucesso.Visibility = Visibility.Visible;
         }
 
         private void BtnFecharModal_Click(object sender, RoutedEventArgs e)
         {
+            // Fecha o modal visualmente primeiro
+            ModalSucesso.Visibility = Visibility.Collapsed;
+
             var resultadoCalculado = this.DataContext as ResultadoCalculoModel;
-            int proximoNumero = ResumoProdutosView.ProdutosBancoDados.Count + 1;
+            int proximoNumero = ResumoProdutosView.ProdutosCadastrados.Count + 1;
             string skuSequencial = $"#PROD-{proximoNumero:D3}";
 
             var novoProduto = new ProdutoItemModel
             {
                 Nome = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.Nome) ? "Peça 3D" : CalculadoraView.MemoriaRascunho.Nome,
                 CodigoSku = skuSequencial,
-
-                // Puxa exatamente o nome (ex: "PLA Preto")
                 FilamentoNome = CalculadoraView.MemoriaRascunho.NomeFilamentoVisual,
-
-                // Puxa o HEX exato gravado no sistema sem conversões extras (ex: "#000000")
-                FilamentoDetalhe = CalculadoraView.MemoriaRascunho.CodigoHexVisual,
-
-                // Aplica a cor real na bolinha
+                FilamentoDetalhe = CalculadoraView.MemoriaRascunho.NomeCorVisual,
                 CorFilamentoBrush = CalculadoraView.MemoriaRascunho.CorFilamentoVisualBrush,
-
                 ImpressoraNome = CalculadoraView.MemoriaRascunho.NomeImpressoraVisual,
                 ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual,
                 CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00",
                 PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00",
-                CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem
+                CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem,
+                DadosCompletos = resultadoCalculado
             };
 
-            ResumoProdutosView.ProdutosBancoDados.Add(novoProduto);
+            ResumoProdutosView.ProdutosCadastrados.Add(novoProduto);
+            CalculadoraView.MemoriaRascunho.CalculoPendente = false;
 
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
-            while (parent != null)
+            if (Window.GetWindow(this) is DashboardWindow dashboard)
             {
-                if (parent is ContentControl cc) { cc.Content = new ResumoProdutosView(); return; }
-                if (parent is Panel panel)
+                try
                 {
-                    int index = panel.Children.IndexOf(this);
-                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, new ResumoProdutosView()); return; }
+                    if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo) txtTitulo.Text = "Produtos";
+                    if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub) txtSub.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
                 }
-                parent = VisualTreeHelper.GetParent(parent);
+                catch { }
             }
+
+            // Sincroniza o botão dourado do menu lateral para a aba "Produtos" de forma imediata
+            SincronizarMenuLateral("MenuProdutos", "BtnProdutos");
+
+            // Navega para a tela de resumo de produtos
+            NavegarPara(new ResumoProdutosView());
         }
     }
 }

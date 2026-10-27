@@ -113,7 +113,7 @@ namespace FavoStudio3D.Views
             TextoTituloPagina.Text = "Produtos";
 
             // Verifica se já existem produtos salvos para alternar entre a tela vazia e o resumo
-            if (ResumoProdutosView.ProdutosBancoDados != null && ResumoProdutosView.ProdutosBancoDados.Count > 0)
+            if (ResumoProdutosView.ProdutosCadastrados != null && ResumoProdutosView.ProdutosCadastrados.Count > 0)
             {
                 TextoSubtituloPagina.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
                 AreaConteudo.Content = new ResumoProdutosView();

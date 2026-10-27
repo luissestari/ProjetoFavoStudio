@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FavoStudio3D.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -10,21 +11,24 @@ namespace FavoStudio3D.Views
 {
     public class ProdutoItemModel
     {
-        public string? CaminhoImagem { get; set; }
-        public string? Nome { get; set; }
-        public string? CodigoSku { get; set; }
-        public string? FilamentoNome { get; set; }
-        public string? FilamentoDetalhe { get; set; }
-        public Brush? CorFilamentoBrush { get; set; }
-        public string? ImpressoraNome { get; set; }
-        public string? ImpressoraModelo { get; set; }
-        public string? CustoTotalFormatado { get; set; }
-        public string? PrecoSugeridoFormatado { get; set; }
+        public string CaminhoImagem { get; set; } = "";
+        public string Nome { get; set; } = "";
+        public string CodigoSku { get; set; } = "";
+        public string FilamentoNome { get; set; } = "";
+        public string FilamentoDetalhe { get; set; } = "";
+        public Brush CorFilamentoBrush { get; set; } = Brushes.Black;
+        public string ImpressoraNome { get; set; } = "";
+        public string ImpressoraModelo { get; set; } = "";
+        public string CustoTotalFormatado { get; set; } = "";
+        public string PrecoSugeridoFormatado { get; set; } = "";
+
+        public ResultadoCalculoModel? DadosCompletos { get; set; }
     }
 
     public partial class ResumoProdutosView : UserControl
     {
-        public static ObservableCollection<ProdutoItemModel> ProdutosBancoDados = new ObservableCollection<ProdutoItemModel>();
+        public static ObservableCollection<ProdutoItemModel> ProdutosCadastrados = new ObservableCollection<ProdutoItemModel>();
+        private ProdutoItemModel? produtoParaExcluir = null;
 
         public ResumoProdutosView()
         {
@@ -54,7 +58,7 @@ namespace FavoStudio3D.Views
 
         private void CarregarProdutos()
         {
-            ListaProdutos.ItemsSource = ProdutosBancoDados;
+            ListaProdutos.ItemsSource = ProdutosCadastrados;
             AtualizarPaginacao();
         }
 
@@ -63,54 +67,97 @@ namespace FavoStudio3D.Views
             if (PanelPaginacao == null) return;
             PanelPaginacao.Children.Clear();
 
-            int totalItens = ProdutosBancoDados.Count;
+            int totalItens = ProdutosCadastrados.Count;
             int itensPorPagina = 5;
             int totalPaginas = Math.Max(1, (int)Math.Ceiling((double)totalItens / itensPorPagina));
 
-            if (totalPaginas > 1)
+            // Atualiza o texto do contador à esquerda (Ex: "1 produto cadastrado" ou "3 produtos cadastrados")
+            if (TxtContadorProdutos != null)
             {
-                var btnAnterior = new Button { Width = 32, Height = 32, Background = Brushes.Transparent, BorderThickness = new Thickness(0), Cursor = Cursors.Hand };
-                btnAnterior.Content = new TextBlock { Text = "←", FontSize = 14, FontWeight = FontWeights.Bold, Foreground = (Brush)Brushes.SandyBrown };
-                PanelPaginacao.Children.Add(btnAnterior);
+                TxtContadorProdutos.Text = totalItens == 1 ? "1 produto cadastrado" : $"{totalItens} produtos cadastrados";
             }
 
-            for (int i = 1; i <= totalPaginas; i++)
+            // Botão Anterior (<)
+            var borderAnterior = new Border
             {
-                if (i == 1)
-                {
-                    var borderPagina = new Border { Width = 28, Height = 28, CornerRadius = new CornerRadius(5), Background = (Brush)new BrushConverter().ConvertFrom("#B87B2E"), Margin = new Thickness(4, 0, 4, 0), VerticalAlignment = VerticalAlignment.Center };
-                    borderPagina.Child = new TextBlock { Text = i.ToString(), FontSize = 13, FontWeight = FontWeights.Bold, Foreground = Brushes.White, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-                    PanelPaginacao.Children.Add(borderPagina);
-                }
-                else
-                {
-                    var borderPagina = new Border { Width = 28, Height = 28, CornerRadius = new CornerRadius(5), Background = Brushes.Transparent, Margin = new Thickness(4, 0, 4, 0), VerticalAlignment = VerticalAlignment.Center, Cursor = Cursors.Hand };
-                    borderPagina.Child = new TextBlock { Text = i.ToString(), FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-                    PanelPaginacao.Children.Add(borderPagina);
-                }
-            }
+                Width = 28,
+                Height = 28,
+                CornerRadius = new CornerRadius(6),
+                Background = Brushes.White,
+                BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = Cursors.Hand
+            };
+            borderAnterior.Child = new TextBlock
+            {
+                Text = "<",
+                FontSize = 12,
+                FontWeight = FontWeights.Bold,
+                Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            PanelPaginacao.Children.Add(borderAnterior);
 
-            if (totalPaginas > 1)
+            // Número da Página (Ex: 1)
+            var borderPagina = new Border
             {
-                var btnProximo = new Button { Width = 32, Height = 32, Background = Brushes.Transparent, BorderThickness = new Thickness(0), Cursor = Cursors.Hand };
-                btnProximo.Content = new TextBlock { Text = "→", FontSize = 14, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548") };
-                PanelPaginacao.Children.Add(btnProximo);
-            }
+                Width = 28,
+                Height = 28,
+                CornerRadius = new CornerRadius(6),
+                Background = (Brush)new BrushConverter().ConvertFrom("#EBB45D"),
+                Margin = new Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            borderPagina.Child = new TextBlock
+            {
+                Text = "1",
+                FontSize = 12,
+                FontWeight = FontWeights.Bold,
+                Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            PanelPaginacao.Children.Add(borderPagina);
+
+            // Botão Próximo (>)
+            var borderProximo = new Border
+            {
+                Width = 28,
+                Height = 28,
+                CornerRadius = new CornerRadius(6),
+                Background = Brushes.White,
+                BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
+                BorderThickness = new Thickness(1),
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = Cursors.Hand
+            };
+            borderProximo.Child = new TextBlock
+            {
+                Text = ">",
+                FontSize = 12,
+                FontWeight = FontWeights.Bold,
+                Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            PanelPaginacao.Children.Add(borderProximo);
         }
 
         private void TxtPesquisa_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string termo = TxtPesquisa.Text.ToLower();
+            string termo = TxtPesquisa.Text?.ToLower() ?? "";
 
             if (string.IsNullOrWhiteSpace(termo))
             {
-                ListaProdutos.ItemsSource = ProdutosBancoDados;
+                ListaProdutos.ItemsSource = ProdutosCadastrados;
             }
             else
             {
-                // Filtra verificando se o termo existe no Nome do produto OU no Nome do filamento
                 var filtrados = new ObservableCollection<ProdutoItemModel>(
-                    ProdutosBancoDados.Where(p =>
+                    ProdutosCadastrados.Where(p =>
                         (p.Nome != null && p.Nome.ToLower().Contains(termo)) ||
                         (p.FilamentoNome != null && p.FilamentoNome.ToLower().Contains(termo))
                     )
@@ -119,37 +166,128 @@ namespace FavoStudio3D.Views
             }
         }
 
-        private void BtnNovoCalculo_Click(object sender, RoutedEventArgs e)
+        private void NavegarPara(UserControl novaTela)
         {
-            var telaCalculadora = new CalculadoraView();
             DependencyObject parent = VisualTreeHelper.GetParent(this);
             while (parent != null)
             {
-                if (parent is ContentControl cc) { cc.Content = telaCalculadora; return; }
+                if (parent is ContentControl cc) { cc.Content = novaTela; return; }
                 if (parent is Panel panel)
                 {
                     int index = panel.Children.IndexOf(this);
-                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaCalculadora); return; }
+                    if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, novaTela); return; }
                 }
                 parent = VisualTreeHelper.GetParent(parent);
             }
         }
 
-        private void MenuEditar_Click(object sender, RoutedEventArgs e)
+        private void AcionarBotaoLateralCalculadora()
         {
-            if (sender is MenuItem menuItem && menuItem.DataContext is ProdutoItemModel produtoSelecionado)
+            if (Window.GetWindow(this) is DashboardWindow dashboard)
             {
-                MessageBox.Show($"Editar produto: {produtoSelecionado.Nome}", "Editar", MessageBoxButton.OK, MessageBoxImage.Information);
+                object? obj1 = dashboard.FindName("MenuCalculadora");
+                object? obj2 = dashboard.FindName("BtnCalculadora");
+
+                RadioButton? rb = (obj1 as RadioButton) ?? (obj2 as RadioButton);
+                if (rb != null) rb.IsChecked = true;
+                else NavegarPara(new CalculadoraView());
             }
         }
 
-        private void MenuExcluir_Click(object sender, RoutedEventArgs e)
+        private void BtnNovoCalculo_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem menuItem && menuItem.DataContext is ProdutoItemModel produtoSelecionado)
+            CalculadoraView.MemoriaRascunho.LimparTudo();
+            AcionarBotaoLateralCalculadora();
+        }
+
+        private void BtnAcoes_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.ContextMenu != null)
             {
-                ProdutosBancoDados.Remove(produtoSelecionado);
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                btn.ContextMenu.DataContext = btn.DataContext;
+                btn.ContextMenu.IsOpen = true;
+                e.Handled = true;
+            }
+        }
+
+        private ProdutoItemModel? ObterProdutoDoMenu(object sender)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                if (menuItem.DataContext is ProdutoItemModel produtoDireto) return produtoDireto;
+                if (menuItem.Parent is ContextMenu menu && menu.PlacementTarget is Button btn && btn.DataContext is ProdutoItemModel produtoBotao) return produtoBotao;
+            }
+            return null;
+        }
+
+        private void MenuVisualizar_Click(object sender, RoutedEventArgs e)
+        {
+            var produto = ObterProdutoDoMenu(sender);
+            if (produto != null)
+            {
+                if (produto.DadosCompletos != null)
+                {
+                    NavegarPara(new ResumoCalculadoraView(produto.DadosCompletos, modoVisualizacao: true));
+                }
+                else
+                {
+                    var resultado = new ResultadoCalculoModel
+                    {
+                        ProdutoNome = produto.Nome ?? "Peça 3D",
+                        CustoTotalProducao = produto.CustoTotalFormatado ?? "R$ 0,00",
+                        PrecoVendaSugerido = produto.PrecoSugeridoFormatado ?? "R$ 0,00",
+                        CaminhoImagemProduto = produto.CaminhoImagem ?? ""
+                    };
+                    resultado.Parametros.Add(new ParametroInfo { Rotulo = "Filamento", Valor = produto.FilamentoNome ?? "" });
+                    resultado.Parametros.Add(new ParametroInfo { Rotulo = "Cor", Valor = produto.FilamentoDetalhe ?? "" });
+                    resultado.Parametros.Add(new ParametroInfo { Rotulo = "Impressora", Valor = produto.ImpressoraNome ?? "" });
+
+                    NavegarPara(new ResumoCalculadoraView(resultado, modoVisualizacao: true));
+                }
+            }
+        }
+
+        private void MenuEditar_Click(object sender, RoutedEventArgs e)
+        {
+            var produto = ObterProdutoDoMenu(sender);
+            if (produto != null)
+            {
+                CalculadoraView.MemoriaRascunho.CalculoPendente = false;
+                CalculadoraView.MemoriaRascunho.Nome = produto.Nome ?? "";
+                CalculadoraView.MemoriaRascunho.CaminhoImagem = produto.CaminhoImagem ?? "";
+
+                AcionarBotaoLateralCalculadora();
+            }
+        }
+
+        private void MenuExcluir_Solicitar_Click(object sender, RoutedEventArgs e)
+        {
+            var produto = ObterProdutoDoMenu(sender);
+            if (produto != null)
+            {
+                produtoParaExcluir = produto;
+                TxtMensagemExclusao.Text = $"Tem certeza que deseja excluir o produto '{produto.Nome}'?";
+                ModalExclusao.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void BtnCancelarExclusao_Click(object sender, RoutedEventArgs e)
+        {
+            ModalExclusao.Visibility = Visibility.Collapsed;
+            produtoParaExcluir = null;
+        }
+
+        private void BtnConfirmarExclusao_Click(object sender, RoutedEventArgs e)
+        {
+            if (produtoParaExcluir != null)
+            {
+                ProdutosCadastrados.Remove(produtoParaExcluir);
                 CarregarProdutos();
             }
+            ModalExclusao.Visibility = Visibility.Collapsed;
+            produtoParaExcluir = null;
         }
     }
 }

@@ -19,6 +19,9 @@ namespace FavoStudio3D.Views
         // === MEMÓRIA ESTÁTICA PARA RASCUNHO E PASSAGEM DE DADOS ===
         public static class MemoriaRascunho
         {
+            public static bool CalculoPendente = false;
+            public static ResultadoCalculoModel? ResultadoPendente = null;
+
             public static string Nome = "";
             public static string Descricao = "";
             public static string Peso = "";
@@ -36,12 +39,26 @@ namespace FavoStudio3D.Views
             public static string HorasMao = "";
             public static string MinutosMao = "";
 
-            // Variáveis visuais extras para usar na tela de resumo/tabela
             public static string NomeFilamentoVisual = "PLA";
-            public static string CodigoHexVisual = "#000000"; // Guarda o texto exato do HEX
+            public static string CodigoHexVisual = "#000000";
+            public static string NomeCorVisual = "Padrão";
             public static Brush CorFilamentoVisualBrush = Brushes.Black;
             public static string NomeImpressoraVisual = "Impressora 3D";
             public static string ModeloImpressoraVisual = "Principal";
+
+            // Função centralizada para resetar tudo quando o produto for salvo
+            public static void LimparTudo()
+            {
+                CalculoPendente = false;
+                ResultadoPendente = null;
+                Nome = ""; Descricao = ""; Peso = ""; Horas = ""; Minutos = "";
+                Quantidade = "1"; Frete = ""; Margem = ""; Categoria = "";
+                ValorHora = ""; HorasMao = ""; MinutosMao = ""; CaminhoImagem = "";
+                FilamentoSelecionado = null; ImpressoraSelecionada = null;
+                CustosSelecionadosDescricoes.Clear();
+                NomeFilamentoVisual = "PLA"; CodigoHexVisual = "#000000"; NomeCorVisual = "Padrão";
+                CorFilamentoVisualBrush = Brushes.Black; NomeImpressoraVisual = "Impressora 3D"; ModeloImpressoraVisual = "Principal";
+            }
         }
 
         private double _totalCustosFixos = 0;
@@ -77,6 +94,29 @@ namespace FavoStudio3D.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            // === INTELIGÊNCIA DE REDIRECIONAMENTO AUTOMÁTICO ===
+            // Se o usuário já preencheu, calculou e saiu da tela sem salvar, nós o jogamos direto de volta para o resumo!
+            if (MemoriaRascunho.CalculoPendente && MemoriaRascunho.ResultadoPendente != null)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    var telaResumo = new ResumoCalculadoraView(MemoriaRascunho.ResultadoPendente);
+                    DependencyObject parent = VisualTreeHelper.GetParent(this);
+                    while (parent != null)
+                    {
+                        if (parent is ContentControl cc) { cc.Content = telaResumo; return; }
+                        if (parent is Panel panel)
+                        {
+                            int index = panel.Children.IndexOf(this);
+                            if (index >= 0) { panel.Children.RemoveAt(index); panel.Children.Insert(index, telaResumo); return; }
+                        }
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+                }), System.Windows.Threading.DispatcherPriority.Send);
+
+                return; // Pausa o resto do carregamento para não piscar a tela do formulário
+            }
+
             CarregarDadosCadastrados();
             RestaurarRascunho();
         }
@@ -222,7 +262,8 @@ namespace FavoStudio3D.Views
                             else if (rawValue is int i) val = i;
                             else
                             {
-                                string valorTexto = rawValue.ToString() ?? "0";
+                                // Correção do possível valor nulo aqui
+                                string valorTexto = rawValue?.ToString() ?? "0";
                                 valorTexto = valorTexto.Replace("R$", "").Replace(" ", "").Trim();
                                 if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt)) val = valPt;
                                 else if (double.TryParse(valorTexto.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double valInv)) val = valInv;
@@ -244,7 +285,8 @@ namespace FavoStudio3D.Views
                                 break;
                             }
                         }
-                        if (rawDesc != null) desc = rawDesc.ToString() ?? desc;
+                        // Correção do possível valor nulo aqui
+                        if (rawDesc != null) desc = rawDesc?.ToString() ?? desc;
                     }
                     catch { }
 
@@ -360,22 +402,7 @@ namespace FavoStudio3D.Views
 
         private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
-            MemoriaRascunho.Nome = "";
-            MemoriaRascunho.Descricao = "";
-            MemoriaRascunho.Peso = "";
-            MemoriaRascunho.Horas = "";
-            MemoriaRascunho.Minutos = "";
-            MemoriaRascunho.Quantidade = "1";
-            MemoriaRascunho.Frete = "";
-            MemoriaRascunho.Margem = "";
-            MemoriaRascunho.Categoria = "";
-            MemoriaRascunho.ValorHora = "";
-            MemoriaRascunho.HorasMao = "";
-            MemoriaRascunho.MinutosMao = "";
-            MemoriaRascunho.CaminhoImagem = "";
-            MemoriaRascunho.FilamentoSelecionado = null;
-            MemoriaRascunho.ImpressoraSelecionada = null;
-            MemoriaRascunho.CustosSelecionadosDescricoes.Clear();
+            MemoriaRascunho.LimparTudo();
 
             TxtNomeProduto.Text = string.Empty;
             TxtDescricao.Text = string.Empty;
@@ -481,13 +508,11 @@ namespace FavoStudio3D.Views
             {
                 dynamic filamentoEscolhido = ListaFilamentos.SelectedItem;
                 double precoKgFilamento = 100.0;
-
-                // Salva o nome exato que está no botão (Ex: "PLA Preto")
-                MemoriaRascunho.NomeFilamentoVisual = txtFilamento?.Text ?? "PLA";
                 MemoriaRascunho.NomeImpressoraVisual = txtImpressora?.Text ?? "Impressora 3D";
 
-                // === LÓGICA 100% DINÂMICA DA COR ===
-                string hexExato = "#000000"; // Valor de segurança inicial
+                string nomePrincipal = "PLA";
+                string nomeDaCor = "Padrão";
+                string hexExato = "#000000";
                 Brush brushDaCor = Brushes.Black;
 
                 if (filamentoEscolhido != null)
@@ -495,30 +520,56 @@ namespace FavoStudio3D.Views
                     object? rawPreco = ObterValorDeObjeto(filamentoEscolhido, "preco", "valor");
                     if (rawPreco != null) precoKgFilamento = ConverterParaDouble(rawPreco);
 
-                    // Tenta puxar o texto HEX exato que você salvou no banco
+                    object? rawTipo = ObterValorDeObjeto(filamentoEscolhido, "tipo", "categoria");
+                    if (rawTipo != null && !string.IsNullOrWhiteSpace(rawTipo.ToString()))
+                    {
+                        nomePrincipal = rawTipo.ToString()!.Trim();
+                    }
+                    else
+                    {
+                        string[] partes = (txtFilamento?.Text ?? "PLA").Split(' ');
+                        nomePrincipal = partes[0];
+                    }
+
+                    object? rawNome = ObterValorDeObjeto(filamentoEscolhido, "nome", "descricao");
+                    string nomeCompleto = rawNome?.ToString() ?? txtFilamento?.Text ?? "";
+
+                    if (nomeCompleto.StartsWith(nomePrincipal, StringComparison.OrdinalIgnoreCase))
+                    {
+                        nomeDaCor = nomeCompleto.Substring(nomePrincipal.Length).Trim();
+                        if (nomeDaCor.StartsWith("-")) nomeDaCor = nomeDaCor.Substring(1).Trim();
+                    }
+                    else
+                    {
+                        nomeDaCor = nomeCompleto;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(nomeDaCor)) nomeDaCor = "Padrão";
+
                     object? rawHex = ObterValorDeObjeto(filamentoEscolhido, "hex", "codigo", "corhex", "cor");
                     object? rawBrush = ObterValorDeObjeto(filamentoEscolhido, "corbrush", "brush");
 
                     if (rawHex != null)
                     {
-                        string txtCor = rawHex.ToString()!.Trim();
+                        // Correção do possível valor nulo aqui
+                        string txtCor = rawHex?.ToString()?.Trim() ?? "";
                         if (txtCor.StartsWith("#") || txtCor.Length == 6 || txtCor.Length == 8)
                         {
                             hexExato = txtCor.StartsWith("#") ? txtCor : "#" + txtCor;
                         }
                     }
-                    // Se não achar o texto HEX, extrai matematicamente o RGB exato da bolinha
                     else if (rawBrush is SolidColorBrush sb)
                     {
                         hexExato = $"#{sb.Color.R:X2}{sb.Color.G:X2}{sb.Color.B:X2}";
                     }
 
-                    // Transforma o HEX exato de volta para a pintura da bolinha visual
                     try { brushDaCor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexExato)); } catch { }
                 }
 
                 MemoriaRascunho.CodigoHexVisual = hexExato;
                 MemoriaRascunho.CorFilamentoVisualBrush = brushDaCor;
+                MemoriaRascunho.NomeFilamentoVisual = nomePrincipal;
+                MemoriaRascunho.NomeCorVisual = nomeDaCor;
 
                 dynamic impressoraEscolhida = ListaImpressoras.SelectedItem;
                 double potenciaWatts = 350.0;
@@ -611,6 +662,9 @@ namespace FavoStudio3D.Views
                 }
                 resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
 
+                MemoriaRascunho.CalculoPendente = true;
+                MemoriaRascunho.ResultadoPendente = resultado;
+
                 var telaResumo = new ResumoCalculadoraView(resultado);
                 DependencyObject parent = VisualTreeHelper.GetParent(this);
                 while (parent != null)
@@ -650,14 +704,17 @@ namespace FavoStudio3D.Views
             return null;
         }
 
-        private double ConverterParaDouble(object valorBruto)
+        // Correção principal: O método agora aceita valores nulos na assinatura (object?)
+        private double ConverterParaDouble(object? valorBruto)
         {
+            if (valorBruto == null) return 0;
             if (valorBruto is double d) return d;
             if (valorBruto is decimal dec) return (double)dec;
             if (valorBruto is float f) return (double)f;
             if (valorBruto is int i) return i;
 
-            string texto = valorBruto.ToString() ?? "0";
+            // Correção do possível valor nulo aqui
+            string texto = valorBruto?.ToString() ?? "0";
             texto = texto.Replace("R$", "").Replace(" ", "").Trim();
 
             if (double.TryParse(texto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt)) return valPt;
