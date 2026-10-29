@@ -45,11 +45,24 @@ namespace FavoStudio3D.Views
                 {
                     try
                     {
+                        // 1. Atualiza os textos do cabeçalho
                         if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo)
                             txtTitulo.Text = "Produtos";
 
                         if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub)
                             txtSub.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
+
+                        // 2. Atualiza o título da janela principal
+                        dashboard.Title = "Favo Studio 3D - Produtos";
+
+                        // 3. Destaca corretamente o menu de Produtos na barra lateral usando o método da DashboardWindow
+                        if (dashboard.FindName("MenuProdutosBorder") is Border borderProd &&
+                            dashboard.FindName("MenuProdutosTexto") is TextBlock textoProd)
+                        {
+                            // Usa reflexão ou chama diretamente se o método for acessível (ou podemos invocar o método privado/público)
+                            var metodoAtivar = dashboard.GetType().GetMethod("AtivarBotaoMenu", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            metodoAtivar?.Invoke(dashboard, new object[] { borderProd, textoProd });
+                        }
                     }
                     catch { }
                 }
@@ -254,10 +267,25 @@ namespace FavoStudio3D.Views
             var produto = ObterProdutoDoMenu(sender);
             if (produto != null)
             {
+                // 1. Define a referência para o sistema saber que estamos a atualizar e não a criar um novo
+                CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef = produto;
                 CalculadoraView.MemoriaRascunho.CalculoPendente = false;
+
+                // 2. Restaura os dados básicos
                 CalculadoraView.MemoriaRascunho.Nome = produto.Nome ?? "";
                 CalculadoraView.MemoriaRascunho.CaminhoImagem = produto.CaminhoImagem ?? "";
 
+                // 3. Se houver os dados detalhados do cálculo anterior, preenche o rascunho para reaparecer no formulário
+                if (produto.DadosCompletos != null)
+                {
+                    var res = produto.DadosCompletos;
+                    CalculadoraView.MemoriaRascunho.Categoria = res.ProdutoCategoria ?? "";
+                    CalculadoraView.MemoriaRascunho.Descricao = res.ProdutoDescricao ?? "";
+
+                    // Se você guardar mais propriedades detalhadas no ResultadoCalculoModel ou parâmetros, pode resgatar aqui.
+                }
+
+                // 4. Redireciona para a tela da calculadora com os dados carregados
                 AcionarBotaoLateralCalculadora();
             }
         }

@@ -144,25 +144,49 @@ namespace FavoStudio3D.Views
             ModalSucesso.Visibility = Visibility.Collapsed;
 
             var resultadoCalculado = this.DataContext as ResultadoCalculoModel;
-            int proximoNumero = ResumoProdutosView.ProdutosCadastrados.Count + 1;
-            string skuSequencial = $"#PROD-{proximoNumero:D3}";
 
-            var novoProduto = new ProdutoItemModel
+            // VERIFICA SE ESTÁ A EDITAR UM PRODUTO EXISTENTE
+            if (CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef is ProdutoItemModel produtoExistente)
             {
-                Nome = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.Nome) ? "Peça 3D" : CalculadoraView.MemoriaRascunho.Nome,
-                CodigoSku = skuSequencial,
-                FilamentoNome = CalculadoraView.MemoriaRascunho.NomeFilamentoVisual,
-                FilamentoDetalhe = CalculadoraView.MemoriaRascunho.NomeCorVisual,
-                CorFilamentoBrush = CalculadoraView.MemoriaRascunho.CorFilamentoVisualBrush,
-                ImpressoraNome = CalculadoraView.MemoriaRascunho.NomeImpressoraVisual,
-                ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual,
-                CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00",
-                PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00",
-                CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem,
-                DadosCompletos = resultadoCalculado
-            };
+                // Atualiza o produto existente em vez de criar um novo (evita duplicar)
+                produtoExistente.Nome = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.Nome) ? "Peça 3D" : CalculadoraView.MemoriaRascunho.Nome;
+                produtoExistente.FilamentoNome = CalculadoraView.MemoriaRascunho.NomeFilamentoVisual;
+                produtoExistente.FilamentoDetalhe = CalculadoraView.MemoriaRascunho.NomeCorVisual;
+                produtoExistente.CorFilamentoBrush = CalculadoraView.MemoriaRascunho.CorFilamentoVisualBrush;
+                produtoExistente.ImpressoraNome = CalculadoraView.MemoriaRascunho.NomeImpressoraVisual;
+                produtoExistente.ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual;
+                produtoExistente.CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00";
+                produtoExistente.PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00";
+                produtoExistente.CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem;
+                produtoExistente.DadosCompletos = resultadoCalculado;
 
-            ResumoProdutosView.ProdutosCadastrados.Add(novoProduto);
+                // Limpa a referência de edição após salvar
+                CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef = null;
+            }
+            else
+            {
+                // Se não estiver a editar, cria um novo registo normalmente com SKU sequencial
+                int proximoNumero = ResumoProdutosView.ProdutosCadastrados.Count + 1;
+                string skuSequencial = $"#PROD-{proximoNumero:D3}";
+
+                var novoProduto = new ProdutoItemModel
+                {
+                    Nome = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.Nome) ? "Peça 3D" : CalculadoraView.MemoriaRascunho.Nome,
+                    CodigoSku = skuSequencial,
+                    FilamentoNome = CalculadoraView.MemoriaRascunho.NomeFilamentoVisual,
+                    FilamentoDetalhe = CalculadoraView.MemoriaRascunho.NomeCorVisual,
+                    CorFilamentoBrush = CalculadoraView.MemoriaRascunho.CorFilamentoVisualBrush,
+                    ImpressoraNome = CalculadoraView.MemoriaRascunho.NomeImpressoraVisual,
+                    ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual,
+                    CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00",
+                    PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00",
+                    CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem,
+                    DadosCompletos = resultadoCalculado
+                };
+
+                ResumoProdutosView.ProdutosCadastrados.Add(novoProduto);
+            }
+
             CalculadoraView.MemoriaRascunho.CalculoPendente = false;
 
             if (Window.GetWindow(this) is DashboardWindow dashboard)

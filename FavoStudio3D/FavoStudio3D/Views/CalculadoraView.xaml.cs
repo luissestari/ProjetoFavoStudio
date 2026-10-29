@@ -19,6 +19,7 @@ namespace FavoStudio3D.Views
         // === MEMÓRIA ESTÁTICA PARA RASCUNHO E PASSAGEM DE DADOS ===
         public static class MemoriaRascunho
         {
+            public static object? ProdutoEmEdicaoRef = null;
             public static bool CalculoPendente = false;
             public static ResultadoCalculoModel? ResultadoPendente = null;
 
@@ -610,7 +611,8 @@ namespace FavoStudio3D.Views
                 double custosAdicionaisUnitarios = 0;
                 foreach (var c in custosSelecionados) custosAdicionaisUnitarios += c.Valor;
 
-                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + (_totalCustosFixos / Math.Max(1, quantidade));
+                double custoTotalLote = custoUnitarioTotal * quantidade;
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
 
                 string tempoMaoDisplay = $"{TxtHorasMaoDeObra.Text}h {TxtMinutosMaoDeObra.Text}min".Trim();
@@ -660,8 +662,15 @@ namespace FavoStudio3D.Views
                 {
                     resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeMaoObra.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = $"R$ {custoMaoDeObraUnitario:N2}" });
                 }
-                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
 
+                // ---> INSIRA AQUI O BLOCO DOS CUSTOS FIXOS:
+                if (_totalCustosFixos > 0)
+                {
+                    double custoFixoUnitario = _totalCustosFixos / Math.Max(1, quantidade);
+                    resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoFixo.png", Titulo = "Custos fixos", Descricao = "Rateio de custos fixos mensais", ValorFormatado = $"R$ {custoFixoUnitario:N2}" });
+                }
+
+                resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeCustoAdicional.png", Titulo = "Outros custos", Descricao = "Embalagens, insumos, etc.", ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}" });
                 MemoriaRascunho.CalculoPendente = true;
                 MemoriaRascunho.ResultadoPendente = resultado;
 

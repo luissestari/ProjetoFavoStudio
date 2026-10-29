@@ -125,8 +125,19 @@ namespace FavoStudio3D.Views
             }
         }
 
+        public void DestacarBotaoMenu(string nomeMenu)
+        {
+            // Limpa ou redefine o estado visual dos botões do menu conforme necessário
+            // Exemplo ajustado aos nomes reais dos seus botões na barra lateral:
+            if (FindName("MenuProdutos") is RadioButton rbProd) rbProd.IsChecked = (nomeMenu == "Produtos");
+            if (FindName("MenuCalculadora") is RadioButton rbCalc) rbCalc.IsChecked = (nomeMenu == "Calculadora");
+
+            // Se forem botões normais com estilos visuais próprios, você também pode controlar propriedades aqui.
+        }
+
         private void NavegarParaCalculadora()
         {
+            // ADICIONE ESTA LINHA AQUI para pintar o botão da calculadora de dourado:
             AtivarBotaoMenu(MenuCalculadoraBorder, MenuCalculadoraTexto);
 
             TextoTituloPagina.Text = "Calculadora";
