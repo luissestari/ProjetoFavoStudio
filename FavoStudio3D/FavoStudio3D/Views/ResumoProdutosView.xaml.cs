@@ -22,6 +22,20 @@ namespace FavoStudio3D.Views
         public string CustoTotalFormatado { get; set; } = "";
         public string PrecoSugeridoFormatado { get; set; } = "";
 
+        // --- NOVAS VARIÁVEIS DE MEMÓRIA PARA A EDIÇÃO ---
+        public string PesoGramaSalvo { get; set; } = "";
+        public string HorasImpSalvo { get; set; } = "";
+        public string MinutosImpSalvo { get; set; } = "";
+        public string QuantidadeSalva { get; set; } = "1";
+        public string FreteSalvo { get; set; } = "";
+        public string MargemSalva { get; set; } = "";
+        public string ValorHoraMaoSalvo { get; set; } = "";
+        public string HorasMaoSalvo { get; set; } = "";
+        public string MinutosMaoSalvo { get; set; } = "";
+        public object? FilamentoObjetoSalvo { get; set; }
+        public object? ImpressoraObjetoSalvo { get; set; }
+        public System.Collections.Generic.List<string> CustosMarcadosSalvos { get; set; } = new System.Collections.Generic.List<string>();
+
         public ResultadoCalculoModel? DadosCompletos { get; set; }
     }
 
@@ -267,25 +281,37 @@ namespace FavoStudio3D.Views
             var produto = ObterProdutoDoMenu(sender);
             if (produto != null)
             {
-                // 1. Define a referência para o sistema saber que estamos a atualizar e não a criar um novo
                 CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef = produto;
                 CalculadoraView.MemoriaRascunho.CalculoPendente = false;
 
-                // 2. Restaura os dados básicos
+                // Devolve os dados básicos
                 CalculadoraView.MemoriaRascunho.Nome = produto.Nome ?? "";
                 CalculadoraView.MemoriaRascunho.CaminhoImagem = produto.CaminhoImagem ?? "";
 
-                // 3. Se houver os dados detalhados do cálculo anterior, preenche o rascunho para reaparecer no formulário
+                // Devolve os números brutos para os TextBoxes da calculadora
+                CalculadoraView.MemoriaRascunho.Peso = produto.PesoGramaSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.Horas = produto.HorasImpSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.Minutos = produto.MinutosImpSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.Quantidade = string.IsNullOrWhiteSpace(produto.QuantidadeSalva) ? "1" : produto.QuantidadeSalva;
+                CalculadoraView.MemoriaRascunho.Frete = produto.FreteSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.Margem = produto.MargemSalva ?? "";
+                CalculadoraView.MemoriaRascunho.ValorHora = produto.ValorHoraMaoSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.HorasMao = produto.HorasMaoSalvo ?? "";
+                CalculadoraView.MemoriaRascunho.MinutosMao = produto.MinutosMaoSalvo ?? "";
+
+                // Devolve as seleções corretas para os Dropdowns e Checkboxes
+                CalculadoraView.MemoriaRascunho.FilamentoSelecionado = produto.FilamentoObjetoSalvo;
+                CalculadoraView.MemoriaRascunho.ImpressoraSelecionada = produto.ImpressoraObjetoSalvo;
+                CalculadoraView.MemoriaRascunho.CustosSelecionadosDescricoes = produto.CustosMarcadosSalvos != null
+                    ? new System.Collections.Generic.List<string>(produto.CustosMarcadosSalvos)
+                    : new System.Collections.Generic.List<string>();
+
                 if (produto.DadosCompletos != null)
                 {
-                    var res = produto.DadosCompletos;
-                    CalculadoraView.MemoriaRascunho.Categoria = res.ProdutoCategoria ?? "";
-                    CalculadoraView.MemoriaRascunho.Descricao = res.ProdutoDescricao ?? "";
-
-                    // Se você guardar mais propriedades detalhadas no ResultadoCalculoModel ou parâmetros, pode resgatar aqui.
+                    CalculadoraView.MemoriaRascunho.Categoria = produto.DadosCompletos.ProdutoCategoria ?? "";
+                    CalculadoraView.MemoriaRascunho.Descricao = produto.DadosCompletos.ProdutoDescricao ?? "";
                 }
 
-                // 4. Redireciona para a tela da calculadora com os dados carregados
                 AcionarBotaoLateralCalculadora();
             }
         }

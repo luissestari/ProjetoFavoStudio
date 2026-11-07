@@ -199,6 +199,10 @@ namespace FavoStudio3D.Views
                 catch { }
             }
 
+            // --- CORREÇÃO APLICADA AQUI ---
+            // Limpa todos os dados da memória rascunho (campos digitados, imagem, cálculos)
+            CalculadoraView.MemoriaRascunho.LimparTudo();
+
             // Sincroniza o botão dourado do menu lateral para a aba "Produtos" de forma imediata
             SincronizarMenuLateral("MenuProdutos", "BtnProdutos");
 

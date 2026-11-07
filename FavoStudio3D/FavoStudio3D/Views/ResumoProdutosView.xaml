@@ -52,7 +52,7 @@
 
     <Grid>
         <!-- CONTEÚDO PRINCIPAL -->
-        <Border Width="880" Height="580" CornerRadius="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,0,0,0" Padding="35,25,35,20">
+        <Border Width="880" Height="580" CornerRadius="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="40,0,0,0" Padding="35,25,35,20">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity="0.75"/>
             </Border.Background>
@@ -180,15 +180,15 @@
 
                                         <!-- Impressora -->
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding ImpressoraNome}" FontSize="12" FontWeight="SemiBold" Foreground="#3E2723"/>
-                                            <TextBlock Text="{Binding ImpressoraModelo}" FontSize="10" Foreground="#A99F96"/>
+                                            <TextBlock Text="{Binding ImpressoraNome}" FontSize="13" FontWeight="SemiBold" Foreground="#3E2723"/>
+                                            <TextBlock Text="{Binding ImpressoraModelo}" FontSize="12" Foreground="#A99F96"/>
                                         </StackPanel>
 
                                         <!-- Custo Total -->
-                                        <TextBlock Grid.Column="3" Text="{Binding CustoTotalFormatado}" FontSize="13" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding CustoTotalFormatado}" FontSize="14" FontWeight="Bold" Foreground="#3E2723" VerticalAlignment="Center"/>
 
                                         <!-- Preço Sugerido -->
-                                        <TextBlock Grid.Column="4" Text="{Binding PrecoSugeridoFormatado}" FontSize="13" FontWeight="Bold" Foreground="#8D4925" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding PrecoSugeridoFormatado}" FontSize="14" FontWeight="Bold" Foreground="#8D4925" VerticalAlignment="Center"/>
 
                                         <!-- AÇÕES -->
                                         <Button Grid.Column="5" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BtnAcoes_Click">
