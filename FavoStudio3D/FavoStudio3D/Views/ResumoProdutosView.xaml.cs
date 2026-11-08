@@ -11,6 +11,9 @@ namespace FavoStudio3D.Views
 {
     public class ProdutoItemModel
     {
+        // === NOVA VARIÁVEL PARA A CHECKBOX ===
+        public bool Selecionado { get; set; } = false;
+
         public string CaminhoImagem { get; set; } = "";
         public string Nome { get; set; } = "";
         public string CodigoSku { get; set; } = "";
@@ -22,7 +25,7 @@ namespace FavoStudio3D.Views
         public string CustoTotalFormatado { get; set; } = "";
         public string PrecoSugeridoFormatado { get; set; } = "";
 
-        // --- NOVAS VARIÁVEIS DE MEMÓRIA PARA A EDIÇÃO ---
+        // Variáveis de memória da edição
         public string PesoGramaSalvo { get; set; } = "";
         public string HorasImpSalvo { get; set; } = "";
         public string MinutosImpSalvo { get; set; } = "";
@@ -59,21 +62,17 @@ namespace FavoStudio3D.Views
                 {
                     try
                     {
-                        // 1. Atualiza os textos do cabeçalho
                         if (dashboard.FindName("TextoTituloPagina") is TextBlock txtTitulo)
                             txtTitulo.Text = "Produtos";
 
                         if (dashboard.FindName("TextoSubtituloPagina") is TextBlock txtSub)
                             txtSub.Text = "Os produtos cadastrados aparecem aqui após serem calculados e salvos na calculadora.";
 
-                        // 2. Atualiza o título da janela principal
                         dashboard.Title = "Favo Studio 3D - Produtos";
 
-                        // 3. Destaca corretamente o menu de Produtos na barra lateral usando o método da DashboardWindow
                         if (dashboard.FindName("MenuProdutosBorder") is Border borderProd &&
                             dashboard.FindName("MenuProdutosTexto") is TextBlock textoProd)
                         {
-                            // Usa reflexão ou chama diretamente se o método for acessível (ou podemos invocar o método privado/público)
                             var metodoAtivar = dashboard.GetType().GetMethod("AtivarBotaoMenu", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                             metodoAtivar?.Invoke(dashboard, new object[] { borderProd, textoProd });
                         }
@@ -98,13 +97,15 @@ namespace FavoStudio3D.Views
             int itensPorPagina = 5;
             int totalPaginas = Math.Max(1, (int)Math.Ceiling((double)totalItens / itensPorPagina));
 
-            // Atualiza o texto do contador à esquerda (Ex: "1 produto cadastrado" ou "3 produtos cadastrados")
             if (TxtContadorProdutos != null)
             {
                 TxtContadorProdutos.Text = totalItens == 1 ? "1 produto cadastrado" : $"{totalItens} produtos cadastrados";
             }
 
-            // Botão Anterior (<)
+            // === LÓGICA DE MOSTRAR/ESCONDER OS BOTÕES DE PDF ===
+            AtualizarVisibilidadeBotoesPDF();
+            // ====================================================
+
             var borderAnterior = new Border
             {
                 Width = 28,
@@ -117,18 +118,9 @@ namespace FavoStudio3D.Views
                 VerticalAlignment = VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderAnterior.Child = new TextBlock
-            {
-                Text = "<",
-                FontSize = 12,
-                FontWeight = FontWeights.Bold,
-                Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            borderAnterior.Child = new TextBlock { Text = "<", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderAnterior);
 
-            // Número da Página (Ex: 1)
             var borderPagina = new Border
             {
                 Width = 28,
@@ -138,18 +130,9 @@ namespace FavoStudio3D.Views
                 Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            borderPagina.Child = new TextBlock
-            {
-                Text = "1",
-                FontSize = 12,
-                FontWeight = FontWeights.Bold,
-                Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            borderPagina.Child = new TextBlock { Text = "1", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderPagina);
 
-            // Botão Próximo (>)
             var borderProximo = new Border
             {
                 Width = 28,
@@ -161,16 +144,26 @@ namespace FavoStudio3D.Views
                 VerticalAlignment = VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderProximo.Child = new TextBlock
-            {
-                Text = ">",
-                FontSize = 12,
-                FontWeight = FontWeights.Bold,
-                Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            borderProximo.Child = new TextBlock { Text = ">", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderProximo);
+        }
+
+        // =================================================================
+        // EVENTOS DA CHECKBOX E CONTROLO DOS BOTÕES PDF
+        // =================================================================
+        private void ChkProduto_Changed(object sender, RoutedEventArgs e)
+        {
+            AtualizarVisibilidadeBotoesPDF();
+        }
+
+        private void AtualizarVisibilidadeBotoesPDF()
+        {
+            if (PainelBotoesPDF != null)
+            {
+                // Se algum produto da lista estiver marcado como "Selecionado", mostra os botões. Senão, esconde.
+                bool algumSelecionado = ProdutosCadastrados.Any(p => p.Selecionado);
+                PainelBotoesPDF.Visibility = algumSelecionado ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void TxtPesquisa_TextChanged(object sender, TextChangedEventArgs e)
@@ -225,6 +218,19 @@ namespace FavoStudio3D.Views
         {
             CalculadoraView.MemoriaRascunho.LimparTudo();
             AcionarBotaoLateralCalculadora();
+        }
+
+        private void BtnGerarCatalogo_Click(object sender, RoutedEventArgs e)
+        {
+            // Aqui vamos saber quais produtos gerar o PDF!
+            var produtosSelecionados = ProdutosCadastrados.Where(p => p.Selecionado).ToList();
+            MessageBox.Show($"Gerar Catálogo para {produtosSelecionados.Count} produto(s).", "Catálogo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void BtnGerarRelatorio_Click(object sender, RoutedEventArgs e)
+        {
+            var produtosSelecionados = ProdutosCadastrados.Where(p => p.Selecionado).ToList();
+            MessageBox.Show($"Gerar Relatório para {produtosSelecionados.Count} produto(s).", "Relatório", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnAcoes_Click(object sender, RoutedEventArgs e)
@@ -284,11 +290,8 @@ namespace FavoStudio3D.Views
                 CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef = produto;
                 CalculadoraView.MemoriaRascunho.CalculoPendente = false;
 
-                // Devolve os dados básicos
                 CalculadoraView.MemoriaRascunho.Nome = produto.Nome ?? "";
                 CalculadoraView.MemoriaRascunho.CaminhoImagem = produto.CaminhoImagem ?? "";
-
-                // Devolve os números brutos para os TextBoxes da calculadora
                 CalculadoraView.MemoriaRascunho.Peso = produto.PesoGramaSalvo ?? "";
                 CalculadoraView.MemoriaRascunho.Horas = produto.HorasImpSalvo ?? "";
                 CalculadoraView.MemoriaRascunho.Minutos = produto.MinutosImpSalvo ?? "";
@@ -299,7 +302,6 @@ namespace FavoStudio3D.Views
                 CalculadoraView.MemoriaRascunho.HorasMao = produto.HorasMaoSalvo ?? "";
                 CalculadoraView.MemoriaRascunho.MinutosMao = produto.MinutosMaoSalvo ?? "";
 
-                // Devolve as seleções corretas para os Dropdowns e Checkboxes
                 CalculadoraView.MemoriaRascunho.FilamentoSelecionado = produto.FilamentoObjetoSalvo;
                 CalculadoraView.MemoriaRascunho.ImpressoraSelecionada = produto.ImpressoraObjetoSalvo;
                 CalculadoraView.MemoriaRascunho.CustosSelecionadosDescricoes = produto.CustosMarcadosSalvos != null

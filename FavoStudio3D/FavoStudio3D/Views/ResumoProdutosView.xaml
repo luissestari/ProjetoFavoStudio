@@ -72,7 +72,6 @@
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
@@ -102,18 +101,62 @@
                         </Grid>
                     </Border>
 
-                    <Button Grid.Column="2" Width="165" Height="46" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCalculo_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Image Source="/Assets/Images/BotaoMaisBranco.png" Height="20" Margin="0,0,8,0" Stretch="Uniform"/>
-                                        <TextBlock Text="Novo cálculo" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- PAINEL DOS BOTÕES PDF -->
+                        <StackPanel x:Name="PainelBotoesPDF" Orientation="Horizontal" Visibility="Collapsed">
+
+                            <!-- Botão Gerar Catálogo -->
+                            <Button x:Name="BtnGerarCatalogo" Width="130" Height="46" Margin="0,0,10,0" Cursor="Hand" Click="BtnGerarCatalogo_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <!-- Adicionamos o x:Name="FundoBotao" para podermos alterar a sua cor -->
+                                        <Border x:Name="FundoBotao" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" CornerRadius="10">
+                                            <TextBlock Text="Gerar Catálogo" Foreground="#3E2723" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Gatilho do efeito Hover -->
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="FundoBotao" Property="Background" Value="#FFF6BE"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <!-- Botão Gerar Relatório -->
+                            <Button x:Name="BtnGerarRelatorio" Width="130" Height="46" Margin="0,0,20,0" Cursor="Hand" Click="BtnGerarRelatorio_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="FundoBotao2" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" CornerRadius="10">
+                                            <TextBlock Text="Gerar Relatório" Foreground="#3E2723" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Gatilho do efeito Hover -->
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="FundoBotao2" Property="Background" Value="#FFF6BE"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Botão Novo Cálculo -->
+                        <Button x:Name="BtnNovoCalculo" Width="165" Height="46" Background="#EBB45D" BorderThickness="0" Cursor="Hand" Click="BtnNovoCalculo_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Assets/Images/BotaoMaisBranco.png" Height="20" Margin="0,0,8,0" Stretch="Uniform"/>
+                                            <TextBlock Text="Novo cálculo" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
                 </Grid>
 
                 <!-- 2. CABEÇALHO -->
@@ -127,7 +170,7 @@
                             <ColumnDefinition Width="1.4*"/>
                             <ColumnDefinition Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Produto" FontSize="12" FontWeight="Bold" Foreground="#381300" Margin="5,0,0,0"/>
+                        <TextBlock Grid.Column="0" Text="Produto" FontSize="12" FontWeight="Bold" Foreground="#381300" Margin="32,0,0,0"/>
                         <TextBlock Grid.Column="1" Text="Filamento" FontSize="12" FontWeight="Bold" Foreground="#381300"/>
                         <TextBlock Grid.Column="2" Text="Impressora" FontSize="12" FontWeight="Bold" Foreground="#381300"/>
                         <TextBlock Grid.Column="3" Text="Custo total" FontSize="12" FontWeight="Bold" Foreground="#381300"/>
@@ -157,6 +200,14 @@
 
                                         <!-- Produto -->
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+
+                                            <!-- NOVA CHECKBOX ADICIONADA AQUI -->
+                                            <CheckBox IsChecked="{Binding Selecionado}" Margin="0,0,12,0" VerticalAlignment="Center" Checked="ChkProduto_Changed" Unchecked="ChkProduto_Changed">
+                                                <CheckBox.LayoutTransform>
+                                                    <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                                </CheckBox.LayoutTransform>
+                                            </CheckBox>
+
                                             <Border Width="38" Height="38" CornerRadius="6" Background="#FFFBF5" BorderBrush="#EADCC9" BorderThickness="1" Margin="0,0,10,0" ClipToBounds="True">
                                                 <Image Source="{Binding CaminhoImagem}" Stretch="UniformToFill"/>
                                             </Border>
