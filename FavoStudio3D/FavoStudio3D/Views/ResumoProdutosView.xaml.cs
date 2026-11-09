@@ -6,14 +6,23 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+// --- IMPORTAÇÕES PARA O PDF ---
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System.IO;
+using System.Diagnostics;
+using Microsoft.Win32;
+
+// --- SOLUÇÃO PARA O ERRO DE AMBIGUIDADE (CORES E FONTES) ---
+using QColors = QuestPDF.Helpers.Colors;
+using QFonts = QuestPDF.Helpers.Fonts;
 
 namespace FavoStudio3D.Views
 {
     public class ProdutoItemModel
     {
-        // === NOVA VARIÁVEL PARA A CHECKBOX ===
         public bool Selecionado { get; set; } = false;
-
         public string CaminhoImagem { get; set; } = "";
         public string Nome { get; set; } = "";
         public string CodigoSku { get; set; } = "";
@@ -25,7 +34,6 @@ namespace FavoStudio3D.Views
         public string CustoTotalFormatado { get; set; } = "";
         public string PrecoSugeridoFormatado { get; set; } = "";
 
-        // Variáveis de memória da edição
         public string PesoGramaSalvo { get; set; } = "";
         public string HorasImpSalvo { get; set; } = "";
         public string MinutosImpSalvo { get; set; } = "";
@@ -102,9 +110,7 @@ namespace FavoStudio3D.Views
                 TxtContadorProdutos.Text = totalItens == 1 ? "1 produto cadastrado" : $"{totalItens} produtos cadastrados";
             }
 
-            // === LÓGICA DE MOSTRAR/ESCONDER OS BOTÕES DE PDF ===
             AtualizarVisibilidadeBotoesPDF();
-            // ====================================================
 
             var borderAnterior = new Border
             {
@@ -115,10 +121,10 @@ namespace FavoStudio3D.Views
                 BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
                 BorderThickness = new Thickness(1),
                 Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderAnterior.Child = new TextBlock { Text = "<", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            borderAnterior.Child = new TextBlock { Text = "<", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderAnterior);
 
             var borderPagina = new Border
@@ -128,9 +134,9 @@ namespace FavoStudio3D.Views
                 CornerRadius = new CornerRadius(6),
                 Background = (Brush)new BrushConverter().ConvertFrom("#EBB45D"),
                 Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
             };
-            borderPagina.Child = new TextBlock { Text = "1", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            borderPagina.Child = new TextBlock { Text = "1", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderPagina);
 
             var borderProximo = new Border
@@ -141,16 +147,13 @@ namespace FavoStudio3D.Views
                 Background = Brushes.White,
                 BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
                 BorderThickness = new Thickness(1),
-                VerticalAlignment = VerticalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderProximo.Child = new TextBlock { Text = ">", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            borderProximo.Child = new TextBlock { Text = ">", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderProximo);
         }
 
-        // =================================================================
-        // EVENTOS DA CHECKBOX E CONTROLO DOS BOTÕES PDF
-        // =================================================================
         private void ChkProduto_Changed(object sender, RoutedEventArgs e)
         {
             AtualizarVisibilidadeBotoesPDF();
@@ -160,7 +163,6 @@ namespace FavoStudio3D.Views
         {
             if (PainelBotoesPDF != null)
             {
-                // Se algum produto da lista estiver marcado como "Selecionado", mostra os botões. Senão, esconde.
                 bool algumSelecionado = ProdutosCadastrados.Any(p => p.Selecionado);
                 PainelBotoesPDF.Visibility = algumSelecionado ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -220,17 +222,210 @@ namespace FavoStudio3D.Views
             AcionarBotaoLateralCalculadora();
         }
 
+        // =================================================================
+        // GERAÇÃO DOS PDFs - DESIGN PREMIUM
+        // =================================================================
         private void BtnGerarCatalogo_Click(object sender, RoutedEventArgs e)
         {
-            // Aqui vamos saber quais produtos gerar o PDF!
+            QuestPDF.Settings.License = LicenseType.Community;
+            QuestPDF.Settings.UseSystemFonts = true;
+
             var produtosSelecionados = ProdutosCadastrados.Where(p => p.Selecionado).ToList();
-            MessageBox.Show($"Gerar Catálogo para {produtosSelecionados.Count} produto(s).", "Catálogo", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (produtosSelecionados.Count == 0) return;
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Ficheiro PDF (*.pdf)|*.pdf",
+                FileName = "Catalogo_FavoStudio3D.pdf",
+                Title = "Guardar Catálogo"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    Document.Create(container =>
+                    {
+                        container.Page(page =>
+                        {
+                            page.Size(PageSizes.A4);
+                            page.Margin(40);
+
+                            // =========================================================
+                            // NOVA LÓGICA INFALÍVEL PARA A IMAGEM DE FUNDO
+                            // Lê a imagem embutida (Recurso) diretamente da memória
+                            // =========================================================
+                            try
+                            {
+                                // O URI pack://application:,,, aponta para a raiz do assembly onde estão os Recursos
+                                var uri = new Uri("pack://application:,,,/fundo_catalogo.png");
+                                var resourceStream = System.Windows.Application.GetResourceStream(uri);
+
+                                if (resourceStream != null)
+                                {
+                                    using (var stream = resourceStream.Stream)
+                                    using (var ms = new MemoryStream())
+                                    {
+                                        stream.CopyTo(ms);
+                                        page.Background().Image(ms.ToArray());
+                                    }
+                                }
+                                else
+                                {
+                                    page.PageColor("#FAEDDC"); // Cor de segurança se o stream for nulo
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                // Log do erro na consola de debug, aplica cor de fundo bege em caso de falha
+                                Debug.WriteLine($"Erro ao carregar a imagem de fundo: {ex.Message}");
+                                page.PageColor("#FAEDDC");
+                            }
+
+                            page.DefaultTextStyle(x => x.FontSize(12).FontFamily(QFonts.Arial));
+
+                            page.Content().Column(col =>
+                            {
+                                col.Item().Height(140);
+
+                                col.Item().PaddingBottom(30).AlignRight().Row(dateRow =>
+                                {
+                                    dateRow.AutoItem()
+                                           .Background("#EADCC9")
+                                           .PaddingHorizontal(15)
+                                           .PaddingVertical(6)
+                                           .Text(DateTime.Now.ToString("dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-BR"))).FontSize(10).FontColor("#381300");
+                                });
+
+                                col.Item().Column(listaCol =>
+                                {
+                                    listaCol.Spacing(25);
+
+                                    foreach (var prod in produtosSelecionados)
+                                    {
+                                        listaCol.Item()
+                                            .Background(QColors.White)
+                                            .Padding(15)
+                                            .Row(cardRow =>
+                                            {
+                                                cardRow.ConstantItem(100).Height(100).Background("#F9F5F0").AlignCenter().AlignMiddle().Element(imgContainer =>
+                                                {
+                                                    if (!string.IsNullOrWhiteSpace(prod.CaminhoImagem) && File.Exists(prod.CaminhoImagem))
+                                                        imgContainer.Image(prod.CaminhoImagem);
+                                                    else
+                                                        imgContainer.Text("Sem foto").FontSize(10).FontColor("#A99F96");
+                                                });
+
+                                                cardRow.RelativeItem().PaddingLeft(20).AlignMiddle().Column(texto =>
+                                                {
+                                                    texto.Item().Text(prod.Nome).FontSize(22).Bold().FontColor("#1A1A1A");
+                                                    texto.Item().PaddingTop(4).Text($"Material: {prod.FilamentoNome}").FontSize(12).FontColor("#4A4A4A");
+                                                    texto.Item().Text($"Cor: {prod.FilamentoDetalhe}").FontSize(12).FontColor("#4A4A4A");
+                                                    texto.Item().PaddingTop(10).Text($"Ref: {prod.CodigoSku}").FontSize(10).FontColor("#A99F96");
+                                                });
+
+                                                cardRow.ConstantItem(140).AlignMiddle().AlignRight().Element(priceBadge =>
+                                                {
+                                                    priceBadge.Background("#FFD54F")
+                                                              .PaddingHorizontal(15)
+                                                              .PaddingVertical(12)
+                                                              .Text(prod.PrecoSugeridoFormatado).FontSize(20).Bold().FontColor("#381300");
+                                                });
+                                            });
+                                    }
+                                });
+                            });
+                        });
+                    }).GeneratePdf(saveFileDialog.FileName);
+
+                    Process.Start(new ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao gerar o PDF: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void BtnGerarRelatorio_Click(object sender, RoutedEventArgs e)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+            QuestPDF.Settings.UseSystemFonts = true;
+
             var produtosSelecionados = ProdutosCadastrados.Where(p => p.Selecionado).ToList();
-            MessageBox.Show($"Gerar Relatório para {produtosSelecionados.Count} produto(s).", "Relatório", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (produtosSelecionados.Count == 0) return;
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog { Filter = "Ficheiro PDF (*.pdf)|*.pdf", FileName = "Relatorio_FavoStudio3D.pdf", Title = "Guardar Relatório" };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    Document.Create(container =>
+                    {
+                        container.Page(page =>
+                        {
+                            page.Size(PageSizes.A4);
+                            page.Margin(2, Unit.Centimetre);
+                            page.PageColor(QColors.White);
+                            page.DefaultTextStyle(x => x.FontSize(11).FontFamily(QFonts.Arial));
+
+                            page.Header().BorderBottom(2).BorderColor("#F0D1A7").PaddingBottom(10).Row(row =>
+                            {
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().Text("RELATÓRIO DE CUSTOS E MARGENS").FontSize(16).FontColor("#381300").Black();
+                                    col.Item().Text("Favo Studio 3D - Gestão Interna").FontSize(10).FontColor("#A99F96");
+                                });
+                                row.ConstantItem(100).AlignRight().AlignBottom().Text(DateTime.Now.ToString("dd/MM/yyyy")).FontSize(10).FontColor("#795548");
+                            });
+
+                            page.Content().PaddingVertical(20).Column(col =>
+                            {
+                                col.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.RelativeColumn(3);
+                                        columns.RelativeColumn(1.5f);
+                                        columns.RelativeColumn(1.5f);
+                                        columns.RelativeColumn(2);
+                                        columns.RelativeColumn(1.5f);
+                                    });
+
+                                    table.Header(header =>
+                                    {
+                                        header.Cell().Background("#F0D1A7").Padding(8).Text("Produto").FontColor("#381300").SemiBold();
+                                        header.Cell().Background("#F0D1A7").Padding(8).AlignCenter().Text("Tempo").FontColor("#381300").SemiBold();
+                                        header.Cell().Background("#F0D1A7").Padding(8).AlignCenter().Text("Peso").FontColor("#381300").SemiBold();
+                                        header.Cell().Background("#F0D1A7").Padding(8).AlignRight().Text("Custo").FontColor("#381300").SemiBold();
+                                        header.Cell().Background("#F0D1A7").Padding(8).AlignCenter().Text("Margem").FontColor("#381300").SemiBold();
+                                    });
+
+                                    bool isZebra = false;
+                                    foreach (var prod in produtosSelecionados)
+                                    {
+                                        var bgColor = isZebra ? "#FDF8F0" : "#FFFFFF";
+                                        var tempo = (prod.HorasImpSalvo == "0" && prod.MinutosImpSalvo == "0") ? "-" : $"{prod.HorasImpSalvo}h {prod.MinutosImpSalvo}m";
+                                        var peso = prod.PesoGramaSalvo == "0" ? "-" : $"{prod.PesoGramaSalvo}g";
+
+                                        table.Cell().Background(bgColor).BorderBottom(1).BorderColor("#EADCC9").Padding(8).Text(prod.Nome).SemiBold().FontColor("#3E2723");
+                                        table.Cell().Background(bgColor).BorderBottom(1).BorderColor("#EADCC9").Padding(8).AlignCenter().Text(tempo).FontColor("#795548");
+                                        table.Cell().Background(bgColor).BorderBottom(1).BorderColor("#EADCC9").Padding(8).AlignCenter().Text(peso).FontColor("#795548");
+                                        table.Cell().Background(bgColor).BorderBottom(1).BorderColor("#EADCC9").Padding(8).AlignRight().Text(prod.CustoTotalFormatado).FontColor("#D32F2F");
+                                        table.Cell().Background(bgColor).BorderBottom(1).BorderColor("#EADCC9").Padding(8).AlignCenter().Text($"{prod.MargemSalva}%").FontColor("#4CAF50").SemiBold();
+
+                                        isZebra = !isZebra;
+                                    }
+                                });
+                            });
+                        });
+                    }).GeneratePdf(saveFileDialog.FileName);
+
+                    Process.Start(new ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
+                }
+                catch (Exception ex) { MessageBox.Show($"Erro ao gerar o Relatório: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error); }
+            }
         }
 
         private void BtnAcoes_Click(object sender, RoutedEventArgs e)
