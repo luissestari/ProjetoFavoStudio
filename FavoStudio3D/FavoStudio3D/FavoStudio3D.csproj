@@ -51,6 +51,7 @@
     <None Remove="Assets\Images\IconeUploadImagem.png" />
     <None Remove="Assets\Images\ImagemTelaInicio.png" />
     <None Remove="Assets\Images\Logo.png" />
+    <None Remove="Assets\Images\LogoCat.png" />
     <None Remove="Assets\Images\LogoMini.png" />
   </ItemGroup>
 
@@ -63,9 +64,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\fundo_catalogo.png">
+    <EmbeddedResource Include="Assets\fundo_catalogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Images\LogoCat.png" />
     <Resource Include="Assets\Images\BotaoMaisBranco.png" />
     <Resource Include="Assets\Images\FundoDashboard.png" />
     <Resource Include="Assets\Images\IconeAbaCusto.png" />
