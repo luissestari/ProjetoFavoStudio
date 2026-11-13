@@ -9,9 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\fundo_catalogo.png" />
     <None Remove="Assets\Images\BotaoMaisBranco.png" />
     <None Remove="Assets\Images\FundoDashboard.png" />
+    <None Remove="Assets\Images\fundo_catalogo.png" />
+    <None Remove="Assets\Images\fundo_orcamento.png" />
     <None Remove="Assets\Images\IconeAbaCusto.png" />
     <None Remove="Assets\Images\IconeAbaFilamento.png" />
     <None Remove="Assets\Images\IconeAcabamento.png" />
@@ -64,9 +65,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\fundo_catalogo.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Images\fundo_catalogo.png" />
+    <EmbeddedResource Include="Assets\Images\fundo_orcamento.png" />
     <EmbeddedResource Include="Assets\Images\LogoCat.png" />
     <Resource Include="Assets\Images\BotaoMaisBranco.png" />
     <Resource Include="Assets\Images\FundoDashboard.png" />

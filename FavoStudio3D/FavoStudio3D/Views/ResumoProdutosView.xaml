@@ -109,12 +109,10 @@
                             <Button x:Name="BtnGerarCatalogo" Width="130" Height="46" Margin="0,0,10,0" Cursor="Hand" Click="BtnGerarCatalogo_Click">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <!-- Adicionamos o x:Name="FundoBotao" para podermos alterar a sua cor -->
                                         <Border x:Name="FundoBotao" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" CornerRadius="10">
                                             <TextBlock Text="Gerar Catálogo" Foreground="#3E2723" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
 
-                                        <!-- Gatilho do efeito Hover -->
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="FundoBotao" Property="Background" Value="#FFF6BE"/>
@@ -124,15 +122,14 @@
                                 </Button.Template>
                             </Button>
 
-                            <!-- Botão Gerar Relatório -->
-                            <Button x:Name="BtnGerarRelatorio" Width="130" Height="46" Margin="0,0,20,0" Cursor="Hand" Click="BtnGerarRelatorio_Click">
+                            <!-- Botão Gerar Orçamento -->
+                            <Button x:Name="BtnGerarOrcamento" Width="140" Height="46" Margin="0,0,20,0" Cursor="Hand" Click="BtnGerarOrcamento_Click">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="FundoBotao2" Background="Transparent" BorderBrush="#EBB45D" BorderThickness="2" CornerRadius="10">
-                                            <TextBlock Text="Gerar Relatório" Foreground="#3E2723" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <TextBlock Text="Gerar Orçamento" Foreground="#3E2723" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
 
-                                        <!-- Gatilho do efeito Hover -->
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="FundoBotao2" Property="Background" Value="#FFF6BE"/>
@@ -201,7 +198,6 @@
                                         <!-- Produto -->
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
 
-                                            <!-- NOVA CHECKBOX ADICIONADA AQUI -->
                                             <CheckBox IsChecked="{Binding Selecionado}" Margin="0,0,12,0" VerticalAlignment="Center" Checked="ChkProduto_Changed" Unchecked="ChkProduto_Changed">
                                                 <CheckBox.LayoutTransform>
                                                     <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -281,7 +277,7 @@
                     </ItemsControl>
                 </ScrollViewer>
 
-                <!-- 4. RODAPÉ (Corrigido dentro da Grid principal) -->
+                <!-- 4. RODAPÉ -->
                 <Grid Grid.Row="3" Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
