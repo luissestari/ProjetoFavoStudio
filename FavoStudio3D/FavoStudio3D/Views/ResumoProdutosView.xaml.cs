@@ -661,159 +661,163 @@ namespace FavoStudio3D.Views
                                         });
 
                                     // =========================================================
-                                    // 4. SEÇÃO: PRODUTO SOLICITADO (Apenas o produto desta folha)
+                                    // 4. SEÇÃO: PRODUTO SOLICITADO (Aba alinhada + Card)
                                     // =========================================================
-                                    col.Item().Column(prodSection =>
+                                    col.Item().Layers(prodLayers =>
                                     {
-                                        prodSection.Item().Width(175).Height(25).Layers(tabLayers =>
+                                        prodLayers.Layer().Width(180).Height(37)
+                                            .Svg("<svg viewBox=\"0 0 180 37\"><path fill=\"#F8C463\" d=\"M0 10 Q0 0 10 0 L155 0 Q162 0 165 6 L175 25 L175 37 L0 37 Z\"/></svg>");
+
+                                        prodLayers.PrimaryLayer().Column(prodSection =>
                                         {
-                                            tabLayers.Layer().Svg("<svg viewBox=\"0 0 175 25\"><path fill=\"#F8C463\" d=\"M0 8 Q0 0 8 0 L154 0 Q161 0 164 6 L175 25 L0 25 Z\"/></svg>");
-                                            tabLayers.PrimaryLayer().PaddingLeft(12).AlignMiddle().Row(r =>
+                                            prodSection.Item().Width(180).Height(25).PaddingLeft(12).AlignMiddle().Row(r =>
                                             {
                                                 r.AutoItem().Width(13).Height(13).AlignMiddle()
                                                     .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#291506\" d=\"M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.21v6.7zm14 0v-6.7l-6 3.37v6.71l6-3.38z\"/></svg>");
                                                 r.AutoItem().PaddingLeft(6).AlignMiddle().Text("Produto Solicitado").FontSize(10).Bold().FontColor("#291506");
                                             });
-                                        });
 
-                                        prodSection.Item()
-                                            .CornerRadius(12)
-                                            .Background("#E6FFFFFF")
-                                            .Border(1).BorderColor("#E6C483")
-                                            .Padding(14)
-                                            .Row(cardRow =>
-                                            {
-                                                cardRow.ConstantItem(88).Height(88)
-                                                    .CornerRadius(8)
-                                                    .Background("#FFFFFF")
-                                                    .Border(1).BorderColor("#E6C483")
-                                                    .Padding(4)
-                                                    .AlignCenter().AlignMiddle().Element(imgContainer =>
-                                                    {
-                                                        if (!string.IsNullOrWhiteSpace(prod.CaminhoImagem) && File.Exists(prod.CaminhoImagem))
-                                                            imgContainer.Image(prod.CaminhoImagem);
-                                                        else
-                                                            imgContainer.Text("Sem foto").FontSize(8.5f).FontColor("#A99F96");
-                                                    });
-
-                                                cardRow.RelativeItem().PaddingLeft(14).AlignMiddle().Column(specCol =>
+                                            prodSection.Item()
+                                                .CornerRadius(12)
+                                                .Background("#FFFDF9")
+                                                .Border(1).BorderColor("#E6C483")
+                                                .Padding(14)
+                                                .Row(cardRow =>
                                                 {
-                                                    specCol.Item().PaddingBottom(4).Text(prod.Nome).FontSize(15).Bold().FontColor("#291506");
-
-                                                    specCol.Item().PaddingTop(2).Row(r =>
-                                                    {
-                                                        r.AutoItem().Width(11).Height(11).AlignMiddle()
-                                                            .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2L2 7l10 5 10-5-10-5zm0 14.5l-10-5v2.5l10 5 10-5V11.5l-10 5z\"/></svg>");
-                                                        r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
+                                                    cardRow.ConstantItem(88).Height(88)
+                                                        .CornerRadius(8)
+                                                        .Background("#FFFFFF")
+                                                        .Border(1).BorderColor("#E6C483")
+                                                        .Padding(4)
+                                                        .AlignCenter().AlignMiddle().Element(imgContainer =>
                                                         {
-                                                            t.Span("Material: ").Bold().FontSize(9.5f).FontColor("#381300");
-                                                            t.Span(prod.FilamentoNome).FontSize(9.5f).FontColor("#381300");
+                                                            if (!string.IsNullOrWhiteSpace(prod.CaminhoImagem) && File.Exists(prod.CaminhoImagem))
+                                                                imgContainer.Image(prod.CaminhoImagem);
+                                                            else
+                                                                imgContainer.Text("Sem foto").FontSize(8.5f).FontColor("#A99F96");
                                                         });
-                                                    });
 
-                                                    specCol.Item().PaddingTop(2).Row(r =>
+                                                    cardRow.RelativeItem().PaddingLeft(14).AlignMiddle().Column(specCol =>
                                                     {
-                                                        r.AutoItem().Width(11).Height(11).AlignMiddle()
-                                                            .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 21c-4.418 0-8-3.582-8-8 0-4.667 8-11 8-11s8 6.333 8 11c0 4.418-3.582 8-8 8z\"/></svg>");
-                                                        r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
-                                                        {
-                                                            t.Span("Cor: ").Bold().FontSize(9.5f).FontColor("#381300");
-                                                            t.Span(prod.FilamentoDetalhe).FontSize(9.5f).FontColor("#381300");
-                                                        });
-                                                    });
+                                                        specCol.Item().PaddingBottom(4).Text(prod.Nome).FontSize(15).Bold().FontColor("#291506");
 
-                                                    specCol.Item().PaddingTop(2).Row(r =>
-                                                    {
-                                                        r.AutoItem().Width(11).Height(11).AlignMiddle()
-                                                            .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z\"/></svg>");
-                                                        r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
+                                                        specCol.Item().PaddingTop(2).Row(r =>
                                                         {
-                                                            t.Span("Quantidade: ").Bold().FontSize(9.5f).FontColor("#381300");
-                                                            t.Span($"{qtdTexto} {sufixoUnidade}").FontSize(9.5f).FontColor("#381300");
-                                                        });
-                                                    });
-
-                                                    specCol.Item().PaddingTop(2).Row(r =>
-                                                    {
-                                                        r.AutoItem().Width(11).Height(11).AlignMiddle()
-                                                            .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z\"/></svg>");
-                                                        r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
-                                                        {
-                                                            t.Span("Prazo de Produção: ").Bold().FontSize(9.5f).FontColor("#381300");
-                                                            t.Span(prazoProducao).FontSize(9.5f).FontColor("#381300");
-                                                        });
-                                                    });
-                                                });
-
-                                                cardRow.ConstantItem(115).AlignMiddle().Element(priceBox =>
-                                                {
-                                                    priceBox.CornerRadius(10)
-                                                            .Background("#F9C661")
-                                                            .Border(1).BorderColor("#E09E19")
-                                                            .PaddingVertical(10)
-                                                            .PaddingHorizontal(8)
-                                                            .Column(pCol =>
+                                                            r.AutoItem().Width(11).Height(11).AlignMiddle()
+                                                                .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2L2 7l10 5 10-5-10-5zm0 14.5l-10-5v2.5l10 5 10-5V11.5l-10 5z\"/></svg>");
+                                                            r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
                                                             {
-                                                                pCol.Item().AlignCenter().Text("Preço Unitário").FontSize(8.5f).FontColor("#4A2500");
-                                                                pCol.Item().PaddingTop(2).AlignCenter().Text(prod.PrecoSugeridoFormatado).FontSize(16).Bold().FontColor("#291506");
+                                                                t.Span("Material: ").Bold().FontSize(9.5f).FontColor("#381300");
+                                                                t.Span(prod.FilamentoNome).FontSize(9.5f).FontColor("#381300");
                                                             });
+                                                        });
+
+                                                        specCol.Item().PaddingTop(2).Row(r =>
+                                                        {
+                                                            r.AutoItem().Width(11).Height(11).AlignMiddle()
+                                                                .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 21c-4.418 0-8-3.582-8-8 0-4.667 8-11 8-11s8 6.333 8 11c0 4.418-3.582 8-8 8z\"/></svg>");
+                                                            r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
+                                                            {
+                                                                t.Span("Cor: ").Bold().FontSize(9.5f).FontColor("#381300");
+                                                                t.Span(prod.FilamentoDetalhe).FontSize(9.5f).FontColor("#381300");
+                                                            });
+                                                        });
+
+                                                        specCol.Item().PaddingTop(2).Row(r =>
+                                                        {
+                                                            r.AutoItem().Width(11).Height(11).AlignMiddle()
+                                                                .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z\"/></svg>");
+                                                            r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
+                                                            {
+                                                                t.Span("Quantidade: ").Bold().FontSize(9.5f).FontColor("#381300");
+                                                                t.Span($"{qtdTexto} {sufixoUnidade}").FontSize(9.5f).FontColor("#381300");
+                                                            });
+                                                        });
+
+                                                        specCol.Item().PaddingTop(2).Row(r =>
+                                                        {
+                                                            r.AutoItem().Width(11).Height(11).AlignMiddle()
+                                                                .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z\"/></svg>");
+                                                            r.AutoItem().PaddingLeft(6).AlignMiddle().Text(t =>
+                                                            {
+                                                                t.Span("Prazo de Produção: ").Bold().FontSize(9.5f).FontColor("#381300");
+                                                                t.Span(prazoProducao).FontSize(9.5f).FontColor("#381300");
+                                                            });
+                                                        });
+                                                    });
+
+                                                    cardRow.ConstantItem(115).AlignMiddle().Element(priceBox =>
+                                                    {
+                                                        priceBox.CornerRadius(10)
+                                                                .Background("#F9C661")
+                                                                .Border(1).BorderColor("#E09E19")
+                                                                .PaddingVertical(10)
+                                                                .PaddingHorizontal(8)
+                                                                .Column(pCol =>
+                                                                {
+                                                                    pCol.Item().AlignCenter().Text("Preço Unitário").FontSize(8.5f).FontColor("#4A2500");
+                                                                    pCol.Item().PaddingTop(2).AlignCenter().Text(prod.PrecoSugeridoFormatado).FontSize(16).Bold().FontColor("#291506");
+                                                                });
+                                                    });
                                                 });
-                                            });
+                                        });
                                     });
 
                                     // =========================================================
-                                    // 5. SEÇÃO: CUSTOS UTILIZADOS (Específicos deste produto)
+                                    // 5. SEÇÃO: CUSTOS UTILIZADOS (Aba alinhada + Lista)
                                     // =========================================================
-                                    col.Item().PaddingTop(16).Column(costSection =>
+                                    col.Item().PaddingTop(16).Layers(costLayers =>
                                     {
-                                        costSection.Item().Width(175).Height(25).Layers(tabLayers =>
+                                        costLayers.Layer().Width(180).Height(37)
+                                            .Svg("<svg viewBox=\"0 0 180 37\"><path fill=\"#F8C463\" d=\"M0 10 Q0 0 10 0 L155 0 Q162 0 165 6 L175 25 L175 37 L0 37 Z\"/></svg>");
+
+                                        costLayers.PrimaryLayer().Column(costSection =>
                                         {
-                                            tabLayers.Layer().Svg("<svg viewBox=\"0 0 175 25\"><path fill=\"#F8C463\" d=\"M0 8 Q0 0 8 0 L154 0 Q161 0 164 6 L175 25 L0 25 Z\"/></svg>");
-                                            tabLayers.PrimaryLayer().PaddingLeft(12).AlignMiddle().Row(r =>
+                                            costSection.Item().Width(180).Height(25).PaddingLeft(12).AlignMiddle().Row(r =>
                                             {
                                                 r.AutoItem().Width(13).Height(13).AlignMiddle()
                                                     .Svg("<svg viewBox=\"0 0 24 24\"><path fill=\"#291506\" d=\"M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2zm4 8h-2v-6h2v6zm0-8h-2V7h2v2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2z\"/></svg>");
                                                 r.AutoItem().PaddingLeft(6).AlignMiddle().Text("Custos Utilizados").FontSize(10).Bold().FontColor("#291506");
                                             });
-                                        });
 
-                                        costSection.Item()
-                                            .CornerRadius(12)
-                                            .Background("#E6FFFFFF")
-                                            .Border(1).BorderColor("#E6C483")
-                                            .PaddingVertical(6)
-                                            .PaddingHorizontal(16)
-                                            .Column(cListCol =>
-                                            {
-                                                for (int i = 0; i < listaCustos.Count; i++)
+                                            costSection.Item()
+                                                .CornerRadius(12)
+                                                .Background("#FFFDF9")
+                                                .Border(1).BorderColor("#E6C483")
+                                                .PaddingVertical(6)
+                                                .PaddingHorizontal(16)
+                                                .Column(cListCol =>
                                                 {
-                                                    var itemCusto = listaCustos[i];
-                                                    bool temLinhaAbaixo = i < listaCustos.Count - 1;
+                                                    for (int i = 0; i < listaCustos.Count; i++)
+                                                    {
+                                                        var itemCusto = listaCustos[i];
+                                                        bool temLinhaAbaixo = i < listaCustos.Count - 1;
 
-                                                    string nomeLower = itemCusto.Nome.ToLower();
-                                                    string svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.48 2 2 4.02 2 6.5v11C2 19.98 6.48 22 12 22s10-2.02 10-4.5v-11C22 4.02 17.52 2 12 2zm0 2c4.42 0 8 1.34 8 3s-3.58 3-8 3-8-1.34-8-3 3.58-3 8-3zm0 16c-4.42 0-8-1.34-8-3v-2.23c1.61 1.07 4.61 1.73 8 1.73s6.39-.66 8-1.73V17c0 1.66-3.58 3-8 3z\"/></svg>"; // Filamento
+                                                        string nomeLower = itemCusto.Nome.ToLower();
+                                                        string svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.48 2 2 4.02 2 6.5v11C2 19.98 6.48 22 12 22s10-2.02 10-4.5v-11C22 4.02 17.52 2 12 2zm0 2c4.42 0 8 1.34 8 3s-3.58 3-8 3-8-1.34-8-3 3.58-3 8-3zm0 16c-4.42 0-8-1.34-8-3v-2.23c1.61 1.07 4.61 1.73 8 1.73s6.39-.66 8-1.73V17c0 1.66-3.58 3-8 3z\"/></svg>"; // Filamento
 
-                                                    if (nomeLower.Contains("energia"))
-                                                        svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M7 2v11h3v9l7-12h-4l4-8z\"/></svg>"; // Raio
-                                                    else if (nomeLower.Contains("mão") || nomeLower.Contains("mao") || nomeLower.Contains("preparo"))
-                                                        svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z\"/></svg>"; // Ferramenta
-                                                    else if (nomeLower.Contains("fixo"))
-                                                        svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z\"/></svg>"; // Etiqueta
-                                                    else if (nomeLower.Contains("outro") || nomeLower.Contains("embalag"))
-                                                        svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z\"/></svg>"; // Moeda
+                                                        if (nomeLower.Contains("energia"))
+                                                            svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M7 2v11h3v9l7-12h-4l4-8z\"/></svg>"; // Raio
+                                                        else if (nomeLower.Contains("mão") || nomeLower.Contains("mao") || nomeLower.Contains("preparo"))
+                                                            svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z\"/></svg>"; // Ferramenta
+                                                        else if (nomeLower.Contains("fixo"))
+                                                            svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z\"/></svg>"; // Etiqueta
+                                                        else if (nomeLower.Contains("outro") || nomeLower.Contains("embalag"))
+                                                            svgIcone = "<svg viewBox=\"0 0 24 24\"><path fill=\"#5A3B1C\" d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z\"/></svg>"; // Moeda
 
-                                                    cListCol.Item()
-                                                        .BorderBottom(temLinhaAbaixo ? 1 : 0)
-                                                        .BorderColor("#EADCC9")
-                                                        .PaddingVertical(8)
-                                                        .Row(cRow =>
-                                                        {
-                                                            cRow.AutoItem().Width(14).Height(14).AlignMiddle().Svg(svgIcone);
-                                                            cRow.RelativeItem().PaddingLeft(10).AlignMiddle().Text(itemCusto.Nome).FontSize(10).FontColor("#381300");
-                                                            cRow.AutoItem().AlignMiddle().Text(itemCusto.Valor).FontSize(10).Bold().FontColor("#381300");
-                                                        });
-                                                }
-                                            });
+                                                        cListCol.Item()
+                                                            .BorderBottom(temLinhaAbaixo ? 1 : 0)
+                                                            .BorderColor("#EADCC9")
+                                                            .PaddingVertical(8)
+                                                            .Row(cRow =>
+                                                            {
+                                                                cRow.AutoItem().Width(14).Height(14).AlignMiddle().Svg(svgIcone);
+                                                                cRow.RelativeItem().PaddingLeft(10).AlignMiddle().Text(itemCusto.Nome).FontSize(10).FontColor("#381300");
+                                                                cRow.AutoItem().AlignMiddle().Text(itemCusto.Valor).FontSize(10).Bold().FontColor("#381300");
+                                                            });
+                                                    }
+                                                });
+                                        });
                                     });
 
                                     // =========================================================
