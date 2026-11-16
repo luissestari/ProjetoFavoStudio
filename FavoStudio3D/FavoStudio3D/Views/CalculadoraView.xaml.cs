@@ -633,7 +633,7 @@ namespace FavoStudio3D.Views
                     ProdutoDescricao = string.IsNullOrWhiteSpace(TxtDescricao.Text) ? "Sem descrição" : TxtDescricao.Text,
                     CustoTotalProducao = $"R$ {custoUnitarioTotal:N2}",
                     PrecoVendaSugerido = $"R$ {precoVendaUnitario:N2}",
-                    CaminhoImagemProduto = caminhoImagemLimpo
+                    CaminhoImagemProduto = caminhoImagemLimpo ?? string.Empty,
                 };
 
                 resultado.Parametros.Add(new ParametroInfo { Icone = "/Assets/Images/IconeFilamentoForm.png", Rotulo = "Filamento", Valor = txtFilamento?.Text ?? "" });

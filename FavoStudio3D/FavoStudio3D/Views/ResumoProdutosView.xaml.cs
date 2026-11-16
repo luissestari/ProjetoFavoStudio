@@ -118,13 +118,13 @@ namespace FavoStudio3D.Views
                 Height = 28,
                 CornerRadius = new CornerRadius(6),
                 Background = Brushes.White,
-                BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
+                BorderBrush = (Brush?)new BrushConverter().ConvertFrom("#EADCC9") ?? Brushes.Transparent,
                 BorderThickness = new Thickness(1),
                 Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderAnterior.Child = new TextBlock { Text = "<", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
+            borderAnterior.Child = new TextBlock { Text = "<", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush?)new BrushConverter().ConvertFrom("#795548") ?? Brushes.Black, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderAnterior);
 
             var borderPagina = new Border
@@ -132,11 +132,11 @@ namespace FavoStudio3D.Views
                 Width = 28,
                 Height = 28,
                 CornerRadius = new CornerRadius(6),
-                Background = (Brush)new BrushConverter().ConvertFrom("#EBB45D"),
+                Background = (Brush?)new BrushConverter().ConvertFrom("#EBB45D") ?? Brushes.Orange,
                 Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = System.Windows.VerticalAlignment.Center
             };
-            borderPagina.Child = new TextBlock { Text = "1", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#3E2723"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
+            borderPagina.Child = new TextBlock { Text = "1", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush?)new BrushConverter().ConvertFrom("#3E2723") ?? Brushes.Black, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderPagina);
 
             var borderProximo = new Border
@@ -145,12 +145,12 @@ namespace FavoStudio3D.Views
                 Height = 28,
                 CornerRadius = new CornerRadius(6),
                 Background = Brushes.White,
-                BorderBrush = (Brush)new BrushConverter().ConvertFrom("#EADCC9"),
+                BorderBrush = (Brush?)new BrushConverter().ConvertFrom("#EADCC9") ?? Brushes.Transparent,
                 BorderThickness = new Thickness(1),
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 Cursor = Cursors.Hand
             };
-            borderProximo.Child = new TextBlock { Text = ">", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush)new BrushConverter().ConvertFrom("#795548"), HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
+            borderProximo.Child = new TextBlock { Text = ">", FontSize = 12, FontWeight = FontWeights.Bold, Foreground = (Brush?)new BrushConverter().ConvertFrom("#795548") ?? Brushes.Black, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
             PanelPaginacao.Children.Add(borderProximo);
         }
 
@@ -387,9 +387,9 @@ namespace FavoStudio3D.Views
                                                     .AlignCenter().AlignMiddle().Element(imgContainer =>
                                                     {
                                                         if (!string.IsNullOrWhiteSpace(prod.CaminhoImagem) && File.Exists(prod.CaminhoImagem))
-                                                            imgContainer.Image(prod.CaminhoImagem);
+                                                            imgContainer.Image(prod.CaminhoImagem).FitArea();
                                                         else
-                                                            imgContainer.Text("Sem foto").FontSize(8).FontColor("#A99F96");
+                                                            imgContainer.Text("Sem foto").FontSize(8.5f).FontColor("#A99F96");
                                                     });
 
                                                 cardRow.RelativeItem().PaddingLeft(15).AlignMiddle().Column(texto =>
@@ -437,6 +437,7 @@ namespace FavoStudio3D.Views
                         });
                     }).GeneratePdf(saveFileDialog.FileName);
 
+                    System.Threading.Thread.Sleep(200);
                     Process.Start(new ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
                 }
                 catch (Exception ex)
@@ -692,7 +693,7 @@ namespace FavoStudio3D.Views
                                                         .AlignCenter().AlignMiddle().Element(imgContainer =>
                                                         {
                                                             if (!string.IsNullOrWhiteSpace(prod.CaminhoImagem) && File.Exists(prod.CaminhoImagem))
-                                                                imgContainer.Image(prod.CaminhoImagem);
+                                                                imgContainer.Image(prod.CaminhoImagem).FitArea();
                                                             else
                                                                 imgContainer.Text("Sem foto").FontSize(8.5f).FontColor("#A99F96");
                                                         });

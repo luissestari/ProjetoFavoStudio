@@ -146,6 +146,8 @@ namespace FavoStudio3D.Views
             var resultadoCalculado = this.DataContext as ResultadoCalculoModel;
 
             // VERIFICA SE ESTÁ A EDITAR UM PRODUTO EXISTENTE
+            // VERIFICA SE ESTÁ A EDITAR UM PRODUTO EXISTENTE
+            // VERIFICA SE ESTÁ A EDITAR UM PRODUTO EXISTENTE
             if (CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef is ProdutoItemModel produtoExistente)
             {
                 // Atualiza o produto existente em vez de criar um novo (evita duplicar)
@@ -157,8 +159,22 @@ namespace FavoStudio3D.Views
                 produtoExistente.ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual;
                 produtoExistente.CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00";
                 produtoExistente.PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00";
-                produtoExistente.CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem;
+                produtoExistente.CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? string.Empty : CalculadoraView.MemoriaRascunho.CaminhoImagem;
                 produtoExistente.DadosCompletos = resultadoCalculado;
+
+                // Grava os dados brutos para edição futura e relatórios PDF
+                produtoExistente.PesoGramaSalvo = CalculadoraView.MemoriaRascunho.Peso;
+                produtoExistente.HorasImpSalvo = CalculadoraView.MemoriaRascunho.Horas;
+                produtoExistente.MinutosImpSalvo = CalculadoraView.MemoriaRascunho.Minutos;
+                produtoExistente.QuantidadeSalva = CalculadoraView.MemoriaRascunho.Quantidade;
+                produtoExistente.FreteSalvo = CalculadoraView.MemoriaRascunho.Frete;
+                produtoExistente.MargemSalva = CalculadoraView.MemoriaRascunho.Margem;
+                produtoExistente.ValorHoraMaoSalvo = CalculadoraView.MemoriaRascunho.ValorHora;
+                produtoExistente.HorasMaoSalvo = CalculadoraView.MemoriaRascunho.HorasMao;
+                produtoExistente.MinutosMaoSalvo = CalculadoraView.MemoriaRascunho.MinutosMao;
+                produtoExistente.FilamentoObjetoSalvo = CalculadoraView.MemoriaRascunho.FilamentoSelecionado;
+                produtoExistente.ImpressoraObjetoSalvo = CalculadoraView.MemoriaRascunho.ImpressoraSelecionada;
+                produtoExistente.CustosMarcadosSalvos = new System.Collections.Generic.List<string>(CalculadoraView.MemoriaRascunho.CustosSelecionadosDescricoes);
 
                 // Limpa a referência de edição após salvar
                 CalculadoraView.MemoriaRascunho.ProdutoEmEdicaoRef = null;
@@ -180,12 +196,27 @@ namespace FavoStudio3D.Views
                     ImpressoraModelo = CalculadoraView.MemoriaRascunho.ModeloImpressoraVisual,
                     CustoTotalFormatado = resultadoCalculado?.CustoTotalProducao ?? "R$ 0,00",
                     PrecoSugeridoFormatado = resultadoCalculado?.PrecoVendaSugerido ?? "R$ 0,00",
-                    CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? null : CalculadoraView.MemoriaRascunho.CaminhoImagem,
-                    DadosCompletos = resultadoCalculado
+                    CaminhoImagem = string.IsNullOrWhiteSpace(CalculadoraView.MemoriaRascunho.CaminhoImagem) ? string.Empty : CalculadoraView.MemoriaRascunho.CaminhoImagem,
+                    DadosCompletos = resultadoCalculado,
+
+                    // Grava os dados brutos para edição futura e relatórios PDF
+                    PesoGramaSalvo = CalculadoraView.MemoriaRascunho.Peso,
+                    HorasImpSalvo = CalculadoraView.MemoriaRascunho.Horas,
+                    MinutosImpSalvo = CalculadoraView.MemoriaRascunho.Minutos,
+                    QuantidadeSalva = CalculadoraView.MemoriaRascunho.Quantidade,
+                    FreteSalvo = CalculadoraView.MemoriaRascunho.Frete,
+                    MargemSalva = CalculadoraView.MemoriaRascunho.Margem,
+                    ValorHoraMaoSalvo = CalculadoraView.MemoriaRascunho.ValorHora,
+                    HorasMaoSalvo = CalculadoraView.MemoriaRascunho.HorasMao,
+                    MinutosMaoSalvo = CalculadoraView.MemoriaRascunho.MinutosMao,
+                    FilamentoObjetoSalvo = CalculadoraView.MemoriaRascunho.FilamentoSelecionado,
+                    ImpressoraObjetoSalvo = CalculadoraView.MemoriaRascunho.ImpressoraSelecionada,
+                    CustosMarcadosSalvos = new System.Collections.Generic.List<string>(CalculadoraView.MemoriaRascunho.CustosSelecionadosDescricoes)
                 };
 
                 ResumoProdutosView.ProdutosCadastrados.Add(novoProduto);
-            }
+            }     // Atualiza o produto existente em vez de criar um novo (evita duplicar)
+
 
             CalculadoraView.MemoriaRascunho.CalculoPendente = false;
 
