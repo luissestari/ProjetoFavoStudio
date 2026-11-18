@@ -331,7 +331,7 @@ namespace FavoStudio3D.Views
                                             titleCol.Item().Row(r =>
                                             {
                                                 r.AutoItem().Text("Favo Studio ").FontSize(22).Bold().FontColor("#291506");
-                                                r.AutoItem().Text("  3D").FontSize(22).Bold().FontColor("#E09E19");
+                                                r.AutoItem().Text(" 3D").FontSize(22).Bold().FontColor("#E09E19");
                                             });
                                             titleCol.Item().PaddingTop(1).Text("Inovação em cada detalhe").FontSize(9).FontColor("#6B5A4B");
                                         });
