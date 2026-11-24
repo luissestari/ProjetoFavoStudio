@@ -1263,5 +1263,143 @@ namespace FavoStudio3D.Views
             ModalExclusao.Visibility = Visibility.Collapsed;
             produtoParaExcluir = null;
         }
+        public static void RecalcularProdutosSalvos()
+        {
+            if (ProdutosCadastrados == null || ProdutosCadastrados.Count == 0) return;
+
+            var culturaPT = new System.Globalization.CultureInfo("pt-BR");
+            var culturaInv = System.Globalization.CultureInfo.InvariantCulture;
+
+            double ParseNum(string? texto)
+            {
+                if (string.IsNullOrWhiteSpace(texto)) return 0;
+                string limpo = texto.Replace("R$", "").Replace("%", "").Replace("g", "").Replace(" ", "").Trim();
+                if (double.TryParse(limpo, System.Globalization.NumberStyles.Any, culturaPT, out double vPt)) return vPt;
+                if (double.TryParse(limpo.Replace(",", "."), System.Globalization.NumberStyles.Any, culturaInv, out double vInv)) return vInv;
+                return 0;
+            }
+
+            // Calcula o custo fixo por impressão atual (considerando VidaUtilEstimada)
+            double totalCustosFixosPorImpressao = 0;
+            var mapaCustosAdicionais = new System.Collections.Generic.Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+
+            if (ResumoCustosMateriaisView.CustosBancoDados != null)
+            {
+                foreach (var custo in ResumoCustosMateriaisView.CustosBancoDados)
+                {
+                    if (custo == null) continue;
+                    string tipo = custo.Tipo ?? "";
+                    double valor = ParseNum(custo.ValorFormatado);
+
+                    if (tipo.IndexOf("Fixo", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        int vidaUtil = custo.VidaUtilEstimada ?? 0;
+                        totalCustosFixosPorImpressao += vidaUtil > 0 ? (valor / vidaUtil) : valor;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(custo.Descricao))
+                    {
+                        mapaCustosAdicionais[custo.Descricao.Trim()] = valor;
+                    }
+                }
+            }
+
+            foreach (var prod in ProdutosCadastrados)
+            {
+                if (prod == null) continue;
+
+                // 1. Preço/kg do filamento atualizado
+                double precoKgFilamento = 0;
+                FilamentoModel? filamentoAtual = null;
+
+                if (ResumoCustosMateriaisView.FilamentosBancoDados != null)
+                {
+                    filamentoAtual = ResumoCustosMateriaisView.FilamentosBancoDados.FirstOrDefault(f =>
+                        (!string.IsNullOrWhiteSpace(prod.FilamentoNome) && f.Nome.Equals(prod.FilamentoNome, StringComparison.OrdinalIgnoreCase)) ||
+                        (prod.FilamentoObjetoSalvo is FilamentoModel fSalvo &&
+                         f.Nome.Equals(fSalvo.Nome, StringComparison.OrdinalIgnoreCase) &&
+                         f.Tipo.Equals(fSalvo.Tipo, StringComparison.OrdinalIgnoreCase)));
+                }
+
+                if (filamentoAtual != null)
+                {
+                    precoKgFilamento = ParseNum(filamentoAtual.PrecoFormatado);
+                    prod.FilamentoObjetoSalvo = filamentoAtual;
+                    prod.FilamentoNome = filamentoAtual.Nome;
+                }
+                else if (prod.FilamentoObjetoSalvo != null)
+                {
+                    var propPreco = prod.FilamentoObjetoSalvo.GetType().GetProperty("PrecoFormatado")
+                                 ?? prod.FilamentoObjetoSalvo.GetType().GetProperty("Preco");
+                    precoKgFilamento = ParseNum(propPreco?.GetValue(prod.FilamentoObjetoSalvo)?.ToString());
+                }
+
+                // 2. Potência e kWh da impressora salva (se houver)
+                double potenciaWatts = 0;
+                double custoKwh = 0;
+                if (prod.ImpressoraObjetoSalvo != null)
+                {
+                    var tipoImp = prod.ImpressoraObjetoSalvo.GetType();
+                    foreach (var p in tipoImp.GetProperties())
+                    {
+                        string n = p.Name.ToLower();
+                        var val = p.GetValue(prod.ImpressoraObjetoSalvo);
+                        if (n.Contains("potencia") || n.Contains("consumo") || n.Contains("watts"))
+                            potenciaWatts = ParseNum(val?.ToString());
+                        else if (n.Contains("kwh"))
+                            custoKwh = ParseNum(val?.ToString());
+                    }
+                }
+
+                // 3. Parâmetros salvos do produto
+                double pesoGramas = ParseNum(prod.PesoGramaSalvo);
+                double horas = ParseNum(prod.HorasImpSalvo);
+                double minutos = ParseNum(prod.MinutosImpSalvo);
+                int quantidade = int.TryParse(prod.QuantidadeSalva, out int q) && q > 0 ? q : 1;
+                double margemLucro = ParseNum(prod.MargemSalva);
+                double valorHoraTrabalho = ParseNum(prod.ValorHoraMaoSalvo);
+                double horasMao = ParseNum(prod.HorasMaoSalvo);
+                double minutosMao = ParseNum(prod.MinutosMaoSalvo);
+
+                double tempoImpressaoHoras = horas + (minutos / 60.0);
+                double tempoMaoDeObraHoras = horasMao + (minutosMao / 60.0);
+
+                double custoFilamentoUnitario = (precoKgFilamento * pesoGramas) / 1000.0;
+                double custoEnergiaUnitario = ((potenciaWatts / 1000.0) * custoKwh) * tempoImpressaoHoras;
+                double custoMaoDeObraUnitario = valorHoraTrabalho * tempoMaoDeObraHoras;
+
+                double custosAdicionaisUnitarios = 0;
+                if (prod.CustosMarcadosSalvos != null)
+                {
+                    foreach (var descCusto in prod.CustosMarcadosSalvos)
+                    {
+                        if (!string.IsNullOrWhiteSpace(descCusto) && mapaCustosAdicionais.TryGetValue(descCusto.Trim(), out double vAdc))
+                            custosAdicionaisUnitarios += vAdc;
+                    }
+                }
+
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + totalCustosFixosPorImpressao;
+                double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
+
+                prod.CustoTotalFormatado = $"R$ {custoUnitarioTotal:N2}";
+                prod.PrecoSugeridoFormatado = $"R$ {precoVendaUnitario:N2}";
+
+                // Atualiza também o ResultadoCalculoModel para manter PDF/Visualização sincronizados
+                if (prod.DadosCompletos != null)
+                {
+                    prod.DadosCompletos.CustoTotalProducao = prod.CustoTotalFormatado;
+                    prod.DadosCompletos.PrecoVendaSugerido = prod.PrecoSugeridoFormatado;
+
+                    foreach (var cDet in prod.DadosCompletos.CustosDetalhados)
+                    {
+                        if (cDet.Titulo.StartsWith("Material", StringComparison.OrdinalIgnoreCase))
+                            cDet.ValorFormatado = $"R$ {custoFilamentoUnitario:N2}";
+                        else if (cDet.Titulo.Equals("Custos fixos", StringComparison.OrdinalIgnoreCase) && totalCustosFixosPorImpressao > 0)
+                            cDet.ValorFormatado = $"R$ {(totalCustosFixosPorImpressao / quantidade):N2}";
+                        else if (cDet.Titulo.Equals("Outros custos", StringComparison.OrdinalIgnoreCase))
+                            cDet.ValorFormatado = $"R$ {custosAdicionaisUnitarios:N2}";
+                    }
+                }
+            }
+        }
     }
 }

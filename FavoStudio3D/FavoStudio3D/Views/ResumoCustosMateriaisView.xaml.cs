@@ -404,6 +404,7 @@ namespace FavoStudio3D.Views
         public string Descricao { get; set; } = string.Empty;
         public string ValorFormatado { get; set; } = string.Empty;
         public string Tipo { get; set; } = string.Empty;
+        public int? VidaUtilEstimada { get; set; }
 
         public string CorFundoTipo => Tipo.ToLower().Contains("fixo") ? "#E8DAEF" :
                                       Tipo.ToLower().Contains("adicional") ? "#D5F5E3" : "#EAEDED";

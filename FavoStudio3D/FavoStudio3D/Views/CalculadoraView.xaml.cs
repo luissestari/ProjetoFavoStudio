@@ -293,7 +293,22 @@ namespace FavoStudio3D.Views
 
                     if (!string.IsNullOrEmpty(tipoCusto) && tipoCusto.IndexOf("Fixo", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        somatorioCustosFixos += val;
+                        
+                        int vidaUtil = 0;
+                        try
+                        {
+                            object? rawVidaUtil = tipoDoObjeto.GetProperty("VidaUtilEstimada")?.GetValue(custo);
+                            if (rawVidaUtil != null)
+                            {
+                                if (rawVidaUtil is int iVida) vidaUtil = iVida;
+                                else int.TryParse(rawVidaUtil.ToString(), out vidaUtil);
+                            }
+                        }
+                        catch { }
+
+                        double custoPorImpressao = vidaUtil > 0 ? val / vidaUtil : val;
+                        somatorioCustosFixos += custoPorImpressao;
+                        
                     }
                     else
                     {
@@ -611,7 +626,7 @@ namespace FavoStudio3D.Views
                 double custosAdicionaisUnitarios = 0;
                 foreach (var c in custosSelecionados) custosAdicionaisUnitarios += c.Valor;
 
-                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + (_totalCustosFixos / Math.Max(1, quantidade));
+                double custoUnitarioTotal = custoFilamentoUnitario + custoEnergiaUnitario + custoMaoDeObraUnitario + custosAdicionaisUnitarios + _totalCustosFixos;
                 double custoTotalLote = custoUnitarioTotal * quantidade;
                 double precoVendaUnitario = custoUnitarioTotal * (1 + (margemLucro / 100.0));
 

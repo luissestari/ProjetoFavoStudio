@@ -141,6 +141,10 @@ namespace FavoStudio3D.Views
                 TipoCustoSelecionado = custo.Tipo ?? "";
             else
                 TipoCustoSelecionado = custo.Tipo ?? "";
+
+            TxtVidaUtilCusto.Text = custo.VidaUtilEstimada.HasValue && custo.VidaUtilEstimada.Value > 0
+                ? custo.VidaUtilEstimada.Value.ToString()
+                : string.Empty;
         }
 
         // ==========================================
@@ -349,6 +353,7 @@ namespace FavoStudio3D.Views
                 {
                     int index = ResumoCustosMateriaisView.FilamentosBancoDados.IndexOf(_filamentoEmEdicao);
                     if (index >= 0) ResumoCustosMateriaisView.FilamentosBancoDados[index] = filamentoAtualizado;
+                    ResumoProdutosView.RecalcularProdutosSalvos();
                 }
                 else
                 {
@@ -363,17 +368,31 @@ namespace FavoStudio3D.Views
 
                 string valorFinalFormatado = valorCusto.ToString("N2", new CultureInfo("pt-BR"));
 
+                string tipoFinal = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado;
+                int? vidaUtil = null;
+
+                if (tipoFinal.Equals("Custo fixo", StringComparison.OrdinalIgnoreCase))
+                {
+                    string textoVida = TxtVidaUtilCusto.Text.Trim();
+                    if (int.TryParse(textoVida, NumberStyles.Any, CultureInfo.InvariantCulture, out int v) && v > 0)
+                    {
+                        vidaUtil = v;
+                    }
+                }
+
                 var custoAtualizado = new CustoModel
                 {
                     Descricao = TxtDescricaoCusto.Text,
                     ValorFormatado = "R$ " + valorFinalFormatado,
-                    Tipo = TipoCustoSelecionado == "Selecione o tipo" ? "Custo fixo" : TipoCustoSelecionado
+                    Tipo = tipoFinal,
+                    VidaUtilEstimada = vidaUtil
                 };
 
                 if (_custoEmEdicao != null)
                 {
                     int index = ResumoCustosMateriaisView.CustosBancoDados.IndexOf(_custoEmEdicao);
                     if (index >= 0) ResumoCustosMateriaisView.CustosBancoDados[index] = custoAtualizado;
+                    ResumoProdutosView.RecalcularProdutosSalvos();
                 }
                 else
                 {
