@@ -1,5 +1,4 @@
-﻿// Substitua pelo seu namespace correto caso necessário
-using FavoStudio3D.Models;
+﻿using FavoStudio3D.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,11 +55,23 @@ namespace FavoStudio3D.Views
 
         public ObservableCollection<string> ListaTiposCusto { get; set; } = new ObservableCollection<string>();
 
+        private Visibility _visibilidadeVidaUtil = Visibility.Collapsed;
+        public Visibility VisibilidadeVidaUtil
+        {
+            get { return _visibilidadeVidaUtil; }
+            set { _visibilidadeVidaUtil = value; OnPropertyChanged(nameof(VisibilidadeVidaUtil)); }
+        }
+
         private string _tipoCustoSelecionado = string.Empty;
         public string TipoCustoSelecionado
         {
             get { return _tipoCustoSelecionado; }
-            set { _tipoCustoSelecionado = value; OnPropertyChanged(nameof(TipoCustoSelecionado)); }
+            set
+            {
+                _tipoCustoSelecionado = value;
+                OnPropertyChanged(nameof(TipoCustoSelecionado));
+                VisibilidadeVidaUtil = value == "Custo fixo" ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private Visibility _visibilidadeFilamento = Visibility.Visible;
@@ -286,7 +297,8 @@ namespace FavoStudio3D.Views
         private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
             TxtNome.Text = ""; TxtTipo.Text = ""; TxtPreco.Text = ""; TxtQuantidade.Text = "";
-            TxtDescricaoCusto.Text = ""; TxtValorCusto.Text = ""; TipoCustoSelecionado = "Selecione o tipo";
+            TxtDescricaoCusto.Text = ""; TxtValorCusto.Text = ""; TxtVidaUtilCusto.Text = "";
+            TipoCustoSelecionado = "Selecione o tipo";
             _filamentoEmEdicao = null;
             _custoEmEdicao = null;
         }
@@ -309,7 +321,8 @@ namespace FavoStudio3D.Views
             else
             {
                 if (string.IsNullOrWhiteSpace(TxtDescricaoCusto.Text) ||
-                    string.IsNullOrWhiteSpace(TxtValorCusto.Text))
+                    string.IsNullOrWhiteSpace(TxtValorCusto.Text) ||
+                    (VisibilidadeVidaUtil == Visibility.Visible && string.IsNullOrWhiteSpace(TxtVidaUtilCusto.Text)))
                 {
                     ModalValidacao.Visibility = Visibility.Visible;
                     return;
@@ -318,12 +331,10 @@ namespace FavoStudio3D.Views
 
             if (VisibilidadeFilamento == Visibility.Visible)
             {
-                // CONVERSÃO SEGURA DE PREÇO (FILAMENTO)
                 string textoPreco = TxtPreco.Text.Replace("R$", "").Replace(" ", "").Trim();
                 textoPreco = textoPreco.Replace(",", ".");
                 double.TryParse(textoPreco, NumberStyles.Any, CultureInfo.InvariantCulture, out double precoFilamento);
 
-                // Formata de volta para o padrão limpo (Ex: 12,50)
                 string precoFinalFormatado = precoFilamento.ToString("N2", new CultureInfo("pt-BR"));
 
                 var filamentoAtualizado = new FilamentoModel
@@ -346,12 +357,10 @@ namespace FavoStudio3D.Views
             }
             else
             {
-                // CONVERSÃO SEGURA DE VALOR (CUSTO)
                 string textoCusto = TxtValorCusto.Text.Replace("R$", "").Replace(" ", "").Trim();
                 textoCusto = textoCusto.Replace(",", ".");
                 double.TryParse(textoCusto, NumberStyles.Any, CultureInfo.InvariantCulture, out double valorCusto);
 
-                // Formata de volta para o padrão limpo (Ex: 12,50)
                 string valorFinalFormatado = valorCusto.ToString("N2", new CultureInfo("pt-BR"));
 
                 var custoAtualizado = new CustoModel

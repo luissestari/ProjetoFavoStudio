@@ -4,7 +4,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="600">
+             d:DesignHeight="500" d:DesignWidth="600"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <Style x:Key="EstiloBotaoDourado" TargetType="Button">
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BordaBtn"
+                                Background="#B47614"
+                                CornerRadius="10"
+                                Padding="18,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordaBtn" Property="Background" Value="#9E660E"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordaBtn" Property="Background" Value="#85540A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
     <Border Width="600" Height="500" CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center">
         <Border.Background>
@@ -14,14 +44,35 @@
             <DropShadowEffect Color="Black" Opacity="0.15" BlurRadius="45" ShadowDepth="0"/>
         </Border.Effect>
 
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50">
-            <Image Source="/Assets/Images/IconeAviso.png" Height="125" Margin="0,0,0,25" Stretch="Uniform"/>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="40,35">
+            <Image Source="/Assets/Images/IconeAviso.png" Height="110" Margin="0,0,0,20" Stretch="Uniform"/>
+
             <TextBlock Text="Configure os dados antes&#x0A;de usar a calculadora" 
-                       FontSize="30" FontWeight="Bold" Foreground="#3E2723" 
-                       HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,20"/>
+                       FontSize="28" FontWeight="Bold" Foreground="#3E2723" 
+                       HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,15"/>
+
             <TextBlock Text="Para utilizar a calculadora, cadastre primeiro as&#x0A;impressoras, os filamentos e os custos utilizados&#x0A;nas impressões." 
-                       FontSize="20" Foreground="#3E2723" 
-                       HorizontalAlignment="Center" TextAlignment="Center"/>
+                       FontSize="18" Foreground="#3E2723" 
+                       HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,26"/>
+
+            <!-- BOTÕES NO PADRÃO DOURADO / ÂMBAR -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="BtnIrImpressoras" Style="{StaticResource EstiloBotaoDourado}" Margin="0,0,14,0" Click="BtnIrImpressoras_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Path Data="M19,8H5C3.34,8 2,9.34 2,11V17H6V21H18V17H22V11C22,9.34 20.66,8 19,8M16,19H8V14H16V19M19,12C18.45,12 18,11.55 18,11C18,10.45 18.45,10 19,10C19.55,10 20,10.45 20,11C20,11.55 19.55,12 19,12M18,3H6V7H18V3Z"
+                              Fill="White" Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Cadastrar impressora" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnIrCustos" Style="{StaticResource EstiloBotaoDourado}" Click="BtnIrCustos_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Path Data="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z"
+                              Fill="White" Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Cadastrar custos e materiais" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </StackPanel>
     </Border>
 </UserControl>

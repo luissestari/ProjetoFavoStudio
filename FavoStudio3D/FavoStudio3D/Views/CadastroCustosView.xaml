@@ -348,7 +348,7 @@
                             </Border>
                         </StackPanel>
 
-                        <Grid Margin="0,0,0,30">
+                        <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="15"/>
@@ -442,6 +442,30 @@
                                 <TextBlock Text="Escolha entre custo adicional ou custo fixo" FontSize="11" Foreground="#795548" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Grid>
+
+                        <!-- CAMPO CONDICIONAL: APENAS PARA CUSTO FIXO -->
+                        <StackPanel Visibility="{Binding VisibilidadeVidaUtil}" Margin="0,0,0,25">
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="#3E2723" Margin="0,0,0,8">
+                                Vida útil estimada (impressões) <Run Text="*" Foreground="#D32F2F"/>
+                            </TextBlock>
+                            <Border BorderBrush="#C7BCAE" BorderThickness="1" CornerRadius="6" Background="White" Height="40" Padding="12,0">
+                                <Grid>
+                                    <TextBlock Text="Ex: 500" Foreground="#A99F96" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=TxtVidaUtilCusto}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtVidaUtilCusto" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Foreground="#3E2723" FontSize="14"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
 
                         <Border Background="#F4DDB5" BorderBrush="#EBB45D" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,30">
                             <Grid>

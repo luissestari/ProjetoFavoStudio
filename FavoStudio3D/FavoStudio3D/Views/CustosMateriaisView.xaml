@@ -44,9 +44,17 @@
             <Button Width="400" Height="55" Background="#B57218" BorderThickness="0" Cursor="Hand" Click="BotaoCadastrarNovo_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                        <Border x:Name="BordaBtn" Background="{TemplateBinding Background}" CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordaBtn" Property="Background" Value="#9A630F"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordaBtn" Property="Background" Value="#82520B"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
 
