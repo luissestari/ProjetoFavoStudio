@@ -66,7 +66,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
@@ -150,17 +150,50 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Box de Imagem Clicável -->
-                        <Grid Grid.Column="2" Cursor="Hand" Height="148" Width="200" VerticalAlignment="Bottom" MouseLeftButtonDown="BoxImagem_MouseLeftButtonDown">
+                        <!-- Box de Imagem Clicável e Ajustável (Quadrado 1:1 alinhado com os campos abaixo) -->
+                        <Grid x:Name="BoxImagemProduto"
+                              Grid.Column="2"
+                              Background="Transparent"
+                              Cursor="Hand"
+                              Height="148"
+                              Width="148"
+                              Margin="0,0,17,0"
+                              VerticalAlignment="Bottom"
+                              HorizontalAlignment="Right"
+                              MouseLeftButtonDown="BoxImagem_MouseLeftButtonDown"
+                              MouseMove="BoxImagem_MouseMove"
+                              MouseLeftButtonUp="BoxImagem_MouseLeftButtonUp"
+                              MouseWheel="BoxImagem_MouseWheel">
+
                             <Rectangle Stroke="#C7BCAE" StrokeThickness="1.5" StrokeDashArray="4 4" RadiusX="12" RadiusY="12" Fill="#FFFBF5"/>
 
-                            <Image x:Name="ImgProdutoPreview" Stretch="Uniform" Margin="15"/>
+                            <!-- Máscara de recorte arredondada para a imagem -->
+                            <Border x:Name="BordaMascaraImagem" CornerRadius="10.5" Margin="1.5" ClipToBounds="True">
+                                <Border.OpacityMask>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Border Background="Black"
+                                                    CornerRadius="10.5"
+                                                    Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Border}}"
+                                                    Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Border}}"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Border.OpacityMask>
 
-                            <StackPanel x:Name="PainelPlaceholderImagem" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <!-- Correção aplicada na linha abaixo -->
-                                <Image Source="/Assets/Images/IconeUploadImagem.png" Width="40" Height="40" Margin="0,0,0,8" Stretch="Uniform" HorizontalAlignment="Center"/>
-                                <TextBlock Text="Adicionar imagem" FontSize="13" FontWeight="Bold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,2"/>
-                                <TextBlock Text="PNG, JPG OU WEBP (máx. 5 MB)" FontSize="9" Foreground="#A99F96" TextAlignment="Center"/>
+                                <Image x:Name="ImgProdutoPreview" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                    <Image.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="EscalaImagem" ScaleX="1" ScaleY="1"/>
+                                            <TranslateTransform x:Name="PosicaoImagem" X="0" Y="0"/>
+                                        </TransformGroup>
+                                    </Image.RenderTransform>
+                                </Image>
+                            </Border>
+
+                            <StackPanel x:Name="PainelPlaceholderImagem" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8" IsHitTestVisible="False">
+                                <Image Source="/Assets/Images/IconeUploadImagem.png" Width="36" Height="36" Margin="0,0,0,6" Stretch="Uniform" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Adicionar imagem" FontSize="12" FontWeight="Bold" Foreground="#3E2723" TextAlignment="Center" Margin="0,0,0,2"/>
+                                <TextBlock Text="PNG, JPG OU WEBP&#x0A;(máx. 5 MB)" FontSize="9" Foreground="#A99F96" TextAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -183,7 +216,6 @@
                     <!-- ========================================== -->
                     <!-- LINHA 3: SCROLLVIEWER DOS CAMPOS           -->
                     <!-- ========================================== -->
-                    <!-- O ScrollViewer garante que nada corte. Margem e Padding evitam que a barra sobreponha o conteúdo -->
                     <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,-15,0" Padding="0,0,15,0">
                         <Grid>
                             <Grid.ColumnDefinitions>

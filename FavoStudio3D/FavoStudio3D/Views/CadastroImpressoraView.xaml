@@ -171,8 +171,22 @@
 
                             <Border BorderBrush="#C7BCAE" BorderThickness="1.5" CornerRadius="12" Background="#FFF5E9" Height="225" Cursor="Hand" MouseLeftButtonDown="BoxImagemImpressora_MouseLeftButtonDown">
                                 <Grid>
-                                    <!-- Imagem de Pré-visualização -->
-                                    <Image x:Name="ImgImpressoraPreview" Stretch="UniformToFill"/>
+                                    <!-- Máscara de recorte para arredondar os cantos da imagem sem cobrir a borda -->
+                                    <Border CornerRadius="10.5">
+                                        <Border.OpacityMask>
+                                            <VisualBrush>
+                                                <VisualBrush.Visual>
+                                                    <Border Background="Black"
+                                                            CornerRadius="10.5"
+                                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Border}}"
+                                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Border}}"/>
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                        </Border.OpacityMask>
+
+                                        <!-- Imagem de Pré-visualização -->
+                                        <Image x:Name="ImgImpressoraPreview" Stretch="UniformToFill"/>
+                                    </Border>
 
                                     <!-- Textos e Ícone padrão -->
                                     <StackPanel x:Name="PainelPlaceholderImpressora" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15">

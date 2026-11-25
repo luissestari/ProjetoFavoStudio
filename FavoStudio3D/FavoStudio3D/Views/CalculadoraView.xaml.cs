@@ -47,7 +47,6 @@ namespace FavoStudio3D.Views
             public static string NomeImpressoraVisual = "Impressora 3D";
             public static string ModeloImpressoraVisual = "Principal";
 
-            // Função centralizada para resetar tudo quando o produto for salvo
             public static void LimparTudo()
             {
                 CalculoPendente = false;
@@ -63,6 +62,13 @@ namespace FavoStudio3D.Views
         }
 
         private double _totalCustosFixos = 0;
+
+        // Variáveis para controle de arraste e zoom da imagem
+        private bool _arrastandoImagem = false;
+        private bool _houveArraste = false;
+        private Point _pontoInicialClique;
+        private double _offsetInicialX;
+        private double _offsetInicialY;
 
         public class CustoVisual : INotifyPropertyChanged
         {
@@ -95,8 +101,6 @@ namespace FavoStudio3D.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // === INTELIGÊNCIA DE REDIRECIONAMENTO AUTOMÁTICO ===
-            // Se o usuário já preencheu, calculou e saiu da tela sem salvar, nós o jogamos direto de volta para o resumo!
             if (MemoriaRascunho.CalculoPendente && MemoriaRascunho.ResultadoPendente != null)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
@@ -115,7 +119,7 @@ namespace FavoStudio3D.Views
                     }
                 }), System.Windows.Threading.DispatcherPriority.Send);
 
-                return; // Pausa o resto do carregamento para não piscar a tela do formulário
+                return;
             }
 
             CarregarDadosCadastrados();
@@ -169,14 +173,13 @@ namespace FavoStudio3D.Views
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.UriSource = new Uri(MemoriaRascunho.CaminhoImagem);
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.EndInit();
+                    bitmap.Freeze();
 
-                    if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview)
-                        ImgProdutoPreview.Source = bitmap;
-
-                    if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem)
-                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
+                    ImgProdutoPreview.Source = bitmap;
+                    PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
                 }
                 catch { }
             }
@@ -263,7 +266,6 @@ namespace FavoStudio3D.Views
                             else if (rawValue is int i) val = i;
                             else
                             {
-                                // Correção do possível valor nulo aqui
                                 string valorTexto = rawValue?.ToString() ?? "0";
                                 valorTexto = valorTexto.Replace("R$", "").Replace(" ", "").Trim();
                                 if (double.TryParse(valorTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out double valPt)) val = valPt;
@@ -286,14 +288,12 @@ namespace FavoStudio3D.Views
                                 break;
                             }
                         }
-                        // Correção do possível valor nulo aqui
                         if (rawDesc != null) desc = rawDesc?.ToString() ?? desc;
                     }
                     catch { }
 
                     if (!string.IsNullOrEmpty(tipoCusto) && tipoCusto.IndexOf("Fixo", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        
                         int vidaUtil = 0;
                         try
                         {
@@ -308,7 +308,6 @@ namespace FavoStudio3D.Views
 
                         double custoPorImpressao = vidaUtil > 0 ? val / vidaUtil : val;
                         somatorioCustosFixos += custoPorImpressao;
-                        
                     }
                     else
                     {
@@ -433,8 +432,12 @@ namespace FavoStudio3D.Views
             TxtHorasMaoDeObra.Text = string.Empty;
             TxtMinutosMaoDeObra.Text = string.Empty;
 
-            if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview) ImgProdutoPreview.Source = null;
-            if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem) PainelPlaceholderImagem.Visibility = Visibility.Visible;
+            EscalaImagem.ScaleX = 1.0;
+            EscalaImagem.ScaleY = 1.0;
+            PosicaoImagem.X = 0;
+            PosicaoImagem.Y = 0;
+            ImgProdutoPreview.Source = null;
+            PainelPlaceholderImagem.Visibility = Visibility.Visible;
 
             if (BtnAbrirFilamento.Template.FindName("TxtFilamentoSelecionado", BtnAbrirFilamento) is TextBlock txtFilamento)
             {
@@ -457,19 +460,76 @@ namespace FavoStudio3D.Views
 
         private void BtnAdicionarImagem_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
-            openFileDialog.Title = "Selecione a imagem do produto 3D";
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string caminhoCompleto = openFileDialog.FileName;
-                MemoriaRascunho.CaminhoImagem = caminhoCompleto;
-                MessageBox.Show($"Imagem selecionada com sucesso:\n{caminhoCompleto}", "Arquivo Carregado", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            SelecionarNovaImagem();
         }
 
         private void BoxImagem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (ImgProdutoPreview.Source == null)
+            {
+                SelecionarNovaImagem();
+                return;
+            }
+
+            _arrastandoImagem = true;
+            _houveArraste = false;
+            _pontoInicialClique = e.GetPosition(BoxImagemProduto);
+            _offsetInicialX = PosicaoImagem.X;
+            _offsetInicialY = PosicaoImagem.Y;
+            BoxImagemProduto.CaptureMouse();
+        }
+
+        private void BoxImagem_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_arrastandoImagem) return;
+
+            Point pontoAtual = e.GetPosition(BoxImagemProduto);
+            double deltaX = pontoAtual.X - _pontoInicialClique.X;
+            double deltaY = pontoAtual.Y - _pontoInicialClique.Y;
+
+            if (Math.Abs(deltaX) > 4 || Math.Abs(deltaY) > 4)
+            {
+                _houveArraste = true;
+                BoxImagemProduto.Cursor = Cursors.SizeAll;
+                PosicaoImagem.X = _offsetInicialX + deltaX;
+                PosicaoImagem.Y = _offsetInicialY + deltaY;
+            }
+        }
+
+        private void BoxImagem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!_arrastandoImagem) return;
+
+            _arrastandoImagem = false;
+            BoxImagemProduto.ReleaseMouseCapture();
+            BoxImagemProduto.Cursor = Cursors.Hand;
+
+            if (!_houveArraste)
+            {
+                SelecionarNovaImagem();
+            }
+        }
+
+        private void BoxImagem_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (ImgProdutoPreview.Source == null) return;
+
+            double zoomPasso = e.Delta > 0 ? 0.1 : -0.1;
+            double novaEscala = Math.Clamp(EscalaImagem.ScaleX + zoomPasso, 1.0, 3.0);
+
+            EscalaImagem.ScaleX = novaEscala;
+            EscalaImagem.ScaleY = novaEscala;
+
+            if (novaEscala == 1.0)
+            {
+                PosicaoImagem.X = 0;
+                PosicaoImagem.Y = 0;
+            }
+
+            e.Handled = true;
+        }
+
+        private void SelecionarNovaImagem()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Imagens (*.jpg; *.jpeg; *.png; *.webp)|*.jpg;*.jpeg;*.png;*.webp|Todos os arquivos (*.*)|*.*";
@@ -485,14 +545,19 @@ namespace FavoStudio3D.Views
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.UriSource = new Uri(caminhoCompleto);
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.EndInit();
+                    bitmap.Freeze();
 
-                    if (FindName("ImgProdutoPreview") is Image ImgProdutoPreview)
-                        ImgProdutoPreview.Source = bitmap;
+                    EscalaImagem.ScaleX = 1.0;
+                    EscalaImagem.ScaleY = 1.0;
+                    PosicaoImagem.X = 0;
+                    PosicaoImagem.Y = 0;
 
-                    if (FindName("PainelPlaceholderImagem") is UIElement PainelPlaceholderImagem)
-                        PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
+                    ImgProdutoPreview.Source = null;
+                    ImgProdutoPreview.Source = bitmap;
+                    PainelPlaceholderImagem.Visibility = Visibility.Collapsed;
                 }
                 catch (Exception ex)
                 {
@@ -567,7 +632,6 @@ namespace FavoStudio3D.Views
 
                     if (rawHex != null)
                     {
-                        // Correção do possível valor nulo aqui
                         string txtCor = rawHex?.ToString()?.Trim() ?? "";
                         if (txtCor.StartsWith("#") || txtCor.Length == 6 || txtCor.Length == 8)
                         {
@@ -678,7 +742,6 @@ namespace FavoStudio3D.Views
                     resultado.CustosDetalhados.Add(new CustoInfo { Icone = "/Assets/Images/IconeMaoObra.png", Titulo = "Mão de obra", Descricao = "Tempo de preparo e acabamento", ValorFormatado = $"R$ {custoMaoDeObraUnitario:N2}" });
                 }
 
-                // ---> INSIRA AQUI O BLOCO DOS CUSTOS FIXOS:
                 if (_totalCustosFixos > 0)
                 {
                     double custoFixoUnitario = _totalCustosFixos / Math.Max(1, quantidade);
@@ -728,7 +791,6 @@ namespace FavoStudio3D.Views
             return null;
         }
 
-        // Correção principal: O método agora aceita valores nulos na assinatura (object?)
         private double ConverterParaDouble(object? valorBruto)
         {
             if (valorBruto == null) return 0;
@@ -737,7 +799,6 @@ namespace FavoStudio3D.Views
             if (valorBruto is float f) return (double)f;
             if (valorBruto is int i) return i;
 
-            // Correção do possível valor nulo aqui
             string texto = valorBruto?.ToString() ?? "0";
             texto = texto.Replace("R$", "").Replace(" ", "").Trim();
 
